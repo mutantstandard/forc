@@ -62,12 +62,10 @@ def main():
         print(HELP)
         sys.exit(2)
     try:
-        log.out(f'Loading manifest file...', 36)
-        m = manifest.Manifest(os.path.dirname(manifest_path),
-                              os.path.basename(manifest_path))
-        print(export(m, input_path, output_formats))
+        export(input_path, output_formats)
     except Exception as e:
         log.out(f'!!! {e}', 31)
+        raise e  ######################## TEMP
         sys.exit(1)
     log.out('All done', 36)
 
