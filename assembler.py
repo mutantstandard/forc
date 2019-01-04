@@ -1,5 +1,4 @@
 from xml.etree.ElementTree import Element, tostring
-from xml.dom import minidom
 
 from tables.glyphOrder import glyphOrder
 from tables.head import head
@@ -13,96 +12,66 @@ from tables.cmap import cmap
 
 
 
-def assembler():
+def assembler(m):
+    """
+    Assembles the TTX file using the manifest file and input data.
+    """
+    # defining various variables that will get used in each table.
 
-  xMin = -1024
-  xMax = 1024
+    metrics = m['metrics']
 
-  yMin = -470
-  yMax = 1578
+    created = m['metadata']['created']
+    OS2VendorID = m['metadata']['OS2VendorID']
+    nameRecords = m['metadata']['nameRecords']
 
-  unitsPerEm = 2048
-  lowestRecPPEM = 16
 
-  created = "Mon Jan 03 13:45:00 2019"
-
-  OS2ySubscriptXSize = 0
-  OS2ySubscriptYSize = 0
-  OS2ySubscriptXOffset = 0
-  OS2ySubscriptYOffset = 0
-  OS2ySuperscriptXSize = 0
-  OS2ySuperscriptYSize = 0
-  OS2ySuperscriptXOffset = 0
-  OS2ySuperscriptYOffset = 0
-  OS2yStrikeoutSize = 0
-  OS2yStrikeoutPosition = 0
+    macLangID = m['encoding']['macLangID']
+    msftLangID = m['encoding']['msftLangID']
 
 
 
-  OS2VendorID = "MTNT"
+    # start the TTX file
+    root = Element('ttFont')
+    root.attrib = {'sfntVersion': '\\x00\\x01\\x00\\x00', 'ttLibVersion': '3.28'} # hard-coded attrs.
 
-  macLangID = "0x0"
-  msftLangID = "0x809"
+    # headers and other weird crap
+    root.append(glyphOrder())
+    root.append(head(metrics, created))
+    root.append(os2(metrics, OS2VendorID))
+    root.append(post())
+    root.append(maxp())
+    root.append(Element("loca")) # just to please macOS, it's supposed to be empty.
 
-  nameRecords =   {"0" : "Copyright ©2017-2019 Dzuk"
-                  ,"1" : "Mutant Standard emoji (SVGinOT)"
-                  ,"2" : "Regular"
-                  ,"3" : "Mutant Standard emoji SVGinOT 0.3.1"
-                  ,"4" : "Mutant Standard emoji (SVGinOT)"
-                  ,"5" : "0.3.1 (3rd January 2019)"
-                  ,"6" : "MutantStandard-SVGinOT-Regular"
-                  ,"8" : "Mutant Standard"
-                  ,"9" : "Dzuk"
-                  ,"10" : "When using the special emoji within this font that aren't supported by Unicode, make sure you are not using them in situations where other people or devices may not have this font installed, or those who are visually impaired. See [URL] for more information."
-                  ,"11" : "https://mutant.tech"
-                  ,"12" : "https://noct.zone"
-                  ,"13" : "Mutant Standard emoji is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License."
-                  ,"14" : "https://creativecommons.org/licenses/by-nc-sa/4.0/"
-                  ,"16" : "Mutant Standard emoji (SVGinOT)"
-                  ,"17" : "Complete"
-                  }
+    # horizontal and vertical metrics tables
+    root.append(hhea())
+    root.append(hmtx())
+    root.append(vhea())
+    root.append(vmtx())
 
-
-
-
+    # glyph-code mappings
+    root.append(cmap(macLangID, msftLangID))
+    # if ligatures
+    # gdef()
+    # gsub()
+    # etc.
 
 
-  # putting the TTX together
+    # glyph picture data
 
-  root = Element('ttFont')
-  root.attrib = {'sfntVersion': '\\x00\\x01\\x00\\x00', 'ttLibVersion': '3.28'} # hard-coded attrs.
+    # glyf()
 
-  root.append(glyphOrder())
-  root.append(head())
-  root.append(os2())
-  root.append(post())
-  root.append(maxp())
-  root.append(Element("loca")) # just to please macOS, it's supposed to be empty.
+    # if svginot
+    #   svg()
+    # if sbix
+    #   sbix()
+    # if CBDT/CBLC
+    #   cblc()
+    #   cbdt()
 
-  root.append(hhea())
-  root.append(hmtx())
-  root.append(vhea())
-  root.append(vmtx())
 
-  root.append(cmap(macLangID, msftLangID))
-  # GDEF, GSUB, etc.
-  # glyf
-  # SVG/sbix/CBDT+CBLC
-
-  root.append(name(nameRecords, macLangID, msftLangID))
+    # human-readable metadata
+    root.append(name(nameRecords, macLangID, msftLangID))
 
 
 
-
-
-
-
-
-  # prettyyyy~~~~
-
-  stringOutput = tostring(root, encoding="unicode", method="xml")
-  reparsedXML = minidom.parseString(stringOutput)
-  prettyOutput = reparsedXML.toprettyxml(indent="  ")
-
-
-  return prettyOutput
+    return tostring(root, encoding="unicode", method="xml")

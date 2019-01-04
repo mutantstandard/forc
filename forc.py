@@ -3,6 +3,8 @@
 import getopt
 import os
 import sys
+import json
+from io import StringIO
 
 import log
 from export import export
@@ -10,12 +12,13 @@ from export import export
 
 
 VERSION = '0.0.0'
-DEF_MANIFEST = 'manifest'
+DEF_MANIFEST = 'manifest.json'
 DEF_INPUT_PATH = 'in'
 DEF_OUTPUT_PATH = 'out'
 DEF_OUTPUT_FORMATS = ['svginot']
-
-
+DEF_TTX_OUTPUT = False
+DEF_TTX_ONLY = False
+DEF_DELIM = "-"
 
 HELP = f'''forc {VERSION}
 USAGE: forc.py [options...]
@@ -31,6 +34,12 @@ OPTIONS:
         (svginot, sbix, cbdtcblc, sbixios)
         (.otf, .ttf, .ttf, .mobileconfig)
 
+-d      delimiter between chained Unicode codepoints
+        (default: {DEF_DELIM})
+
+--ttx       export an additional ttx (.ttx) file for each format as a compiled font file
+
+--ttx-only  only export the TTX files for each format.
 
 '''
 
@@ -41,11 +50,14 @@ def main():
     input_path = DEF_INPUT_PATH
     output_path = DEF_OUTPUT_PATH
     output_formats = DEF_OUTPUT_FORMATS
+    ttx_output = DEF_TTX_OUTPUT
+    ttx_only = DEF_TTX_ONLY
+    delim = DEF_DELIM
 
     try:
         opts, _ = getopt.getopt(sys.argv[1:],
-                                'hm:i:o:F:',
-                                ['help'])
+                                'hm:i:o:F:d:',
+                                ['help', 'ttx', 'ttx-only'])
         for opt, arg in opts:
             if opt in ['-h', '--help']:
                 print(HELP)
@@ -58,11 +70,22 @@ def main():
                 output_path = arg
             elif opt == '-F':
                 output_formats = arg.split(',')
+            elif opt =='-d':
+                delim = arg
+            elif opt =='--ttx':
+                ttx_output = True
+            elif opt =='--ttx-only':
+                ttx_only = True
+
     except Exception:
         print(HELP)
         sys.exit(2)
     try:
-        export(input_path, output_formats)
+        with open(manifest_path, "r") as read_file:
+            m = json.load(read_file)
+
+        export(m, input_path, output_path, output_formats, delim)
+
     except Exception as e:
         log.out(f'!!! {e}', 31)
         raise e  ######################## TEMP
