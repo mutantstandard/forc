@@ -1,6 +1,7 @@
 from xml.etree.ElementTree import Element
 
 def vhea():
+
     vhea = Element("vhea")
 
     vhea.append(Element("tableVersion", {'value': '0x00010000'}))  # hard-coded
@@ -31,6 +32,7 @@ def vhea():
 
 
 def vmtx():
+
     vmtx = Element("vmtx")
 
     return vmtx

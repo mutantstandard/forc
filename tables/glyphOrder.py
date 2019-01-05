@@ -1,6 +1,6 @@
 from xml.etree.ElementTree import Element
 
-def glyphOrder():
+def glyphOrder(glyphs):
     """
     Generates and returns a GlyphOrder XML element.
 
@@ -9,6 +9,9 @@ def glyphOrder():
     """
     glyphOrder = Element("GlyphOrder")
 
-    # here you will need to add all of the juicy glyphs.
+    # add all of the juicy glyphs
+    for id, g in enumerate(glyphs):
+        glyphOrder.append(Element("GlyphID", {"id": str(id), "name": g.name}))
+
 
     return glyphOrder

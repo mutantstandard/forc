@@ -5,6 +5,8 @@ def os2(metrics, OS2VendorID):
     Creates an OS/2 table and fills it with both hard-coded and
     user-defined metadata.
     """
+
+
     os2 = Element("OS_2")
 
     os2.append(Element("version", {'value': '5'})) # hard-coded

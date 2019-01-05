@@ -1,5 +1,5 @@
 import subprocess
-from xml.dom import minidom
+import pathlib
 
 import log
 from assembler import assembler
@@ -7,18 +7,15 @@ from glyphs import getGlyphs
 
 
 
-def ttx(ttxString, inputPath, outputPath):
+def compileTTX(ttxFile, outputPath):
     """
     Invokes ttx
 
     Making this it's own function now so I can selectively invoke it.
     """
-    # write ttx to temporary file
-    with open("temp.ttx", 'w') as f:
-        f.write(ttxString)
 
     # feed the assembled TTX as input to the ttx commaand line tool.
-    cmd_ttx = ['ttx', 'temp.ttx', '-o', outputPath]
+    cmd_ttx = ['ttx', '-o', outputPath, ttxFile]
 
     # try to export temporary PNG
     try:
@@ -29,9 +26,48 @@ def ttx(ttxString, inputPath, outputPath):
         raise Exception('TTX compiler returned error code: ' + str(r))
 
 
+
+
+def createFont(fontFormat, outputPath, manifest, images):
+    """
+    Calls the functions that assemble and create a font.
+    """
+
+    log.out(f'Assembling {fontFormat} font...')
+    ttxString = assembler(fontFormat, manifest, images)
+
+
+    opp = pathlib.Path(outputPath).absolute()
+
+    ttxDestination = opp / (fontFormat + '.ttx')
+
+    try:
+        with open(ttxDestination, 'w') as file:
+            file.write(ttxString)
+    except Exception:
+        raise Exception('Could not write to file')
+
+    compileTTX(ttxDestination, outputPath)
+
+
+
+
+
+
 def export(manifest, inputPath, outputPath, outputFormats, delim):
+    """
+    Performs a variety of processing and validation tasks
+    related to font format, then initiates font creation once those
+    have passed.
+    """
+
+    # determine what image formats need to be used
+    # (also check if the output formats are valid)
+    # ------------------------------------------------
 
     glyphImageFormats = set()
+
+    log.out(f'Checking output format(s)...', 36)
     for f in outputFormats:
         if f == 'svginot':
             glyphImageFormats.add('svg')
@@ -40,15 +76,19 @@ def export(manifest, inputPath, outputPath, outputFormats, delim):
         else:
             raise ValueError(f"Invalid output format: {f}")
 
+    log.out(f'Output format(s) verified.', 32)
 
-    print(glyphImageFormats)
+
+    # check the image sets for each format.
+    # ------------------------------------------------
 
     glyphImages = dict()
 
     log.out(f'Checking glyph images...', 36)
-
     for format in glyphImageFormats:
-        glyphList = getGlyphs(inputPath, delim, format)
+
+        formatInput = pathlib.Path(inputPath) / manifest['glyphs'][format]
+        glyphList = getGlyphs(formatInput, delim, format)
 
         if not glyphList:
             log.out(f'!!! There are no {format} glyph images!!', 31)
@@ -57,11 +97,14 @@ def export(manifest, inputPath, outputPath, outputFormats, delim):
             glyphImages[format] = glyphList
 
 
-    ttxString = assembler(manifest)
 
-    # prettyyyy~~~~
-    reparsedXML = minidom.parseString(ttxString)
-    prettyOutput = reparsedXML.toprettyxml(indent="  ")
-    #print(prettyOutput)
+    # assemble each font format.
+    # ------------------------------------------------
 
-    #ttx(ttxString, inputPath, outputPath)
+    for f in outputFormats:
+
+        if f == 'svginot':
+            createFont(f, outputPath, manifest, glyphImages['svg'])
+
+        elif f in ['sbix', 'sbixios', 'cbdtcblc']:
+            createFont(f, outputPath, manifest, glyphImages['png'])

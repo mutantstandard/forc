@@ -1,28 +1,46 @@
 from xml.etree.ElementTree import Element
 
-def cmap(macLangID, msftLangID):
+
+
+
+
+def cmap(macLangID, msftLangID, glyphs):
+
+
+
+
     cmap = Element("cmap")
 
     cmap.append(Element("tableVersion", {"version": "0"}))
 
-    cmap12_1 = Element("cmap_format_12",   { "platEncID": "0"
+    cmap12_1 = Element("cmap_format_12",    { "platformID": "0"
+                                            , "platEncID": "0"
                                             , "language": "0"
                                             , "format": "12"
                                             , "reserved": "0"
                                             , "length": "0"
-                                            , "nGroupd": "0"
+                                            , "nGroups": "0"
                                             })
-    # fill it with goodies here
+    for g in glyphs:
+        cmap12_1.append(Element("map", {"code": hex(g.codepoints[0]), "name": g.name}))
+
+
+
+
     cmap.append(cmap12_1)
 
-    cmap12_2 = Element("cmap_format_12",   { "platEncID": "1"
+    cmap12_2 = Element("cmap_format_12",    { "platformID": "3"
+                                            , "platEncID": "1"
                                             , "language": msftLangID
                                             , "format": "12"
                                             , "reserved": "0"
                                             , "length": "0"
-                                            , "nGroupd": "0"
+                                            , "nGroups": "0"
                                             })
-    # fill it with goodies here
+
+    for g in glyphs:
+        cmap12_2.append(Element("map", {"code": hex(g.codepoints[0]), "name": g.name}))
+
     cmap.append(cmap12_2)
 
     return cmap
