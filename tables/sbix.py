@@ -15,7 +15,7 @@ def sbix(glyphs):
     # for each strike
     # (for now, we are just creating 1 strike manually)
     strike1 = Element("strike")
-    strike1.append(Element("ppem", {"Value": "128"}))
+    strike1.append(Element("ppem", {"value": "128"}))
     strike1.append(Element("resolution", {"value": "72"}))
 
     for ID, g in enumerate(glyphs):

@@ -1,18 +1,18 @@
 from xml.etree.ElementTree import Element
 
-def vhea():
+def vhea(metrics):
 
     vhea = Element("vhea")
 
     vhea.append(Element("tableVersion", {'value': '0x00010000'}))  # hard-coded
 
-    vhea.append(Element("ascent", {'value': '1578'}))
-    vhea.append(Element("descent", {'value': '-470'}))
-    vhea.append(Element("lineGap", {'value': '0'}))
+    vhea.append(Element("ascent", {'value': str(metrics['xMax']) }))
+    vhea.append(Element("descent", {'value': str(metrics['xMin']) }))
+    vhea.append(Element("lineGap", {'value': str(metrics['lineGap']) }))
 
-    vhea.append(Element("advanceHeightMax", {'value': '2048'}))
-    vhea.append(Element("minTopSideBearing", {'value': '0'}))
-    vhea.append(Element("minBottomSideBearing", {'value': '0'}))
+    vhea.append(Element("advanceHeightMax", {'value': str(metrics['yMax']) }))
+    vhea.append(Element("minTopSideBearing", {'value': str(metrics['yMin']) }))
+    vhea.append(Element("minBottomSideBearing", {'value': str(metrics['yMax']) }))
     vhea.append(Element("yMaxExtent", {'value': '2048'}))
 
     vhea.append(Element("caretSlopeRise", {'value': '1'})) # probably hard-coded
@@ -31,8 +31,25 @@ def vhea():
     return vhea
 
 
-def vmtx():
+def vmtx(metrics, glyphs):
 
     vmtx = Element("vmtx")
+
+    for g in glyphs:
+        if g.name is 'space':
+            vmtx.append(Element("mtx",  {"name": g.name
+                                        ,"height": str(metrics['spaceVLength'])
+                                        ,"tsb": str(metrics['normalTSB'])
+                                        }))
+        elif g.name is 'CR':
+            vmtx.append(Element("mtx", {"name": g.name
+                                        ,"height": "0"
+                                        ,"tsb": "0"
+                                        }))
+        else:
+            vmtx.append(Element("mtx", {"name": g.name
+                                        ,"height": str(metrics['normalHeight'])
+                                        ,"tsb": str(metrics['normalTSB'])
+                                        }))
 
     return vmtx

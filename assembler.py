@@ -40,7 +40,6 @@ def assembler(format, m, glyphs):
     OS2VendorID = m['metadata']['OS2VendorID']
     nameRecords = m['metadata']['nameRecords']
 
-
     macLangID = m['encoding']['macLangID']
     msftLangID = m['encoding']['msftLangID']
 
@@ -84,16 +83,16 @@ def assembler(format, m, glyphs):
     # horizontal and vertical metrics tables
     # ---------------------------------------------
     log.out('Assembling hhea table...', 36)
-    root.append(hhea())
+    root.append(hhea(metrics))
 
     log.out('Assembling hmtx table...', 36)
-    root.append(hmtx())
+    root.append(hmtx(metrics, glyphs))
 
     log.out('Assembling vhea table...', 36)
-    root.append(vhea())
+    root.append(vhea(metrics))
 
     log.out('Assembling vmtx table...', 36)
-    root.append(vmtx())
+    root.append(vmtx(metrics, glyphs))
 
 
 

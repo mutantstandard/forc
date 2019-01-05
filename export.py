@@ -37,9 +37,9 @@ def createFont(fontFormat, outputPath, manifest, images):
     ttxString = assembler(fontFormat, manifest, images)
 
 
-    opp = pathlib.Path(outputPath).absolute()
+    outputAbsolute = pathlib.Path(outputPath).absolute()
 
-    ttxDestination = opp / (fontFormat + '.ttx')
+    ttxDestination = outputAbsolute / (fontFormat + '.ttx')
 
     try:
         with open(ttxDestination, 'w') as file:
@@ -47,7 +47,18 @@ def createFont(fontFormat, outputPath, manifest, images):
     except Exception:
         raise Exception('Could not write to file')
 
-    compileTTX(ttxDestination, outputPath)
+    extension = '.ttf'
+
+    if fontFormat is 'svginot':
+        extension = '.otf'
+    elif fontFormat is 'sbix':
+        extension = '.ttf'
+    elif fontFormat is 'cbdtcblc':
+        extension = '.ttf'
+
+    outputFile = outputAbsolute / (fontFormat + extension)
+
+    compileTTX(ttxDestination, outputFile)
 
 
 
