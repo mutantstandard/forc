@@ -30,7 +30,6 @@ def assembler(format, m, glyphs):
     """
 
 
-
     # defining various variables that will get used in each table.
     # just making this a bit more readable, basically.
 
@@ -133,7 +132,7 @@ def assembler(format, m, glyphs):
     # human-readable metadata
     # ---------------------------------------------
     log.out('Assembling name table...', 36)
-    root.append(name(nameRecords, macLangID, msftLangID))
+    root.append(name(format, macLangID, msftLangID, nameRecords))
 
 
 
