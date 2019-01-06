@@ -18,6 +18,8 @@ from tables.glyf import glyf
 
 from tables.svg import svg
 from tables.sbix import sbix
+from tables.cbdt import cbdt
+from tables.cblc import cblc
 
 
 
@@ -121,10 +123,10 @@ def assembler(format, m, glyphs):
 
     elif format == "cbdtcblc":
         log.out('Assembling CBLC table...', 36)
-        root.append(cblc())
+        root.append(cblc(metrics, glyphs))
 
         log.out('Assembling CBDT table...', 36)
-        root.append(cbdt())
+        root.append(cbdt(metrics, glyphs))
 
 
 
