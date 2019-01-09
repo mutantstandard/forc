@@ -115,7 +115,7 @@ def assembler(format, m, glyphs):
 
     if format == "svginot":
         log.out('Assembling SVG table...', 36)
-        root.append(svg(glyphs))
+        root.append(svg(metrics, glyphs))
 
     elif format == "sbix":
         log.out('Assembling sbix table...', 36)

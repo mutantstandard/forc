@@ -1,33 +1,67 @@
 import xml.etree.ElementTree as ET
 
-def svg(glyphs):
+def svg(metrics, glyphs):
     """
     Generates and returns a SVG table.
+
+    It will non-destructively alter glyphs or throw exceptions if there's visual data
+    that's incompatible with SVGinOT standards and/or renderers.
     """
 
     svgTable = ET.Element("SVG")
 
     for ID, g in enumerate(glyphs):
         if g.imagePath:
-            svgElement = ET.Element("svgDoc", {"startGlyph": str(ID), "endGlyph" : str(ID) })
-            svgTable.append(svgElement)
-
-            svgImage = ET.parse(g.imagePath)
+            svgDoc = ET.Element("svgDoc", {"startGlyph": str(ID), "endGlyph" : str(ID) })
 
 
+            svgET = ET.parse(g.imagePath)
+            svgImage = svgET.getroot()
 
 
-    #
-    #   - check if the SVG has an attribute called 'viewbox'
-    #
-    #   - if it does, remove it, and add a group inside
-    #     applying the right transform, based on:
-    #
-    #        - PPEM
-    #        - ascender, descender, bounding box
-    #
-    # stuff the edited SVG into CDATA.
-    #
+            # we have to see if there's a viewBox and if there is, remove it and use
+            # transforms to rectify the image's metrics.
+            #
+            # (viewBox is technically supported but behaves erratically in
+            # most SVGinOT renderers)
 
+            cdata = ""
+
+            if svgImage.find(".[@viewBox]"):
+
+                viewBoxWidth = svgImage.attrib['viewBox'].split(' ')[2] # get the 3rd viewBox number (width)
+
+                xPos = str(metrics['xMin'])
+                yPos = str(-(metrics['yMax'])) # negate and make into a string
+                scale = metrics['unitsPerEm'] / int(viewBoxWidth) # determine the scale for the glyph based on UPEM.
+
+                # make a transform group to wrap the SVG contents around
+                transformGroup = ET.Element("g", {"transform": f"translate({xPos}, {yPos}) scale({scale})"})
+
+                # make a new SVG tag without the viewbox and append the transform group to it.
+                svgCdata = svgImage.find(".")
+                #svgCdata.attrib.pop("viewBox")
+                #svgCdata.append(transformGroup)
+                
+            else:
+                cdata = ""
+
+
+            svgDoc.text = cdata
+            svgTable.append(svgDoc)
+
+
+
+
+
+
+            # Throw an error if there's a style attribute, because
+            # they're not compatible.
+            #
+            # I don't think it's this software's place to deal with
+            # this, so it's gonna throw an exception instead.
+
+            if svgImage.find(".[@style]"):
+                raise Exception(f"SVG image {g.imagePath} has a 'style' attribute. These are not compatible in SVGinOT fonts.")
 
     return svgTable
