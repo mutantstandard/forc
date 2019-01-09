@@ -48,7 +48,6 @@ def assembler(format, m, glyphs):
     # start the TTX file
     # ---------------------------------------------
     log.out(f'Assembling TTX file...')
-    root = Element('ttFont')
     root = Element('ttFont', {'sfntVersion': '\\x00\\x01\\x00\\x00', 'ttLibVersion': '3.28'}) # hard-coded attrs.
 
 

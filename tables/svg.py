@@ -24,7 +24,7 @@ def svg(metrics, glyphs):
 
     for ID, g in enumerate(glyphs):
         if g.imagePath:
-            svgDoc = etree.Element("svgDoc", {"startGlyph": str(ID), "endGlyph" : str(ID) })
+            svgDoc = etree.Element("svgDoc", {"startGlyphID": str(ID), "endGlyphID" : str(ID) })
 
             # lxml can't parse from Path objects, so it has to give a string representation.
             svgET = etree.parse(g.imagePath.as_uri())
