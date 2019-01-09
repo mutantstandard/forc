@@ -1,10 +1,8 @@
 # forc
 
-Forc (a terrible portmanteau of font and orc) is a font compiler, leveraging fonttools' TTX compiler (by proxy, by creating a TTX file that's then fed to it instead of directly using fonttools) to create valid custom emoji fonts that are compatible with a wide variety of platforms.
+Forc (a terrible portmanteau of font and orc) is an emoji font compiler, taking in folders of codepoint-named images and returning font files that are compatible with a variety of platforms.
 
-This is currently just a prototype to speed up the font prototyping process for Mutant Standard's fonts.
-
-Eventually, either this (or bits of this code) will form the basis of an actual font compiler that can be used with orxporter.
+This can either be used by itself or (eventually) from Orxporter as part of an emoji build.
 
 ## Planned Features
 
@@ -21,6 +19,7 @@ Eventually, either this (or bits of this code) will form the basis of an actual 
 - Arbitrary Unicode codepoints - you can use whatever codepoints you want, including PUA.
 - Support for ligatures
 - Support for VS16
+- Can be used from Orxporter for seamlessly building an entire consistent set of different emoji.
 
 
 ## Limitations
@@ -30,11 +29,11 @@ Eventually, either this (or bits of this code) will form the basis of an actual 
 
 I'm still learning how to encode fonts, so these will quickly clear up as time goes on.
 
-- Currently only SVGinOT and sbix formats have been tested working.
-- Currently all of the formats are only considered valid and work in macOS 10.14 and iOS 12.
-- Metrics between SVGinOT and sbix are not consistent.
+- Currently only sbix output has been tested working.
+- Currently all of the formats are only considered valid in macOS 10.14 and iOS 12.
+- Metrics are not consistent across formats.
 - I can't get consistent or usable metrics in vertical writing orientation.
-- Ligatures don't work yet
+- Ligatures aren't supported yet.
 - VS16 support has not yet been implemented.
 
 
@@ -45,4 +44,5 @@ I'm still learning how to encode fonts, so these will quickly clear up as time g
 
 ## Dependencies
 
-- `fonttools` (eventually, not actually being used just yet)
+- `lxml`
+- `fonttools`

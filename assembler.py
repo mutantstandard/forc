@@ -137,6 +137,5 @@ def assembler(format, m, glyphs):
 
 
     # the TTX is now done! (as long as something didn't go wrong)
-
-
-    return tostring(root, pretty_print=True, method="xml", xml_declaration=True)
+    # return an XML string
+    return tostring(root, pretty_print=True, method="xml", xml_declaration=True, encoding="UTF-8")

@@ -11,8 +11,8 @@ def vhea(metrics):
     vhea.append(Element("lineGap", {'value': str(metrics['lineGap']) }))
 
     vhea.append(Element("advanceHeightMax", {'value': str(metrics['yMax']) }))
-    vhea.append(Element("minTopSideBearing", {'value': str(metrics['yMin']) }))
-    vhea.append(Element("minBottomSideBearing", {'value': str(metrics['yMax']) }))
+    vhea.append(Element("minTopSideBearing", {'value': str(metrics['xMin']) }))
+    vhea.append(Element("minBottomSideBearing", {'value': str(metrics['xMax']) }))
     vhea.append(Element("yMaxExtent", {'value': '2048'}))
 
     vhea.append(Element("caretSlopeRise", {'value': '1'})) # probably hard-coded

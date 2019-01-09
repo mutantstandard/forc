@@ -2,12 +2,15 @@ import lxml.etree as etree
 from io import BytesIO
 
 def strip_ns_prefix(tree):
-    #iterate through only element nodes (skip comment node, text node, etc) :
-    for element in tree.xpath('descendant-or-self::*'):
-        #if element has prefix...
-        if element.prefix:
-            #replace element name with its local name
-            element.tag = etree.QName(element).localname
+    #xpath query for selecting all element nodes in namespace
+    query = "descendant-or-self::*[namespace-uri()!='']"
+    #for each element returned by the above xpath query...
+    for element in tree.xpath(query):
+        #replace element name with its local name
+        element.tag = etree.QName(element).localname
+
+    etree.cleanup_namespaces(tree)
+
     return tree
 
 
@@ -57,20 +60,18 @@ def svg(metrics, glyphs):
 
 
                 # make a new SVG tag without the viewbox and append the transform group to it.
-                svgcdataPre = etree.Element(svgImage.tag, svgImage.attrib)
-                svgcdataPre.attrib.pop("viewBox")
-                etree.cleanup_namespaces(svgcdataPre)
-                svgcdataPre.append(transformGroup)
+                svgcdata = etree.Element(svgImage.tag, svgImage.attrib)
+                svgcdata.attrib.pop("viewBox")
+                etree.cleanup_namespaces(svgcdata)
+                svgcdata.append(transformGroup)
 
 
                 # because lxml has a thing for annoying namespaces, you've gotta strip those out
-                svgCdataRoot = svgcdataPre.getroottree()
-                strip_ns_prefix(svgCdataRoot)
-                svgCdata = svgCdataRoot.getroot()
-
+                svgcdatatree = svgcdata.getroottree()
+                strip_ns_prefix(svgcdatatree)
 
                 # now you can finally make it the CDATA.
-                cdata = etree.CDATA(etree.tostring(svgCdata, method="xml", pretty_print="true"))
+                cdata = etree.CDATA(etree.tostring(svgcdata, method="xml", pretty_print=False))
 
             else:
                 cdata = etree.CDATA("")
