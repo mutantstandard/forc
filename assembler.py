@@ -1,5 +1,4 @@
-from xml.etree.ElementTree import Element, tostring
-from xml.dom import minidom
+from lxml.etree import Element, tostring
 
 import log
 
@@ -50,7 +49,7 @@ def assembler(format, m, glyphs):
     # ---------------------------------------------
     log.out(f'Assembling TTX file...')
     root = Element('ttFont')
-    root.attrib = {'sfntVersion': '\\x00\\x01\\x00\\x00', 'ttLibVersion': '3.28'} # hard-coded attrs.
+    root = Element('ttFont', {'sfntVersion': '\\x00\\x01\\x00\\x00', 'ttLibVersion': '3.28'}) # hard-coded attrs.
 
 
 
@@ -141,13 +140,4 @@ def assembler(format, m, glyphs):
     # the TTX is now done! (as long as something didn't go wrong)
 
 
-
-    # prettyyyy~~~~
-    reparsedXML = minidom.parseString(tostring(root, encoding="unicode", method="xml"))
-    prettyOutput = reparsedXML.toprettyxml(indent="  ")
-
-
-
-
-
-    return prettyOutput
+    return tostring(root, pretty_print=True, method="xml", xml_declaration=True)

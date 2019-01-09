@@ -42,7 +42,7 @@ def createFont(fontFormat, outputPath, manifest, images):
     ttxDestination = outputAbsolute / (fontFormat + '.ttx')
 
     try:
-        with open(ttxDestination, 'w') as file:
+        with open(ttxDestination, 'wb') as file:
             file.write(ttxString)
     except Exception:
         raise Exception('Could not write to file')

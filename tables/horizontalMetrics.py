@@ -1,4 +1,4 @@
-from xml.etree.ElementTree import Element
+from lxml.etree import Element
 
 def hhea(metrics):
     hhea = Element("hhea")

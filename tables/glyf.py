@@ -1,4 +1,4 @@
-from xml.etree.ElementTree import Element, ElementTree
+from lxml.etree import Element, ElementTree
 
 def glyf(glyphs):
     """
