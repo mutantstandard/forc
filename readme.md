@@ -1,8 +1,8 @@
 # forc
 
-Forc (a terrible portmanteau of font and orc) is an emoji font compiler, taking in folders of codepoint-named images and returning font files that are compatible with a variety of platforms.
+Forc (a terrible portmanteau of font and orc) is an emoji font compiler, taking in folders of codepoint-named images and a manifest file and returning font files that are compatible with a variety of platforms.
 
-This can either be used by itself or (eventually) from Orxporter as part of an emoji build.
+This can either be used by itself or (eventually) from orxporter as part of an emoji build.
 
 ## Planned Features
 
@@ -19,7 +19,7 @@ This can either be used by itself or (eventually) from Orxporter as part of an e
 - Arbitrary Unicode codepoints - you can use whatever codepoints you want, including PUA.
 - Support for ligatures
 - Support for VS16
-- Can be used from Orxporter for seamlessly building an entire consistent set of different emoji.
+- Can be used from orxporter for seamlessly building an entire set of emoji.
 
 
 ## Limitations
@@ -35,6 +35,7 @@ I'm still learning how to encode fonts, so these will quickly clear up as time g
 - I can't get consistent or usable metrics in vertical writing orientation.
 - Ligatures aren't supported yet.
 - VS16 support has not yet been implemented.
+- Currently doesn't have the code supporting iOS Configuration Profile output.
 
 
 ### Planned

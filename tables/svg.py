@@ -61,6 +61,9 @@ def svg(metrics, glyphs):
 
                 # make a new SVG tag without the viewbox and append the transform group to it.
                 svgcdata = etree.Element(svgImage.tag, svgImage.attrib)
+                svgcdata.attrib["id"] = f"glyph{ID}"
+                svgcdata.attrib["xmlns"] = "http://www.w3.org/2000/svg"
+                svgcdata.attrib["xlink"] = "http://www.w3.org/1999/xlink"
                 svgcdata.attrib.pop("viewBox")
                 etree.cleanup_namespaces(svgcdata)
                 svgcdata.append(transformGroup)
@@ -71,7 +74,7 @@ def svg(metrics, glyphs):
                 strip_ns_prefix(svgcdatatree)
 
                 # now you can finally make it the CDATA.
-                cdata = etree.CDATA(etree.tostring(svgcdata, method="xml", pretty_print=False))
+                cdata = etree.CDATA(etree.tostring(svgcdata, method="xml", pretty_print=False, xml_declaration=True, encoding="UTF-8"))
 
             else:
                 cdata = etree.CDATA("")
