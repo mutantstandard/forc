@@ -28,7 +28,7 @@ def compileTTX(ttxFile, outputPath):
 
 
 
-def createFont(fontFormat, outputPath, manifest, images):
+def createFont(fontFormat, outputPath, manifest, images, ttx_output):
     """
     Calls the functions that assemble and create a font.
     """
@@ -39,10 +39,11 @@ def createFont(fontFormat, outputPath, manifest, images):
 
     outputAbsolute = pathlib.Path(outputPath).absolute()
 
-    ttxDestination = outputAbsolute / (fontFormat + '.ttx')
+
+    tempTTX = outputAbsolute / (f"temp_{fontFormat}.ttx")
 
     try:
-        with open(ttxDestination, 'wb') as file:
+        with open(tempTTX, 'wb') as file:
             file.write(ttxString)
     except Exception:
         raise Exception('Could not write to file')
@@ -53,19 +54,28 @@ def createFont(fontFormat, outputPath, manifest, images):
         extension = '.otf'
     elif fontFormat is 'sbix':
         extension = '.ttf'
-    elif fontFormat is 'cbdtcblc':
+    elif fontFormat is 'cbx':
         extension = '.ttf'
 
-    outputFile = outputAbsolute / (fontFormat + extension)
+    outputFont = outputAbsolute / (fontFormat + extension)
 
-    compileTTX(ttxDestination, outputFile)
+    compileTTX(tempTTX, outputFont)
 
-
-
-
+    tempTTX.unlink() #delete this
 
 
-def export(manifest, inputPath, outputPath, outputFormats, delim):
+    if ttx_output:
+        outputTTX = outputAbsolute / (f"{fontFormat}.ttx")
+        compileTTX(outputFont, outputTTX)
+
+
+
+
+
+
+
+
+def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output):
     """
     Performs a variety of processing and validation tasks
     related to font format, then initiates font creation once those
@@ -82,7 +92,7 @@ def export(manifest, inputPath, outputPath, outputFormats, delim):
     for f in outputFormats:
         if f == 'svginot':
             glyphImageFormats.add('svg')
-        elif f in ['sbix', 'sbixios', 'cbdtcblc']:
+        elif f in ['sbix', 'sbixios', 'cbx']:
             glyphImageFormats.add('png')
         else:
             raise ValueError(f"Invalid output format: {f}")
@@ -115,7 +125,7 @@ def export(manifest, inputPath, outputPath, outputFormats, delim):
     for f in outputFormats:
 
         if f == 'svginot':
-            createFont(f, outputPath, manifest, glyphImages['svg'])
+            createFont(f, outputPath, manifest, glyphImages['svg'], ttx_output)
 
-        elif f in ['sbix', 'sbixios', 'cbdtcblc']:
-            createFont(f, outputPath, manifest, glyphImages['png'])
+        elif f in ['sbix', 'sbixios', 'cbx']:
+            createFont(f, outputPath, manifest, glyphImages['png'], ttx_output)

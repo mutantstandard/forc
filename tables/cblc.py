@@ -27,17 +27,17 @@ def cblc(metrics, glyphs):
     horizontalMetrics = Element("sbitLineMetrics", {"direction": "hori"})
     horizontalMetrics.append(Element("ascender", {"value": "0"}))
     horizontalMetrics.append(Element("descender", {"value": "0"}))
-    horizontalMetrics.append(Element("widthMax", {"value": "0"}))
+    horizontalMetrics.append(Element("widthMax", {"value": "0" }))
 
     horizontalMetrics.append(Element("caretSlopeNumerator", {"value": "0"}))
     horizontalMetrics.append(Element("caretSlopeDenominator", {"value": "0"}))
     horizontalMetrics.append(Element("caretOffset", {"value": "0"}))
 
     horizontalMetrics.append(Element("minOriginSB", {"value": "0"}))
-    horizontalMetrics.append(Element("minAdvanceSB", {"value": "0"}))
+    horizontalMetrics.append(Element("minAdvanceSB", {"value": "0" }))
 
     horizontalMetrics.append(Element("maxBeforeBL", {"value": "0"}))
-    horizontalMetrics.append(Element("minAfterBL", {"value": "0"}))
+    horizontalMetrics.append(Element("minAfterBL", {"value": "0" }))
     horizontalMetrics.append(Element("pad1", {"value": "0"}))
     horizontalMetrics.append(Element("pad2", {"value": "0"}))
 
@@ -46,17 +46,17 @@ def cblc(metrics, glyphs):
     verticalMetrics = Element("sbitLineMetrics", {"direction": "vert"})
     verticalMetrics.append(Element("ascender", {"value": "0"}))
     verticalMetrics.append(Element("descender", {"value": "0"}))
-    verticalMetrics.append(Element("widthMax", {"value": "0"}))
+    verticalMetrics.append(Element("widthMax", {"value": "0" }))
 
     verticalMetrics.append(Element("caretSlopeNumerator", {"value": "0"}))
     verticalMetrics.append(Element("caretSlopeDenominator", {"value": "0"}))
     verticalMetrics.append(Element("caretOffset", {"value": "0"}))
 
     verticalMetrics.append(Element("minOriginSB", {"value": "0"}))
-    verticalMetrics.append(Element("minAdvanceSB", {"value": "0"}))
+    verticalMetrics.append(Element("minAdvanceSB", {"value": "0" }))
 
     verticalMetrics.append(Element("maxBeforeBL", {"value": "0"}))
-    verticalMetrics.append(Element("minAfterBL", {"value": "0"}))
+    verticalMetrics.append(Element("minAfterBL", {"value": "0" }))
     verticalMetrics.append(Element("pad1", {"value": "0"}))
     verticalMetrics.append(Element("pad2", {"value": "0"}))
 
@@ -67,27 +67,32 @@ def cblc(metrics, glyphs):
     bSizeTable.append(Element("startGlyphIndex", {"value": "0"}))
     bSizeTable.append(Element("endGlyphIndex", {"value": "0"}))
 
-    bSizeTable.append(Element("ppemX", {"value": "0"}))
-    bSizeTable.append(Element("ppemY", {"value": "0"}))
+    bSizeTable.append(Element("ppemX", {"value": "128"}))
+    bSizeTable.append(Element("ppemY", {"value": "128"}))
 
     bSizeTable.append(Element("bitDepth", {"value": "32"}))
     bSizeTable.append(Element("flags", {"value": "1"}))
 
     strike.append(bSizeTable)
 
-    eblcSub = Element("eblc_index_sub_table_1", {"imageFormat": "17"
-                                                ,"firstGlyphIndex": "0"
-                                                ,"lastGlyphIndex": str(len(glyphs))
-                                                })
+    eblcSub = Element("eblc_index_sub_table_1", {"imageFormat": "17"})
 
     # EBLC index subtable
     # --------------------------------
 
+    glyphIDList = []
+
     for id, g in enumerate(glyphs):
-        
+
         # you only put them in if there's an actual image
         if g.imagePath:
+            glyphIDList.append(id)
             eblcSub.append(Element("glyphLoc", {"id": str(id), "name": g.name}))
+
+    eblcSub.attrib['firstGlyphIndex'] = str(glyphIDList[0])
+    eblcSub.attrib['lastGlyphIndex'] = str(glyphIDList[-1])
+    bSizeTable.attrib['firstGlyphIndex'] = str(glyphIDList[0])
+    bSizeTable.attrib['lastGlyphIndex'] = str(glyphIDList[0])
 
     strike.append(eblcSub)
 

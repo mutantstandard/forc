@@ -119,7 +119,7 @@ def assembler(format, m, glyphs):
         log.out('Assembling sbix table...', 36)
         root.append(sbix(glyphs))
 
-    elif format == "cbdtcblc":
+    elif format == "cbx":
         log.out('Assembling CBLC table...', 36)
         root.append(cblc(metrics, glyphs))
 

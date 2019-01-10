@@ -10,8 +10,6 @@ def cbdt(metrics, glyphs):
     cbdt.append(Element("header", {"version": "3.0"})) # hard-coded
 
 
-
-
     # start of strikes
     # (which we're fudging right now)
     # ------------------------------------------------------------

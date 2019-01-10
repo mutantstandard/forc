@@ -31,15 +31,13 @@ OPTIONS:
 -o      output (default: {DEF_OUTPUT_PATH})
 
 -F      format (default: {DEF_OUTPUT_FORMATS})
-        (svginot, sbix, cbdtcblc, sbixios)
+        (svginot, sbix, cbx, sbixios)
         (.otf, .ttf, .ttf, .mobileconfig)
 
 -d      delimiter between chained Unicode codepoints
         (default: {DEF_DELIM})
 
---ttx       export an additional ttx (.ttx) file for each format as a compiled font file
-
---ttx-only  only export the TTX files for each format.
+--ttx       export an additional ttx (.ttx) file for each format
 
 '''
 
@@ -51,13 +49,12 @@ def main():
     output_path = DEF_OUTPUT_PATH
     output_formats = DEF_OUTPUT_FORMATS
     ttx_output = DEF_TTX_OUTPUT
-    ttx_only = DEF_TTX_ONLY
     delim = DEF_DELIM
 
     try:
         opts, _ = getopt.getopt(sys.argv[1:],
                                 'hm:i:o:F:d:',
-                                ['help', 'ttx', 'ttx-only'])
+                                ['help', 'ttx'])
         for opt, arg in opts:
             if opt in ['-h', '--help']:
                 print(HELP)
@@ -74,8 +71,6 @@ def main():
                 delim = arg
             elif opt =='--ttx':
                 ttx_output = True
-            elif opt =='--ttx-only':
-                ttx_only = True
 
     except Exception:
         print(HELP)
@@ -84,7 +79,7 @@ def main():
         with open(manifest_path, "r") as read_file:
             m = json.load(read_file)
 
-        export(m, input_path, output_path, output_formats, delim)
+        export(m, input_path, output_path, output_formats, delim, ttx_output)
 
     except Exception as e:
         log.out(f'!!! {e}', 31)
