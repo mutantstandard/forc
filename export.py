@@ -61,7 +61,7 @@ def createFont(fontFormat, outputPath, manifest, images, ttx_output):
 
     compileTTX(tempTTX, outputFont)
 
-    tempTTX.unlink() #delete this
+    #tempTTX.unlink() #delete this
 
 
     if ttx_output:

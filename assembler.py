@@ -13,6 +13,7 @@ from tables.horizontalMetrics import hhea, hmtx
 from tables.verticalMetrics import vhea, vmtx
 
 from tables.cmap import cmap
+from tables.gsub import gsub
 from tables.glyf import glyf
 
 from tables.svg import svg
@@ -98,12 +99,25 @@ def assembler(format, m, glyphs):
 
     # glyph-code mappings
     # ---------------------------------------------
+
+    # single glyphs
     log.out('Assembling cmap table...', 36)
     root.append(cmap(macLangID, msftLangID, glyphs))
-    # if ligatures
-    # gdef()
-    # gsub()
-    # etc.
+
+
+
+    # ligatures
+    ligatures = False
+
+    for g in glyphs:
+        if len(g.codepoints) > 1:
+            ligatures = True
+
+    if ligatures:
+        log.out('Assembling GSUB table...', 36)
+        root.append(gsub(glyphs))
+
+
 
 
     # glyph picture data

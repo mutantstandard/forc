@@ -27,7 +27,7 @@ class glyph:
 
 
     def __str__(self):
-        return f"glyph<{self.codepoints}, {self.name}, {self.imagePath}>"
+        return f"{self.name}"
 
 
     def __repr__(self):
@@ -51,6 +51,8 @@ def getGlyphs(inputPath, delim, extension):
     glyphs.append(glyph([0x0], '.notdef', None))
     glyphs.append(glyph([0xd], 'CR', None))
     glyphs.append(glyph([0x20], 'space', None))
+    glyphs.append(glyph([0x200d], 'ZWJ', None))
+    glyphs.append(glyph([0xfe0f], 'VS16', None))
 
 
     # try to check if every part of the
@@ -63,7 +65,25 @@ def getGlyphs(inputPath, delim, extension):
 
         except ValueError as e:
             log.out(f'!!! One of your glyph files is not named as a hexadecimal number.', 31)
-            log.out(f'!!! It is \'{glyph.name}\'', 31)
+            log.out(f'!!! It is \'{g}\'', 31)
+
+
+
+    # validate ligatures here.
+
+    singleGlyphCodepoints = []
+    ligatures = []
+
+    for g in glyphs:
+        if len(g.codepoints) > 1:
+            ligatures.append(g)
+        else:
+            singleGlyphCodepoints.append(g.codepoints[0])
+
+    for g in ligatures:
+        for codepoint in g.codepoints:
+            if codepoint not in singleGlyphCodepoints:
+                raise Exception(f"The glyph {g.name} has a component {hex(codepoint)} ({str(g.codepoints[0])} in decimal) which are not represented as single glyphs in the images you gave. For every ligature you give, all of it's codepoints must be represented as glyphs.")
 
 
     return glyphs

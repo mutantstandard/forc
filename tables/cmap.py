@@ -22,7 +22,8 @@ def cmap(macLangID, msftLangID, glyphs):
                                             , "nGroups": "0"
                                             })
     for g in glyphs:
-        cmap12_1.append(Element("map", {"code": hex(g.codepoints[0]), "name": g.name}))
+        if len(g.codepoints) == 1:
+            cmap12_1.append(Element("map", {"code": hex(g.codepoints[0]), "name": g.name}))
 
 
 
@@ -39,7 +40,8 @@ def cmap(macLangID, msftLangID, glyphs):
                                             })
 
     for g in glyphs:
-        cmap12_2.append(Element("map", {"code": hex(g.codepoints[0]), "name": g.name}))
+        if len(g.codepoints) == 1:
+            cmap12_2.append(Element("map", {"code": hex(g.codepoints[0]), "name": g.name}))
 
     cmap.append(cmap12_2)
 
