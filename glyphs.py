@@ -74,7 +74,7 @@ def getGlyphs(inputPath, delim, extension):
             codepoints = [int(hex, 16) for hex in g.stem.split(delim)]
 
         except ValueError as e:
-            log.out(f'!!! One of your glyph files is not named as a hexadecimal number.', 31)
+            log.out(f'!!! One of your glyph files is not named as hexadecimal numbers.', 31)
             log.out(f'!!! It is \'{g}\'', 31)
 
 
@@ -108,15 +108,20 @@ def getGlyphs(inputPath, delim, extension):
 
 
 
-    # test for essential duplicates here.
+    # test for duplicates
     # --------------------------------------------------------------------
 
+    for id1, g1 in enumerate(glyphs):
+        for id2, g2 in enumerate(glyphs):
+            if g1.name == g2.name:
+                if id1 != id2:
+                    raise Exception(f"One of your glyphs ({g1.imagePath}), when stripped of VS16 (fe0f), matches another ({g2.imagePath}). There can't be duplicates in this scenario.")
 
 
 
 
 
-    # validate ligatures here.
+    # validate ligatures
     # --------------------------------------------------------------------
 
     singleGlyphCodepoints = []
@@ -132,29 +137,12 @@ def getGlyphs(inputPath, delim, extension):
             singleGlyphCodepoints.append(g.codepoints[0])
             singleGlyphs.append(g)
 
-    # TEMP
-    # this doesn't represent how the operating logic should 100% work.
-    # currently using this because the TTX compiler likes this.
 
     for g in ligatures:
-         for codepoint in g.codepoints:
-             if codepoint not in singleGlyphCodepoints:
-                 raise Exception(f"One of your ligatures ({g.imagePath}) does not have all non-service codepoints represented as glyphs ({glyphName(codepoint)}). All components of all ligatures must be represented as glyphs (apart from fe0f and 200d).")
+        for codepoint in g.codepoints:
+            if codepoint not in singleGlyphCodepoints:
+                raise Exception(f"One of your ligatures ({g.imagePath}) does not have all non-service codepoints represented as glyphs ({glyphName(codepoint)}). All components of all ligatures must be represented as glyphs (apart from fe0f and 200d).")
 
-
-    # possibly the better solution, but isn't working right now and may have serious pitfalls.
-
-    # missingCodepoints = []
-
-    # for g in ligatures:
-    #     for codepoint in g.codepoints:
-    #         if codepoint not in singleGlyphCodepoints:
-    #             if codepoint not in missingCodepoints:
-    #                 missingCodepoints.append(codepoint)
-    #
-    # for m in missingCodepoints:
-    #     glyphs.append(glyph([codepoint], None, None))
-    #     log.out(f'Adding {hex(m)} as a codepoint with no glyph because no glyph has been provided for it.', 36)
 
 
     return glyphs
