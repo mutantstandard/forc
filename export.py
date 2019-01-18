@@ -28,7 +28,7 @@ def compileTTX(ttxFile, outputPath):
 
 
 
-def createFont(fontFormat, outputPath, manifest, images, ttx_output):
+def createFont(fontFormat, outputPath, manifest, images, ttx_output, dev_ttx_output):
     """
     Calls the functions that assemble and create a font.
     """
@@ -40,7 +40,7 @@ def createFont(fontFormat, outputPath, manifest, images, ttx_output):
     outputAbsolute = pathlib.Path(outputPath).absolute()
 
 
-    tempTTX = outputAbsolute / (f"temp_{fontFormat}.ttx")
+    tempTTX = outputAbsolute / (f"{fontFormat}_original.ttx")
 
     try:
         with open(tempTTX, 'wb') as file:
@@ -61,7 +61,8 @@ def createFont(fontFormat, outputPath, manifest, images, ttx_output):
 
     compileTTX(tempTTX, outputFont)
 
-    #tempTTX.unlink() #delete this
+    if not dev_ttx_output:
+        tempTTX.unlink()
 
 
     if ttx_output:
@@ -75,7 +76,7 @@ def createFont(fontFormat, outputPath, manifest, images, ttx_output):
 
 
 
-def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output):
+def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output, dev_ttx_output):
     """
     Performs a variety of processing and validation tasks
     related to font format, then initiates font creation once those
@@ -125,7 +126,7 @@ def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output):
     for f in outputFormats:
 
         if f == 'svginot':
-            createFont(f, outputPath, manifest, glyphImages['svg'], ttx_output)
+            createFont(f, outputPath, manifest, glyphImages['svg'], ttx_output, dev_ttx_output)
 
         elif f in ['sbix', 'sbixios', 'cbx']:
-            createFont(f, outputPath, manifest, glyphImages['png'], ttx_output)
+            createFont(f, outputPath, manifest, glyphImages['png'], ttx_output, dev_ttx_output)

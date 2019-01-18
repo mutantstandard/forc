@@ -42,59 +42,59 @@ def svg(metrics, glyphs):
 
             cdata = etree.CDATA("")
 
-            if svgImage.find(".[@viewBox]"):
 
-                # calculate the transform
-                viewBoxWidth = svgImage.attrib['viewBox'].split(' ')[2] # get the 3rd viewBox number (width)
+            # Throw an error if any of these elements are present.
 
-                xPos = str(metrics['xMin'])
-                yPos = str(-(metrics['yMax'])) # negate and make into a string
-                scale = metrics['unitsPerEm'] / int(viewBoxWidth) # determine the scale for the glyph based on UPEM.
-
-
-                # make a transform group to wrap the SVG contents around
-                transformGroup = etree.Element("g", {"transform": f"translate({xPos}, {yPos}) scale({scale})"})
-
-                for tag in iter(svgImage):
-                    transformGroup.append(tag)
-
-
-                # make a new SVG tag without the viewbox and append the transform group to it.
-                svgcdata = etree.Element(svgImage.tag, svgImage.attrib)
-                svgcdata.attrib["id"] = f"glyph{ID}"
-                svgcdata.attrib["xmlns"] = "http://www.w3.org/2000/svg"
-                svgcdata.attrib["xlink"] = "http://www.w3.org/1999/xlink"
-                svgcdata.attrib.pop("viewBox")
-                etree.cleanup_namespaces(svgcdata)
-                svgcdata.append(transformGroup)
-
-
-                # because lxml has a thing for annoying namespaces, you've gotta strip those out
-                svgcdatatree = svgcdata.getroottree()
-                strip_ns_prefix(svgcdatatree)
-
-                # now you can finally make it the CDATA.
-                cdata = etree.CDATA(etree.tostring(svgcdata, method="xml", pretty_print=False, xml_declaration=True, encoding="UTF-8"))
-
-            else:
-                cdata = etree.CDATA("")
-
-
-            svgDoc.text = cdata
-            svgTable.append(svgDoc)
-
-
-
-
-
-
-            # Throw an error if there's a style attribute, because
-            # they're not compatible.
-            #
-            # I don't think it's this software's place to deal with
-            # this, so it's gonna throw an exception instead.
-
-            if svgImage.find(".[@style]"):
+            if svgImage.find(".[@style]") is not None:
                 raise Exception(f"SVG image {g.imagePath} has a 'style' attribute. These are not compatible in SVGinOT fonts.")
+                
+            else:
+                if svgImage.find(".[@viewBox]"):
+
+                    # calculate the transform
+                    viewBoxWidth = svgImage.attrib['viewBox'].split(' ')[2] # get the 3rd viewBox number (width)
+
+                    xPos = str(metrics['xMin'])
+                    yPos = str(-(metrics['yMax'])) # negate and make into a string
+                    scale = metrics['unitsPerEm'] / int(viewBoxWidth) # determine the scale for the glyph based on UPEM.
+
+
+                    # make a transform group to wrap the SVG contents around
+                    transformGroup = etree.Element("g", {"transform": f"translate({xPos}, {yPos}) scale({scale})"})
+
+                    for tag in iter(svgImage):
+                        transformGroup.append(tag)
+
+
+                    # make a new SVG tag without the viewbox and append the transform group to it.
+                    svgcdata = etree.Element(svgImage.tag, svgImage.attrib)
+                    svgcdata.attrib["id"] = f"glyph{ID}"
+                    svgcdata.attrib["xmlns"] = "http://www.w3.org/2000/svg"
+                    svgcdata.attrib["xlink"] = "http://www.w3.org/1999/xlink"
+                    svgcdata.attrib.pop("viewBox")
+                    etree.cleanup_namespaces(svgcdata)
+                    svgcdata.append(transformGroup)
+
+
+                    # because lxml has a thing for annoying namespaces, you've gotta strip those out
+                    svgcdatatree = svgcdata.getroottree()
+                    strip_ns_prefix(svgcdatatree)
+
+                    # now you can finally make it the CDATA.
+                    cdata = etree.CDATA(etree.tostring(svgcdata, method="xml", pretty_print=False, xml_declaration=True, encoding="UTF-8"))
+
+                else:
+                    cdata = etree.CDATA("")
+
+
+                svgDoc.text = cdata
+                svgTable.append(svgDoc)
+
+
+
+
+
+
+
 
     return svgTable

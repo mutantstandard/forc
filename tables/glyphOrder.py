@@ -7,6 +7,8 @@ def glyphOrder(glyphs):
     GlyphOrder is not a table, but sort of a helper for TTX.
     This does not appear in the tables of a finished font.
     """
+
+
     glyphOrder = Element("GlyphOrder")
 
     # add all of the juicy glyphs

@@ -4,10 +4,13 @@ import log
 
 
 
+def glyphName(int):
+    return (hex(int)[2:])
+
 
 class glyph:
 
-    def __init__(self, codepoints, name, imagePath=None):
+    def __init__(self, codepoints, name, imagePath=None, vs16=False):
 
         if codepoints:
             self.codepoints = codepoints
@@ -19,9 +22,10 @@ class glyph:
         if name:
             self.name = name
         else:
-            self.name = "u" + imagePath.stem
+            self.name = 'u' + '_'.join(map(glyphName, codepoints))
 
         self.imagePath = imagePath
+        self.vs16 = vs16
 
 
 
@@ -51,39 +55,105 @@ def getGlyphs(inputPath, delim, extension):
     glyphs.append(glyph([0x0], '.notdef', None))
     glyphs.append(glyph([0xd], 'CR', None))
     glyphs.append(glyph([0x20], 'space', None))
-    glyphs.append(glyph([0x200d], 'ZWJ', None))
-    glyphs.append(glyph([0xfe0f], 'VS16', None))
 
 
-    # try to check if every part of the
-    # filename stem is a valid hexadecimal number.
+
+    # process all of the input glyphs
+    # --------------------------------------------------------------------
+
+    vs16Presence = False
+    zwjPresence = False
 
     for g in inputGlyphs:
+        codepoints = []
+
+        # try to check if every part of the
+        # filename stem is a valid hexadecimal number.
+
         try:
             codepoints = [int(hex, 16) for hex in g.stem.split(delim)]
-            glyphs.append(glyph(codepoints, None, g))
 
         except ValueError as e:
             log.out(f'!!! One of your glyph files is not named as a hexadecimal number.', 31)
             log.out(f'!!! It is \'{g}\'', 31)
 
 
+        # tidy instances of fe0f before adding them to the glyph list
+
+        if int('fe0f', 16) in codepoints:
+            vs16Presence = True
+            codepoints.remove(int('fe0f', 16))
+
+            if len(codepoints) == 1:
+                glyphs.append(glyph(codepoints, None, g, True))
+
+            else:
+                glyphs.append(glyph(codepoints, None, g, False))
+
+        else:
+            glyphs.append(glyph(codepoints, None, g, False))
+
+        if int('200d', 16) in codepoints:
+            zwjPresence = True
+
+
+    # add vs16 to the glyphs if one of the processed codepoint
+    # chains contained fe0f
+
+    if vs16Presence:
+        glyphs.append(glyph([0xfe0f], 'VS16', None))
+
+    if zwjPresence:
+        glyphs.append(glyph([0x200d], 'ZWJ', None))
+
+
+
+    # test for essential duplicates here.
+    # --------------------------------------------------------------------
+
+
+
+
+
 
     # validate ligatures here.
+    # --------------------------------------------------------------------
 
     singleGlyphCodepoints = []
     ligatures = []
+    singleGlyphs = []
 
     for g in glyphs:
         if len(g.codepoints) > 1:
             ligatures.append(g)
         else:
             singleGlyphCodepoints.append(g.codepoints[0])
+            singleGlyphs.append(g)
 
-    for g in ligatures:
-        for codepoint in g.codepoints:
-            if codepoint not in singleGlyphCodepoints:
-                raise Exception(f"The glyph {g.name} has a component {hex(codepoint)} ({str(g.codepoints[0])} in decimal) which are not represented as single glyphs in the images you gave. For every ligature you give, all of it's codepoints must be represented as glyphs.")
+    # TEMP
+    # this doesn't represent how the operating logic should 100% work.
+    # currently using this because the TTX compiler likes this.
+
+    #for g in ligatures:
+    #     for codepoint in g.codepoints:
+    #         if codepoint not in singleGlyphCodepoints:
+    #             raise Exception(f"One of your ligatures ({g.imagePath}) does not have all non-service codepoints represented as glyphs ({glyphName(codepoint)}). All components of all ligatures must be represented as glyphs (apart from fe0f and 200d).")
+
+
+    # possibly the better solution, but isn't working right now and may have serious pitfalls.
+
+    # missingCodepoints = []
+
+    # for g in ligatures:
+    #     for codepoint in g.codepoints:
+    #         if codepoint not in singleGlyphCodepoints:
+    #             if codepoint not in missingCodepoints:
+    #                 missingCodepoints.append(codepoint)
+    #
+    # for m in missingCodepoints:
+    #     glyphs.append(glyph([codepoint], None, None))
+    #     log.out(f'Adding {hex(m)} as a codepoint with no glyph because no glyph has been provided for it.', 36)
+
 
 
     return glyphs

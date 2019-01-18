@@ -17,7 +17,7 @@ DEF_INPUT_PATH = 'in'
 DEF_OUTPUT_PATH = 'out'
 DEF_OUTPUT_FORMATS = ['svginot']
 DEF_TTX_OUTPUT = False
-DEF_TTX_ONLY = False
+DEF_DEV_TTX = False
 DEF_DELIM = "-"
 
 HELP = f'''forc {VERSION}
@@ -38,6 +38,7 @@ OPTIONS:
         (default: {DEF_DELIM})
 
 --ttx       export an additional ttx (.ttx) file for each format
+--dev-ttx   export the original ttx that forc compiles before passing it to fonttools (mainly for development)
 
 '''
 
@@ -49,12 +50,13 @@ def main():
     output_path = DEF_OUTPUT_PATH
     output_formats = DEF_OUTPUT_FORMATS
     ttx_output = DEF_TTX_OUTPUT
+    dev_ttx_output = DEF_DEV_TTX
     delim = DEF_DELIM
 
     try:
         opts, _ = getopt.getopt(sys.argv[1:],
                                 'hm:i:o:F:d:',
-                                ['help', 'ttx'])
+                                ['help', 'ttx', 'dev-ttx'])
         for opt, arg in opts:
             if opt in ['-h', '--help']:
                 print(HELP)
@@ -71,6 +73,8 @@ def main():
                 delim = arg
             elif opt =='--ttx':
                 ttx_output = True
+            elif opt =='--dev-ttx':
+                dev_ttx_output = True
 
     except Exception:
         print(HELP)
@@ -79,7 +83,7 @@ def main():
         with open(manifest_path, "r") as read_file:
             m = json.load(read_file)
 
-        export(m, input_path, output_path, output_formats, delim, ttx_output)
+        export(m, input_path, output_path, output_formats, delim, ttx_output, dev_ttx_output)
 
     except Exception as e:
         log.out(f'!!! {e}', 31)

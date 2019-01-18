@@ -9,8 +9,6 @@ def glyf(glyphs):
 
 
 
-
-
     for ID, g in enumerate(glyphs):
 
         if ID is 0:
