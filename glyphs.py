@@ -121,6 +121,8 @@ def getGlyphs(inputPath, delim, extension):
 
     singleGlyphCodepoints = []
     ligatures = []
+
+    #TEMP
     singleGlyphs = []
 
     for g in glyphs:
@@ -134,10 +136,10 @@ def getGlyphs(inputPath, delim, extension):
     # this doesn't represent how the operating logic should 100% work.
     # currently using this because the TTX compiler likes this.
 
-    #for g in ligatures:
-    #     for codepoint in g.codepoints:
-    #         if codepoint not in singleGlyphCodepoints:
-    #             raise Exception(f"One of your ligatures ({g.imagePath}) does not have all non-service codepoints represented as glyphs ({glyphName(codepoint)}). All components of all ligatures must be represented as glyphs (apart from fe0f and 200d).")
+    for g in ligatures:
+         for codepoint in g.codepoints:
+             if codepoint not in singleGlyphCodepoints:
+                 raise Exception(f"One of your ligatures ({g.imagePath}) does not have all non-service codepoints represented as glyphs ({glyphName(codepoint)}). All components of all ligatures must be represented as glyphs (apart from fe0f and 200d).")
 
 
     # possibly the better solution, but isn't working right now and may have serious pitfalls.
@@ -153,7 +155,6 @@ def getGlyphs(inputPath, delim, extension):
     # for m in missingCodepoints:
     #     glyphs.append(glyph([codepoint], None, None))
     #     log.out(f'Adding {hex(m)} as a codepoint with no glyph because no glyph has been provided for it.', 36)
-
 
 
     return glyphs
