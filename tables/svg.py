@@ -132,26 +132,28 @@ def svg(metrics, glyphs):
                                   , 'cursor'
                                   ]
 
+
             for elem in restrictedElements:
-                if svgImage.find(f".[@{elem}]") is not None:
+                if svgImage.find(elem) is not None:
                     raise Exception(f"SVG image {g.imagePath} has a {elem} element. These are not compatible in SVGinOT fonts.")
 
             for elem in notRequiredElements:
-                if svgImage.find(f".[@{elem}]") is not None:
+                if svgImage.find(elem) is not None:
                     log.out(f"SVG image {g.imagePath} has a {elem} element. Compatibility with this is not mandatory.", 31)
 
-            if svgImage.find(f".[@style]") is not None:
+            if svgImage.find(f"*[@style]") is not None:
                 raise Exception(f"SVG image {g.imagePath} has a 'style' attribute. These are not compatible in SVGinOT fonts.")
-
-
 
 
             finishedSVG = etree.ElementTree(etree.Element("svg"))
 
+
+
+
             # check if there's a viewBox and compensate for it if that's the case.
             # if not, just pass it on.
             # -------------------------------------------------------------------------------------
-            if svgImage.find(".[@viewBox]"):
+            if svgImage.find(".[@viewBox]") is not None:
                 compensated = viewboxCompensate(metrics, svgImage, ID)
                 finishedSVG = svgAttrNormalisation(compensated, ID)
 
