@@ -102,7 +102,7 @@ def assembler(format, m, glyphs):
 
     # single glyphs
     log.out('Assembling cmap table...', 36)
-    root.append(cmap(macLangID, msftLangID, glyphs))
+    root.append(cmap(glyphs))
 
 
 
