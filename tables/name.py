@@ -17,8 +17,9 @@ def name(format, macLangID, msftLangID, nameRecords):
     for index, record in nameRecords['all'].items():
         compiledNameRecords[index] = record
 
-    for index, record in nameRecords[format].items():
-        compiledNameRecords[index] = record
+    if format in nameRecords:
+        for index, record in nameRecords[format].items():
+            compiledNameRecords[index] = record
 
 
 

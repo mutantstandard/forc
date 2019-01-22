@@ -19,6 +19,22 @@ def strip_ns_prefix(tree):
 
 
 
+def stripStyles(svgImage):
+    elements = svgImage.findall(f"*[@style]")
+
+    for e in elements:
+        styleString = e.attrib['style']
+        styleListPre = styleString.split(";")
+
+        for style in styleListPre:
+            splitStyle = style.split(":")
+
+            e.attrib[splitStyle[0]] = splitStyle[1]
+
+        e.attrib.pop("style")
+
+
+
 
 def viewboxCompensate(metrics, svgImage, ID):
     """
@@ -142,6 +158,7 @@ def svg(metrics, glyphs):
                     log.out(f"SVG image {g.imagePath} has a {elem} element. Compatibility with this is not mandatory.", 31)
 
             if svgImage.find(f"*[@style]") is not None:
+                #stripStyles(svgImage)
                 raise Exception(f"SVG image {g.imagePath} has a 'style' attribute. These are not compatible in SVGinOT fonts.")
 
 

@@ -48,7 +48,7 @@ def assembler(format, m, glyphs):
 
     # start the TTX file
     # ---------------------------------------------
-    log.out(f'Assembling TTX file...')
+    log.out(f'Assembling root XML...', 36)
     root = Element('ttFont', {'sfntVersion': '\\x00\\x01\\x00\\x00', 'ttLibVersion': '3.28'}) # hard-coded attrs.
 
 
@@ -130,6 +130,10 @@ def assembler(format, m, glyphs):
         root.append(svg(metrics, glyphs))
 
     elif format == "sbix":
+        log.out('Assembling sbix table...', 36)
+        root.append(sbix(glyphs))
+
+    elif format == "sbixios":
         log.out('Assembling sbix table...', 36)
         root.append(sbix(glyphs))
 

@@ -31,14 +31,15 @@ OPTIONS:
 -o      output (default: {DEF_OUTPUT_PATH})
 
 -F      format (default: {DEF_OUTPUT_FORMATS})
-        (svginot, sbix, cbx, sbixios)
+        (svginot, sbix, sbixios, cbx)
         (.otf, .ttf, .ttf, .mobileconfig)
+        (default: svginot)
 
 -d      delimiter between chained Unicode codepoints
         (default: {DEF_DELIM})
 
 --ttx       export an additional ttx (.ttx) file for each format
---dev-ttx   export the original ttx that forc compiles before passing it to fonttools (mainly for development)
+--dev-ttx   keep the original ttx that forc compiles before passing it to fonttools
 
 '''
 

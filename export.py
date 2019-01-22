@@ -4,10 +4,10 @@ import pathlib
 import log
 from assembler import assembler
 from glyphs import getGlyphs
+from ios import compileiOSConfig
 
 
-
-def compileTTX(ttxFile, outputPath):
+def compileTTX(input, output):
     """
     Invokes ttx
 
@@ -15,7 +15,7 @@ def compileTTX(ttxFile, outputPath):
     """
 
     # feed the assembled TTX as input to the ttx commaand line tool.
-    cmd_ttx = ['ttx', '-o', outputPath, ttxFile]
+    cmd_ttx = ['ttx', '-o', output, input]
 
     # try to export temporary PNG
     try:
@@ -26,50 +26,75 @@ def compileTTX(ttxFile, outputPath):
         raise Exception('TTX compiler returned error code: ' + str(r))
 
 
+def writeFile(path, contents, exceptionString):
+    try:
+        with open(path, 'wb') as file:
+            file.write(contents)
+    except Exception:
+        raise Exception(exceptionString)
 
 
-def createFont(fontFormat, outputPath, manifest, images, ttx_output, dev_ttx_output):
+
+def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_output):
     """
     Calls the functions that assemble and create a font.
     """
 
-    log.out(f'Assembling {fontFormat} font...')
-    ttxString = assembler(fontFormat, manifest, images)
+    log.out(f'[{fontFormat}]')
 
-
+    # get a usable path for everything happening here.
     outputAbsolute = pathlib.Path(outputPath).absolute()
 
 
-    tempTTX = outputAbsolute / (f"{fontFormat}_original.ttx")
 
-    try:
-        with open(tempTTX, 'wb') as file:
-            file.write(ttxString)
-    except Exception:
-        raise Exception('Could not write to file')
-
-    extension = '.ttf'
-
-    if fontFormat is 'svginot':
+    if fontFormat == 'svginot':
         extension = '.otf'
-    elif fontFormat is 'sbix':
+    elif fontFormat == 'sbix':
         extension = '.ttf'
-    elif fontFormat is 'cbx':
+    elif fontFormat == 'sbixios':
+        extension = '.ttf'
+    elif fontFormat == 'cbx':
         extension = '.ttf'
 
-    outputFont = outputAbsolute / (fontFormat + extension)
 
-    compileTTX(tempTTX, outputFont)
 
+
+    # assemble TTX
+    log.out(f'Assembling initial TTX...')
+    originalTTX = assembler(fontFormat, manifest, glyphs)
+
+    # save TTX
+    log.out(f'Saving initial TTX to file...')
+    originalTTXPath = outputAbsolute / (f"{fontFormat}_initial.ttx")
+    writeFile(originalTTXPath, originalTTX, 'Could not write initial TTX to file')
+
+    # compile TTX to font
+    log.out(f'Compiling font...')
+    outputFontPath = outputAbsolute / (fontFormat + extension)
+    compileTTX(originalTTXPath, outputFontPath)
+
+
+    # --dev-ttx
     if not dev_ttx_output:
-        tempTTX.unlink()
+        log.out(f'Deleting initial TTX...')
+        originalTTXPath.unlink() #delete
 
-
+    # -ttx flag
     if ttx_output:
-        outputTTX = outputAbsolute / (f"{fontFormat}.ttx")
-        compileTTX(outputFont, outputTTX)
+        log.out(f'Compiling finished TTX..')
+        afterExportTTX = outputAbsolute / (f"{fontFormat}_finished.ttx")
+        compileTTX(outputFontPath, afterExportTTX)
 
+    # sbixios iOS Configuration Profile compiling
+    # (must come after everything else)
+    if fontFormat == 'sbixios':
+        log.out(f'Compiling iOS Configuration Profile...')
+        configString = compileiOSConfig(manifest, outputFontPath, outputPath)
+        configPath = outputAbsolute / (f"{fontFormat}.mobileconfig")
+        writeFile(configPath, configString, 'Could not write iOS Configuration Profile to file')
 
+        log.out(f'Deleting the original Font...')
+        outputFontPath.unlink() #delete
 
 
 
@@ -128,5 +153,5 @@ def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output, de
         if f == 'svginot':
             createFont(f, outputPath, manifest, glyphImages['svg'], ttx_output, dev_ttx_output)
 
-        elif f in ['sbix', 'sbixios', 'cbx']:
+        elif f in ['sbix', 'cbx', 'sbixios']:
             createFont(f, outputPath, manifest, glyphImages['png'], ttx_output, dev_ttx_output)
