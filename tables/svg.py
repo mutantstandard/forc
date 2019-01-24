@@ -20,7 +20,7 @@ def strip_ns_prefix(tree):
 
 
 def stripStyles(svgImage):
-    elements = svgImage.findall(f"*[@style]")
+    elements = svgImage.findall(f"//*[@style]")
 
     for e in elements:
         styleString = e.attrib['style']
@@ -36,11 +36,13 @@ def stripStyles(svgImage):
 
 
 
-def viewboxCompensate(metrics, svgImage, ID):
+def viewboxCompensate(metrics, svgTree, ID):
     """
     Strips out the viewBox attribute of an SVG and transforms it using metrics
     determined in the manifest to compensate for the loss of the viewBox.
     """
+
+    svgImage = svgTree.getroot()
 
     # calculate the transform
     # ---------------------------------------------------------------------------
@@ -109,13 +111,14 @@ def svg(metrics, glyphs):
 
     svgTable = etree.Element("SVG")
 
+    NAMESPACE = '{http://www.w3.org/2000/svg}'
+
     for ID, g in enumerate(glyphs):
         if g.imagePath:
             svgDoc = etree.Element("svgDoc", {"startGlyphID": str(ID), "endGlyphID" : str(ID) })
 
             # lxml can't parse from Path objects, so it has to give a string representation.
-            svgET = etree.parse(g.imagePath.as_uri())
-            svgImage = svgET.getroot()
+            svgImage = etree.parse(g.imagePath.as_uri())
 
 
             # we have to see if there's a viewBox and if there is, remove it and use
@@ -150,14 +153,14 @@ def svg(metrics, glyphs):
 
 
             for elem in restrictedElements:
-                if svgImage.find(elem) is not None:
+                if svgImage.find('//*' + NAMESPACE + elem) is not None:
                     raise Exception(f"SVG image {g.imagePath} has a {elem} element. These are not compatible in SVGinOT fonts.")
 
             for elem in notRequiredElements:
-                if svgImage.find(elem) is not None:
+                if svgImage.find('//*' + NAMESPACE + elem) is not None:
                     log.out(f"SVG image {g.imagePath} has a {elem} element. Compatibility with this is not mandatory.", 31)
 
-            if svgImage.find(f"*[@style]") is not None:
+            if svgImage.find(f"//*[@style]") is not None:
                 stripStyles(svgImage)
                 #raise Exception(f"SVG image {g.imagePath} has a 'style' attribute. These are not compatible in SVGinOT fonts.")
 

@@ -5,6 +5,7 @@
 - There are no multi-format emoji font compilers out there.
 - There are no single-format emoji font compilers that support either arbitrary or non-Unicode Standard codepoints.
 
+------
 
 ## How does it work?
 
@@ -16,25 +17,33 @@ In addition, `fonttools` as a library has little to no documentation so it was e
 
 Creating an iOS Configuration Profile is exactly the same process, because it is also XML.
 
+----
+
 ## What are the details on the formats forc can export to?
 
-####svginot
+#### SVGinOT (svginot)
 
 SVG glyphs are encoded in SVG tables encoded alongside other OpenType-compatible data.
 
-####sbix
+#### sbix
 
 PNG glyphs are encoded in sbix tables encoded alongside other TrueType-compatible data.
 
 sbix is also compatible with OpenType, but TrueType data is used to maximise compatibility with Apple platforms.
 
-####CBx
+#### CBx (cbx)
 
 PNG glyphs are encoded in CBDT/CBLC tables encoded alongside other OpenType-compatible data.
 
 This is to mimic how Google encodes their emoji fonts.
 
 In forc, the name 'CBDT/CBLC' is simplified to 'CBx' to make it easier to remember.
+
+#### iOS (sbixios)
+
+sbix as described above, but packaged into an iOS Configuration Profile, ready to be installed on an iOS device.
+
+---
 
 ## What input image formats are supported?
 
