@@ -40,7 +40,7 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
     Calls the functions that assemble and create a font.
     """
 
-    log.out(f'[{fontFormat}]')
+    log.out(f'[{fontFormat}]', 35)
 
     # get a usable path for everything happening here.
     outputAbsolute = pathlib.Path(outputPath).absolute()
@@ -62,17 +62,19 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
     # assemble TTX
     log.out(f'Assembling initial TTX...')
     originalTTX = assembler(fontFormat, manifest, glyphs)
+    log.out(f'TTX successfully assembled.', 32)
 
     # save TTX
     log.out(f'Saving initial TTX to file...')
     originalTTXPath = outputAbsolute / (f"{fontFormat}_initial.ttx")
     writeFile(originalTTXPath, originalTTX, 'Could not write initial TTX to file')
+    log.out(f'TTX saved.', 32)
 
     # compile TTX to font
     log.out(f'Compiling font...')
     outputFontPath = outputAbsolute / (fontFormat + extension)
     compileTTX(originalTTXPath, outputFontPath)
-
+    log.out(f'Font compiled.', 32)
 
     # --dev-ttx
     if not dev_ttx_output:
@@ -95,6 +97,8 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
 
         log.out(f'Deleting the original Font...')
         outputFontPath.unlink() #delete
+
+    log.out(f'Done!!!', 32)
 
 
 

@@ -158,8 +158,8 @@ def svg(metrics, glyphs):
                     log.out(f"SVG image {g.imagePath} has a {elem} element. Compatibility with this is not mandatory.", 31)
 
             if svgImage.find(f"*[@style]") is not None:
-                #stripStyles(svgImage)
-                raise Exception(f"SVG image {g.imagePath} has a 'style' attribute. These are not compatible in SVGinOT fonts.")
+                stripStyles(svgImage)
+                #raise Exception(f"SVG image {g.imagePath} has a 'style' attribute. These are not compatible in SVGinOT fonts.")
 
 
             finishedSVG = etree.ElementTree(etree.Element("svg"))
