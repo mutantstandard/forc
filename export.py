@@ -15,7 +15,7 @@ def compileTTX(input, output):
     """
 
     # feed the assembled TTX as input to the ttx commaand line tool.
-    cmd_ttx = ['ttx', '-o', output, input]
+    cmd_ttx = ['ttx', '-q', '-o', output, input]
 
     # try to export temporary PNG
     try:
@@ -68,7 +68,7 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
     log.out(f'Saving initial TTX to file...')
     originalTTXPath = outputAbsolute / (f"{fontFormat}_initial.ttx")
     writeFile(originalTTXPath, originalTTX, 'Could not write initial TTX to file')
-    log.out(f'TTX saved.', 32)
+    log.out(f'initial TTX saved.', 32)
 
     # compile TTX to font
     log.out(f'Compiling font...')
@@ -133,7 +133,7 @@ def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output, de
     # check the image sets for each format.
     # ------------------------------------------------
 
-    glyphImages = dict()
+    glyphs = dict()
 
     log.out(f'Checking glyph images...', 36)
     for format in glyphImageFormats:
@@ -145,7 +145,7 @@ def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output, de
             log.out(f'!!! There are no {format} glyph images!!', 31)
         else:
             log.out(f'{format} files verified.', 32)
-            glyphImages[format] = glyphList
+            glyphs[format] = glyphList
 
 
 
@@ -155,7 +155,7 @@ def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output, de
     for f in outputFormats:
 
         if f == 'svginot':
-            createFont(f, outputPath, manifest, glyphImages['svg'], ttx_output, dev_ttx_output)
+            createFont(f, outputPath, manifest, glyphs['svg'], ttx_output, dev_ttx_output)
 
         elif f in ['sbix', 'cbx', 'sbixios']:
-            createFont(f, outputPath, manifest, glyphImages['png'], ttx_output, dev_ttx_output)
+            createFont(f, outputPath, manifest, glyphs['png'], ttx_output, dev_ttx_output)

@@ -19,10 +19,10 @@ def cmap(glyphs):
             vs16Presence = True
 
         if len(g.codepoints) == 1:
-            if g.codepoints[0] < int('ff', 16):
-                oneByte.append(g)
-            if g.codepoints[0] < int('ffff', 16):
-                twoByte.append(g)
+            #if g.codepoints[0] < int('ff', 16):
+                #oneByte.append(g)
+            #if g.codepoints[0] < int('ffff', 16):
+                #twoByte.append(g)
             if g.codepoints[0] < int('ffffff', 16):
                 fourByte.append(g)
 
@@ -31,16 +31,16 @@ def cmap(glyphs):
     # U+0 - U+FF
     # ---------------------------------------------------------
 
-    #if oneByte:
-    #    cmap0 = Element("cmap_format_0",    { "platformID": "1"
-    #                                        , "platEncID": "0"
-    #                                        , "language": "0"
-    #                                        })
+    if oneByte:
+        cmap0 = Element("cmap_format_0",    { "platformID": "1"
+                                            , "platEncID": "0"
+                                            , "language": "0"
+                                            })
 
-    #    for g in oneByte:
-    #        cmap0.append(Element("map", {"code": hex(g.codepoints[0]), "name": g.name}))
+        for g in oneByte:
+            cmap0.append(Element("map", {"code": hex(g.codepoints[0]), "name": g.name}))
 
-    #    cmap.append(cmap0)
+        cmap.append(cmap0)
 
 
 
@@ -52,7 +52,7 @@ def cmap(glyphs):
 
         # platform ID 0 (Unicode)
         cmap4_0 = Element("cmap_format_4",    { "platformID": "0"
-                                                , "platEncID": "0"
+                                                , "platEncID": "3"
                                                 , "language": "0"
                                                 })
         for g in twoByte:
@@ -84,7 +84,7 @@ def cmap(glyphs):
 
         # platform ID 0 (Unicode)
         cmap12_1 = Element("cmap_format_12",    { "platformID": "0"
-                                                , "platEncID": "0"
+                                                , "platEncID": "10"
                                                 , "language": "0"
                                                 , "format": "12"
                                                 , "reserved": "0"
@@ -100,7 +100,7 @@ def cmap(glyphs):
 
         # platform ID 3 (Microsoft)
         cmap12_3 = Element("cmap_format_12",    { "platformID": "3"
-                                                , "platEncID": "0"
+                                                , "platEncID": "1"
                                                 , "language": "0"
                                                 , "format": "12"
                                                 , "reserved": "0"

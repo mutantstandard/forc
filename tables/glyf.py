@@ -33,7 +33,7 @@ def glyf(glyphs):
         else:
             # make the others blank because nothing is depending on
             # them actually having glyf contours and we don't want them.
-
+            
             glyfTable.append(Element("TTGlyph", {"name": g.name}))
 
 

@@ -13,9 +13,11 @@ from tables.horizontalMetrics import hhea, hmtx
 from tables.verticalMetrics import vhea, vmtx
 
 from tables.cmap import cmap
+from tables.gdef import gdef
+from tables.gpos import gpos
 from tables.gsub import gsub
-from tables.glyf import glyf
 
+from tables.glyf import glyf
 from tables.svg import svg
 from tables.sbix import sbix
 from tables.cbdt import cbdt
@@ -114,6 +116,12 @@ def assembler(format, m, glyphs):
             ligatures = True
 
     if ligatures:
+        log.out ('Assembling GDEF table...', 36)
+        root.append(gdef(glyphs))
+
+        log.out ('Assembling GPOS table...', 36)
+        root.append(gpos())
+
         log.out('Assembling GSUB table...', 36)
         root.append(gsub(glyphs))
 
@@ -122,8 +130,9 @@ def assembler(format, m, glyphs):
 
     # glyph picture data
     # ---------------------------------------------
-
+    log.out('Assembling passable glyf table...', 36)
     root.append(glyf(glyphs))
+
 
     if format == "svginot":
         log.out('Assembling SVG table...', 36)

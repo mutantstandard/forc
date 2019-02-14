@@ -160,8 +160,8 @@ def svg(metrics, glyphs):
                 if svgImage.find('//*' + NAMESPACE + elem) is not None:
                     log.out(f"SVG image {g.imagePath} has a {elem} element. Compatibility with this is not mandatory.", 31)
 
-            if svgImage.find(f"//*[@style]") is not None:
-                stripStyles(svgImage)
+            #if svgImage.find(f"//*[@style]") is not None:
+                #stripStyles(svgImage)
                 #raise Exception(f"SVG image {g.imagePath} has a 'style' attribute. These are not compatible in SVGinOT fonts.")
 
 

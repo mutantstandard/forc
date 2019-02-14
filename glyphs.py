@@ -97,14 +97,24 @@ def getGlyphs(inputPath, delim, extension):
             zwjPresence = True
 
 
-    # add vs16 to the glyphs if one of the processed codepoint
-    # chains contained fe0f
+    # Add vs16 to the glyphs if one of the
+    # processed codepoint chains contains U+fe0f.
 
     if vs16Presence:
         glyphs.append(glyph([0xfe0f], 'VS16', None))
 
+    # Add ZWJ to the glyphs if one of the
+    # processed codepoint chains contains U+200d.
+
     if zwjPresence:
-        glyphs.append(glyph([0x200d], 'ZWJ', None))
+
+        # The glyph.name is 'u200d' because that's how other
+        # parts of the app will interpret 200d as a GlyphID.
+        # DO NOT CHANGE IT.
+
+        glyphs.append(glyph([0x200d], 'u200d', None))
+
+
 
 
 
