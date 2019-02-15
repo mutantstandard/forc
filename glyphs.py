@@ -41,7 +41,7 @@ class glyph:
 
 
 
-def getGlyphs(inputPath, delim, extension):
+def getGlyphs(inputPath, delim, extension, no_lig):
     """
     - Validates glyph image paths from the input path.
     - Returns a list of glyph objects, including important special control glyphs.
@@ -154,5 +154,7 @@ def getGlyphs(inputPath, delim, extension):
                 raise Exception(f"One of your ligatures ({g.imagePath}) does not have all non-service codepoints represented as glyphs ({glyphName(codepoint)}). All components of all ligatures must be represented as glyphs (apart from fe0f and 200d).")
 
 
-
-    return glyphs
+    if no_lig:
+        return singleGlyphs
+    else:
+        return glyphs

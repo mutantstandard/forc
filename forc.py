@@ -19,6 +19,7 @@ DEF_OUTPUT_FORMATS = ['SVGinOT']
 DEF_TTX_OUTPUT = False
 DEF_DEV_TTX = False
 DEF_DELIM = "-"
+DEF_NO_LIG = False
 
 HELP = f'''forc {VERSION}
 by Mutant Standard
@@ -57,8 +58,11 @@ OPTIONS:
         (default: '{DEF_DELIM}')
 
 --ttx       export an additional ttx (.ttx) file for each format
+
 --dev-ttx   keep the initial ttx that forc compiles before
             passing it to fonttools
+
+--no-lig    (DEVELOPMENT OPTION) filter out any ligature glyphs
 
 '''
 
@@ -73,10 +77,12 @@ def main():
     dev_ttx_output = DEF_DEV_TTX
     delim = DEF_DELIM
 
+    no_lig = DEF_NO_LIG
+
     try:
         opts, _ = getopt.getopt(sys.argv[1:],
                                 'hm:i:o:F:d:',
-                                ['help', 'ttx', 'dev-ttx'])
+                                ['help', 'ttx', 'dev-ttx', 'no-lig'])
         for opt, arg in opts:
             if opt in ['-h', '--help']:
                 print(HELP)
@@ -95,6 +101,8 @@ def main():
                 ttx_output = True
             elif opt =='--dev-ttx':
                 dev_ttx_output = True
+            elif opt =='--no-lig':
+                no_lig = True
 
     except Exception:
         print(HELP)
@@ -103,7 +111,7 @@ def main():
         with open(manifest_path, "r") as read_file:
             m = json.load(read_file)
 
-        export(m, input_path, output_path, output_formats, delim, ttx_output, dev_ttx_output)
+        export(m, input_path, output_path, output_formats, delim, ttx_output, dev_ttx_output, no_lig)
 
     except Exception as e:
         log.out(f'!!! {e}', 31)
