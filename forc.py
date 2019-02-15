@@ -11,16 +11,19 @@ from export import export
 
 
 
-VERSION = '0.0.0'
+VERSION = '0.0.1'
 DEF_MANIFEST = 'manifest.json'
 DEF_INPUT_PATH = 'in'
 DEF_OUTPUT_PATH = 'out'
-DEF_OUTPUT_FORMATS = ['svginot']
+DEF_OUTPUT_FORMATS = ['SVGinOT']
 DEF_TTX_OUTPUT = False
 DEF_DEV_TTX = False
 DEF_DELIM = "-"
 
 HELP = f'''forc {VERSION}
+by Mutant Standard
+(mutant.tech)
+
 USAGE: forc.py [options...]
 
 OPTIONS:
@@ -31,15 +34,22 @@ OPTIONS:
 -o      output (default: {DEF_OUTPUT_PATH})
 
 -F      format (default: {DEF_OUTPUT_FORMATS})
-        (svginot, sbix, sbixios, cbx)
-        (.otf, .ttf, .ttf, .mobileconfig)
-        (default: svginot)
+        - SVGinOT       (SVGinOT) (SVG with OpenType ligatures)
+        - sbixTT        (macOS format) (sbix with TrueType ligatures)
+        - sbixOT        (sbix with OpenType ligatures)
+        - sbixTTiOS     (iOS format) (sbix with TrueType ligatures,
+                        packaged in an iOS Configuration Profile)
+        - sbixOTiOS     (DEVELOPMENT/TESTING) (sbix with OpenType ligatures,
+                        packaged in an iOS Configuration Profile)
+        - CBx           (Google/Android) (CBDT/CBLC with OpenType
+                        ligatures)
 
--d      delimiter between chained Unicode codepoints
-        (default: {DEF_DELIM})
+-d      delimiter between ligatured codepoints
+        (default: '{DEF_DELIM}')
 
 --ttx       export an additional ttx (.ttx) file for each format
---dev-ttx   keep the original ttx that forc compiles before passing it to fonttools
+--dev-ttx   keep the initial ttx that forc compiles before
+            passing it to fonttools
 
 '''
 

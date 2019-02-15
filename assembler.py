@@ -1,10 +1,11 @@
 from lxml.etree import Element, tostring
 
 import log
+from format import formats
 
 from tables.glyphOrder import glyphOrder
 from tables.head import head
-from tables.os2 import os2
+from tables.os2  import os2
 from tables.post import post
 from tables.name import name
 from tables.maxp import maxp
@@ -16,9 +17,10 @@ from tables.cmap import cmap
 from tables.gdef import gdef
 from tables.gpos import gpos
 from tables.gsub import gsub
+from tables.morx import morx
 
 from tables.glyf import glyf
-from tables.svg import svg
+from tables.svg  import svg
 from tables.sbix import sbix
 from tables.cbdt import cbdt
 from tables.cblc import cblc
@@ -28,7 +30,7 @@ from tables.cblc import cblc
 
 
 
-def assembler(format, m, glyphs):
+def assembler(chosenFormat, m, glyphs):
     """
     Assembles a TTX file using the manifest file and input data.
     """
@@ -111,19 +113,27 @@ def assembler(format, m, glyphs):
     # ligatures
     ligatures = False
 
+    # check for presence of ligatures
     for g in glyphs:
         if len(g.codepoints) > 1:
             ligatures = True
 
     if ligatures:
-        log.out ('Assembling GDEF table...', 36)
-        root.append(gdef(glyphs))
 
-        log.out ('Assembling GPOS table...', 36)
-        root.append(gpos())
+        if formats[chosenFormat]["ligatureFormat"] == "OpenType":
+            log.out ('Assembling GDEF table...', 36)
+            root.append(gdef(glyphs))
 
-        log.out('Assembling GSUB table...', 36)
-        root.append(gsub(glyphs))
+            log.out ('Assembling GPOS table...', 36)
+            root.append(gpos())
+
+            log.out('Assembling GSUB table...', 36)
+            root.append(gsub(glyphs))
+
+
+        elif formats[chosenFormat]["ligatureFormat"] == "TrueType":
+            log.out('Assembling morx table...', 36)
+            root.append(morx(glyphs))
 
 
 
@@ -134,19 +144,15 @@ def assembler(format, m, glyphs):
     root.append(glyf(glyphs))
 
 
-    if format == "svginot":
+    if formats[chosenFormat]["imageTables"] == "SVG":
         log.out('Assembling SVG table...', 36)
         root.append(svg(metrics, glyphs))
 
-    elif format == "sbix":
+    elif formats[chosenFormat]["imageTables"] == "sbix":
         log.out('Assembling sbix table...', 36)
         root.append(sbix(glyphs))
 
-    elif format == "sbixios":
-        log.out('Assembling sbix table...', 36)
-        root.append(sbix(glyphs))
-
-    elif format == "cbx":
+    elif formats[chosenFormat]["imageTables"] == "CBx":
         log.out('Assembling CBLC table...', 36)
         root.append(cblc(metrics, glyphs))
 
@@ -159,7 +165,7 @@ def assembler(format, m, glyphs):
     # human-readable metadata
     # ---------------------------------------------
     log.out('Assembling name table...', 36)
-    root.append(name(format, macLangID, msftLangID, nameRecords))
+    root.append(name(chosenFormat, macLangID, msftLangID, nameRecords))
 
 
 

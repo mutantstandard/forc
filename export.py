@@ -5,7 +5,7 @@ import log
 from assembler import assembler
 from glyphs import getGlyphs
 from ios import compileiOSConfig
-
+from format import formats
 
 def compileTTX(input, output):
     """
@@ -35,26 +35,21 @@ def writeFile(path, contents, exceptionString):
 
 
 
-def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_output):
+def createFont(fontFormat, outputPath, manifest, allGlyphs, ttx_output, dev_ttx_output):
     """
     Calls the functions that assemble and create a font.
     """
 
     log.out(f'[{fontFormat}]', 35)
 
-    # get a usable path for everything happening here.
+
+    # VARIABLES
+    extension = formats[fontFormat]["extension"]
+    imageFormat = formats[fontFormat]["imageFormat"]
+    glyphs = allGlyphs[imageFormat]
+
     outputAbsolute = pathlib.Path(outputPath).absolute()
 
-
-
-    if fontFormat == 'svginot':
-        extension = '.otf'
-    elif fontFormat == 'sbix':
-        extension = '.ttf'
-    elif fontFormat == 'sbixios':
-        extension = '.ttf'
-    elif fontFormat == 'cbx':
-        extension = '.ttf'
 
 
 
@@ -62,13 +57,15 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
     # assemble TTX
     log.out(f'Assembling initial TTX...')
     originalTTX = assembler(fontFormat, manifest, glyphs)
-    log.out(f'TTX successfully assembled.', 32)
+    log.out(f'Initial TTX successfully assembled.', 32)
+
 
     # save TTX
     log.out(f'Saving initial TTX to file...')
     originalTTXPath = outputAbsolute / (f"{fontFormat}_initial.ttx")
     writeFile(originalTTXPath, originalTTX, 'Could not write initial TTX to file')
-    log.out(f'initial TTX saved.', 32)
+    log.out(f'Initial TTX saved.', 32)
+
 
     # compile TTX to font
     log.out(f'Compiling font...')
@@ -76,10 +73,12 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
     compileTTX(originalTTXPath, outputFontPath)
     log.out(f'Font compiled.', 32)
 
-    # --dev-ttx
+
+    # --dev-ttx flag
     if not dev_ttx_output:
         log.out(f'Deleting initial TTX...')
         originalTTXPath.unlink() #delete
+
 
     # -ttx flag
     if ttx_output:
@@ -87,9 +86,10 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
         afterExportTTX = outputAbsolute / (f"{fontFormat}_finished.ttx")
         compileTTX(outputFontPath, afterExportTTX)
 
-    # sbixios iOS Configuration Profile compiling
+
+    # iOS Configuration Profile compilation
     # (must come after everything else)
-    if fontFormat == 'sbixios':
+    if formats[fontFormat]["iOSCompile"]:
         log.out(f'Compiling iOS Configuration Profile...')
         configString = compileiOSConfig(manifest, outputFontPath, outputPath)
         configPath = outputAbsolute / (f"{fontFormat}.mobileconfig")
@@ -120,20 +120,27 @@ def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output, de
 
     log.out(f'Checking output format(s)...', 36)
     for f in outputFormats:
-        if f == 'svginot':
-            glyphImageFormats.add('svg')
-        elif f in ['sbix', 'sbixios', 'cbx']:
-            glyphImageFormats.add('png')
-        else:
+
+        # check if it's in the list of accepted formats
+        if f not in formats:
             raise ValueError(f"Invalid output format: {f}")
 
+        # check what formats are needed
+        if formats[f]["imageFormat"] == 'svg':
+            glyphImageFormats.add('svg')
+        elif formats[f]["imageFormat"] == 'png':
+            glyphImageFormats.add('png')
+
+
     log.out(f'Output format(s) verified.', 32)
+
+
 
 
     # check the image sets for each format.
     # ------------------------------------------------
 
-    glyphs = dict()
+    allGlyphs = dict()
 
     log.out(f'Checking glyph images...', 36)
     for format in glyphImageFormats:
@@ -145,7 +152,8 @@ def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output, de
             log.out(f'!!! There are no {format} glyph images!!', 31)
         else:
             log.out(f'{format} files verified.', 32)
-            glyphs[format] = glyphList
+            allGlyphs[format] = glyphList
+            
 
 
 
@@ -153,9 +161,4 @@ def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output, de
     # ------------------------------------------------
 
     for f in outputFormats:
-
-        if f == 'svginot':
-            createFont(f, outputPath, manifest, glyphs['svg'], ttx_output, dev_ttx_output)
-
-        elif f in ['sbix', 'cbx', 'sbixios']:
-            createFont(f, outputPath, manifest, glyphs['png'], ttx_output, dev_ttx_output)
+        createFont(f, outputPath, manifest, allGlyphs, ttx_output, dev_ttx_output)

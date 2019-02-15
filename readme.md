@@ -12,10 +12,12 @@ This is an insider tool that has been open sourced, but feature requests and col
 
 **Exports to:**
 
-- SVGinOT (Linux, Windows 10, Firefox 50+, macOS 10.14+)
-- sbix (macOS 10.7+)
-- sbix packaged in a iOS Configuration Profile (iOS 7+)
-- CBx (Certain Samsung phones, rooted Android devices)
+- `SVGinOT`: SVGinOT
+- `sbixTT`: sbix with TrueType ligatures (macOS) **(incomplete)**
+- `sbixOT`: sbix with OpenType ligatures
+- `sbixTTiOS`: sbix with TrueType ligatures, packaged in an iOS Configuration Profile. **(incomplete)**
+- `sbixOTiOS`: sbix with OpenType ligatures, packaged in an iOS Configuration Profile. (currently just a development/research thing)
+- `cbx`: CBDT/CBLC (Google/Android format)
 
 
 **Other features:**
@@ -23,6 +25,7 @@ This is an insider tool that has been open sourced, but feature requests and col
 - Arbitrary Unicode codepoints - you can use whatever codepoints you want, including PUA.
 - Support for ligatures.
 - Support for VS16.
+- Support for ZWJ.
 - Can be used from [orxporter](https://github.com/mutantstandard/orxporter) for seamlessly building an entire set of emoji.
 
 

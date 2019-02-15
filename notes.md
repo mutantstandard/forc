@@ -21,34 +21,45 @@ Creating an iOS Configuration Profile is exactly the same process, because it is
 
 ## What are the details on the formats forc can export to?
 
-#### SVGinOT (svginot)
+#### SVGinOT
 
-SVG glyphs are encoded in SVG tables encoded alongside other OpenType-compatible data.
+SVG glyphs are encoded in SVG tables encoded alongside OpenType-compatible ligature data.
 
-#### sbix
+#### sbixTT
 
-PNG glyphs are encoded in sbix tables encoded alongside other TrueType-compatible data.
+PNG glyphs are encoded in sbix tables encoded alongside TrueType-compatible ligature data.
 
-sbix is also compatible with OpenType, but TrueType data is used to maximise compatibility with Apple platforms.
+This is designed for compatibility with Apple platforms.
 
-#### CBx (cbx)
+#### sbixOT
 
-PNG glyphs are encoded in CBDT/CBLC tables encoded alongside other OpenType-compatible data.
+PNG glyphs are encoded in sbix tables encoded alongside OpenType-compatible ligature data.
+
+#### sbixTTiOS
+
+sbixTT packaged in an iOS Configuration Profile. Designed for installation in iOS.
+
+#### sbixOTiOS
+
+sbixOT packaged in an iOS Configuration Profile.
+
+This is just a development/research thing and will probably be removed in the first proper release.
+
+#### CBx
+
+PNG glyphs are encoded in CBDT/CBLC tables encoded alongside OpenType-compatible ligature data.
 
 This is to mimic how Google encodes their emoji fonts.
 
-In forc, the name 'CBDT/CBLC' is simplified to 'CBx' to make it easier to remember.
+'CBDT/CBLC' is more commonly used to refer to this format, but in forc it's simplified to 'CBx' to make it easier to remember.
 
-#### iOS (sbixios)
-
-sbix as described above, but packaged into an iOS Configuration Profile, ready to be installed on an iOS device.
 
 ---
 
 ## What input image formats are supported?
 
 - SVG (for SVGinOT)
-- PNG (for sbix and CBx)
+- PNG (for sbix-based formats and CBx)
 
 forc will not render SVGs to PNGs. You will need to find something else that can provide that for you.
 

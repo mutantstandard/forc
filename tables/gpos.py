@@ -7,7 +7,7 @@ def gpos():
     Generates and returns a GSUB table with ligature data.
     """
 
-    gpos = Element("GSUB")
+    gpos = Element("GPOS")
 
 
     # constant information
@@ -26,7 +26,6 @@ def gpos():
             <Script>
               <DefaultLangSys>
                 <ReqFeatureIndex value="65535"/>
-                <FeatureIndex index="0" value="0"/>
               </DefaultLangSys>
             </Script>
           </ScriptRecord>
