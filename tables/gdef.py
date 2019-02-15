@@ -13,13 +13,13 @@ def gdef(glyphs):
     gcd = Element("GlyphClassDef", {"Format": "2"})
 
     for g in glyphs:
+        if g.codepoints[0] != 0: # filter out .notdef
+            if len(g.codepoints) > 1: # if a ligature
+                classNum = "2"
+            else:
+                classNum = "1"
 
-        if len(g.codepoints) > 1: # if a ligature
-            classNum = "2"
-        else:
-            classNum = "1"
-
-        gcd.append(Element("ClassDef", {"glyph": g.name, "class": classNum}))
+            gcd.append(Element("ClassDef", {"glyph": g.name, "class": classNum}))
 
     gdef.append(gcd)
 

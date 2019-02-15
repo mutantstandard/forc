@@ -42,17 +42,17 @@ OPTIONS:
 -F      format (default: {DEF_OUTPUT_FORMATS})
 
         formats that require SVG images:
-        - SVGinOT       (SVGinOT) (SVG with OpenType ligatures)
+        - SVGinOT       SVG with OpenType ligatures.
 
         formats that require PNG images:
-        - sbixTT        (macOS format) (sbix with TrueType ligatures.)
-        - sbixOT        (sbix with OpenType ligatures.)
-        - sbixTTiOS     (iOS format) (sbix with TrueType ligatures,
-                        packaged in an iOS Configuration Profile.)
-        - sbixOTiOS     (DEVELOPMENT/TESTING) (sbix with OpenType ligatures,
-                        packaged in an iOS Configuration Profile.)
-        - CBx           (Google/Android) (CBDT/CBLC with OpenType
-                        ligatures.)
+        - sbixTT        (macOS) sbix with TrueType ligatures.
+        - sbixOT        sbix with OpenType ligatures.
+        - sbixTTiOS     (iOS) sbix with TrueType ligatures,
+                        packaged in an iOS Configuration Profile.
+        - sbixOTiOS     (DEVELOPMENT/TESTING) sbix with OpenType ligatures,
+                        packaged in an iOS Configuration Profile.
+        - CBx           (Google/Android) CBDT/CBLC with OpenType
+                        ligatures.
 
 
 -d      delimiter between ligatured codepoints

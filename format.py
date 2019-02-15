@@ -11,14 +11,14 @@ formats = {"SVGinOT":
          ,"sbixTT":
               {"imageFormat": "png"
               ,"imageTables": "sbix"
-              ,"ligatureFormat": "OpenType"
+              ,"ligatureFormat": "TrueType"
               ,"extension": ".otf"
               ,"iOSCompile": False
               }
          ,"sbixOT":
               {"imageFormat": "png"
               ,"imageTables": "sbix"
-              ,"ligatureFormat": "TrueType"
+              ,"ligatureFormat": "OpenType"
               ,"extension": ".ttf"
               ,"iOSCompile": False
               }

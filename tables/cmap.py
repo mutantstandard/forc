@@ -21,8 +21,8 @@ def cmap(glyphs):
         if len(g.codepoints) == 1:
             #if g.codepoints[0] < int('ff', 16):
                 #oneByte.append(g)
-            #if g.codepoints[0] < int('ffff', 16):
-                #twoByte.append(g)
+            if g.codepoints[0] < int('ffff', 16):
+                twoByte.append(g)
             if g.codepoints[0] < int('ffffff', 16):
                 fourByte.append(g)
 
