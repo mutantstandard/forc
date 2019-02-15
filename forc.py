@@ -20,6 +20,7 @@ DEF_TTX_OUTPUT = False
 DEF_DEV_TTX = False
 DEF_DELIM = "-"
 DEF_NO_LIG = False
+DEF_NO_VS16 = False
 
 HELP = f'''forc {VERSION}
 by Mutant Standard
@@ -44,25 +45,27 @@ OPTIONS:
         - SVGinOT       (SVGinOT) (SVG with OpenType ligatures)
 
         formats that require PNG images:
-        - sbixTT        (macOS format) (sbix with TrueType ligatures)
-        - sbixOT        (sbix with OpenType ligatures)
+        - sbixTT        (macOS format) (sbix with TrueType ligatures.)
+        - sbixOT        (sbix with OpenType ligatures.)
         - sbixTTiOS     (iOS format) (sbix with TrueType ligatures,
-                        packaged in an iOS Configuration Profile)
+                        packaged in an iOS Configuration Profile.)
         - sbixOTiOS     (DEVELOPMENT/TESTING) (sbix with OpenType ligatures,
-                        packaged in an iOS Configuration Profile)
+                        packaged in an iOS Configuration Profile.)
         - CBx           (Google/Android) (CBDT/CBLC with OpenType
-                        ligatures)
+                        ligatures.)
 
 
 -d      delimiter between ligatured codepoints
         (default: '{DEF_DELIM}')
 
---ttx       export an additional ttx (.ttx) file for each format
+--ttx       export an additional ttx (.ttx) file for each format.
 
 --dev-ttx   keep the initial ttx that forc compiles before
-            passing it to fonttools
+            passing it to fonttools.
 
---no-lig    (DEVELOPMENT OPTION) filter out any ligature glyphs
+--no-lig    (DEVELOPMENT OPTION) ignore ligature glyphs in the input.
+--no-vs16   (DEVELOPMENT OPTION) strip any presence of VS16 (U+fe0f)
+            from the output.
 
 '''
 
@@ -78,11 +81,12 @@ def main():
     delim = DEF_DELIM
 
     no_lig = DEF_NO_LIG
+    no_vs16 = DEF_NO_VS16
 
     try:
         opts, _ = getopt.getopt(sys.argv[1:],
                                 'hm:i:o:F:d:',
-                                ['help', 'ttx', 'dev-ttx', 'no-lig'])
+                                ['help', 'ttx', 'dev-ttx', 'no-lig', 'no-vs16'])
         for opt, arg in opts:
             if opt in ['-h', '--help']:
                 print(HELP)
@@ -103,6 +107,8 @@ def main():
                 dev_ttx_output = True
             elif opt =='--no-lig':
                 no_lig = True
+            elif opt =='--no-vs16':
+                no_vs16 = True
 
     except Exception:
         print(HELP)
@@ -111,7 +117,7 @@ def main():
         with open(manifest_path, "r") as read_file:
             m = json.load(read_file)
 
-        export(m, input_path, output_path, output_formats, delim, ttx_output, dev_ttx_output, no_lig)
+        export(m, input_path, output_path, output_formats, delim, ttx_output, dev_ttx_output, no_lig, no_vs16)
 
     except Exception as e:
         log.out(f'!!! {e}', 31)

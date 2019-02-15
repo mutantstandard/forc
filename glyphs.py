@@ -41,7 +41,7 @@ class glyph:
 
 
 
-def getGlyphs(inputPath, delim, extension, no_lig):
+def getGlyphs(inputPath, delim, extension, no_lig, no_vs16):
     """
     - Validates glyph image paths from the input path.
     - Returns a list of glyph objects, including important special control glyphs.
@@ -50,6 +50,8 @@ def getGlyphs(inputPath, delim, extension, no_lig):
     dir = pathlib.Path(inputPath).absolute()
     inputGlyphs = list(dir.glob("*." + extension))
     glyphs = []
+
+    vs16Allowed = not no_vs16
 
 
     glyphs.append(glyph([0x0], '.notdef', None))
@@ -81,11 +83,12 @@ def getGlyphs(inputPath, delim, extension, no_lig):
         # tidy instances of fe0f before adding them to the glyph list
 
         if int('fe0f', 16) in codepoints:
-            vs16Presence = True
+
+            vs16Presence = vs16Allowed
             codepoints.remove(int('fe0f', 16))
 
             if len(codepoints) == 1:
-                glyphs.append(glyph(codepoints, None, g, True))
+                glyphs.append(glyph(codepoints, None, g, vs16Allowed))
 
             else:
                 glyphs.append(glyph(codepoints, None, g, False))

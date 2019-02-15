@@ -105,7 +105,7 @@ def createFont(fontFormat, outputPath, manifest, allGlyphs, ttx_output, dev_ttx_
 
 
 
-def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output, dev_ttx_output, no_lig):
+def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output, dev_ttx_output, no_lig, no_vs16):
     """
     Performs a variety of processing and validation tasks
     related to font format, then initiates font creation once those
@@ -146,7 +146,7 @@ def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output, de
     for format in glyphImageFormats:
 
         formatInput = pathlib.Path(inputPath) / manifest['glyphs'][format]
-        glyphList = getGlyphs(formatInput, delim, format, no_lig)
+        glyphList = getGlyphs(formatInput, delim, format, no_lig, no_vs16)
 
         if not glyphList:
             log.out(f'!!! There are no {format} glyph images!!', 31)
