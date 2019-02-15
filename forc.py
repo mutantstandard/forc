@@ -30,11 +30,19 @@ OPTIONS:
 -h      prints this help message
 
 -m      input JSON manifest (default: {DEF_MANIFEST})
+
 -i      input directory path (default: {DEF_INPUT_PATH})
+        Should have 'png' and/or 'svg' subfolders for PNG and SVG
+        images respectively.
+
 -o      output (default: {DEF_OUTPUT_PATH})
 
 -F      format (default: {DEF_OUTPUT_FORMATS})
+
+        formats that require SVG images:
         - SVGinOT       (SVGinOT) (SVG with OpenType ligatures)
+
+        formats that require PNG images:
         - sbixTT        (macOS format) (sbix with TrueType ligatures)
         - sbixOT        (sbix with OpenType ligatures)
         - sbixTTiOS     (iOS format) (sbix with TrueType ligatures,
@@ -43,6 +51,7 @@ OPTIONS:
                         packaged in an iOS Configuration Profile)
         - CBx           (Google/Android) (CBDT/CBLC with OpenType
                         ligatures)
+
 
 -d      delimiter between ligatured codepoints
         (default: '{DEF_DELIM}')
