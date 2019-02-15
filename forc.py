@@ -63,7 +63,7 @@ OPTIONS:
 --dev-ttx   keep the initial ttx that forc compiles before
             passing it to fonttools.
 
---no-lig    (DEVELOPMENT OPTION) ignore ligature glyphs in the input.
+--no-lig    (DEVELOPMENT OPTION) strip ligatures from the output.
 --no-vs16   (DEVELOPMENT OPTION) strip any presence of VS16 (U+fe0f)
             from the output.
 

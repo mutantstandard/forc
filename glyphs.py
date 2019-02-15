@@ -150,11 +150,11 @@ def getGlyphs(inputPath, delim, extension, no_lig, no_vs16):
             singleGlyphCodepoints.append(g.codepoints[0])
             singleGlyphs.append(g)
 
-
-    for g in ligatures:
-        for codepoint in g.codepoints:
-            if codepoint not in singleGlyphCodepoints:
-                raise Exception(f"One of your ligatures ({g.imagePath}) does not have all non-service codepoints represented as glyphs ({glyphName(codepoint)}). All components of all ligatures must be represented as glyphs (apart from fe0f and 200d).")
+    if not no_lig:
+        for g in ligatures:
+            for codepoint in g.codepoints:
+                if codepoint not in singleGlyphCodepoints:
+                    raise Exception(f"One of your ligatures ({g.imagePath}) does not have all non-service codepoints represented as glyphs ({glyphName(codepoint)}). All components of all ligatures must be represented as glyphs (apart from fe0f and 200d).")
 
 
     if no_lig:
