@@ -12,12 +12,12 @@ This is an insider tool that has been open sourced, but feature requests and col
 
 **Exports to:**
 
-- `SVGinOT`: SVGinOT
-- `sbixTT`: sbix with TrueType ligatures (macOS) **(incomplete)**
-- `sbixOT`: sbix with OpenType ligatures
-- `sbixTTiOS`: sbix with TrueType ligatures, packaged in an iOS Configuration Profile. **(incomplete)**
-- `sbixOTiOS`: sbix with OpenType ligatures, packaged in an iOS Configuration Profile. (currently just a development/research thing)
-- `cbx`: CBDT/CBLC (Google/Android format)
+- **SVGinOT**: SVGinOT
+- **sbixTT**: (macOS format) sbix with TrueType ligatures 
+- **sbixOT**: sbix with OpenType ligatures
+- **sbixTT for iOS**: (iOS format) sbix with TrueType ligatures, packaged in an iOS Configuration Profile.
+- **sbixOT for iOS**: sbix with OpenType ligatures, packaged in an iOS Configuration Profile. (currently just a development/research thing)
+- **CBDT/CBLC** (Google/Android format)
 
 
 **Other features:**
@@ -31,24 +31,12 @@ This is an insider tool that has been open sourced, but feature requests and col
 
 ## Limitations
 
-forc is still in development and is not ready for use:
-
-### Current
-
-I'm still learning how to encode fonts, so these will quickly clear up as time goes on.
-
-- Currently only sbix and SVGinOT fonts are visible and working.
-- Currently all of the formats generated are only considered valid in macOS 10.14 and iOS 12.
-- Metrics are not consistent across formats.
-- I can't get consistent or usable metrics in vertical writing orientation.
-- VS16 support isn't 100%
-- It currently doesn't have the code supporting iOS Configuration Profile output.
-- There's no documentation on how to make manifests yet.
+forc is still in development and is not ready for use. Various exports will only either work in limited contexts, with certain kinds of inputs or will not be complete, valid fonts.
 
 
-### Planned
+## Planned Limitations
 
-- You can't have black and white fallbacks. forc just inserts dummy and empty `glyf` data to please font validation processes. forc expects that you only want to compile and see colour emoji data.
+Black and white fallbacks will not be produced. forc just inserts dummy and empty `glyf` data to please font validation processes. forc expects that you only want to compile and see colour emoji data. forc font exports can only be seen in computing environments that support colour glyphs.
 
 
 ## Dependencies
@@ -57,6 +45,9 @@ I'm still learning how to encode fonts, so these will quickly clear up as time g
 - [lxml](https://lxml.de/)
 - [fonttools](https://github.com/fonttools/fonttools)
 
+## Collaborators
+- Dzuk
+- kiilas (thanks for all the help!)
 
 ## License
 

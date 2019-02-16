@@ -30,36 +30,29 @@ by Mutant Standard
 USAGE: forc.py [options...]
 
 OPTIONS:
+
 -h      prints this help message
 
--m      input JSON manifest (default: {DEF_MANIFEST})
+-i      input directory (default: {DEF_INPUT_PATH})
+-o      output directory (default: {DEF_OUTPUT_PATH})
+-m      manifest file (default: {DEF_MANIFEST})
 
--i      input directory path (default: {DEF_INPUT_PATH})
-        Should have 'png' and/or 'svg' subfolders for PNG and SVG
-        images respectively.
-
--o      output (default: {DEF_OUTPUT_PATH})
 
 -F      format (default: {DEF_OUTPUT_FORMATS})
 
         formats that require SVG images:
-        - SVGinOT       SVG with OpenType ligatures.
+        - SVGinOT       (Many platforms)
 
         formats that require PNG images:
-        - sbixTT        (macOS) sbix with TrueType ligatures.
-        - sbixOT        sbix with OpenType ligatures.
-        - sbixTTiOS     (iOS) sbix with TrueType ligatures,
-                        packaged in an iOS Configuration Profile.
-        - sbixOTiOS     (DEVELOPMENT/TESTING) sbix with OpenType ligatures,
-                        packaged in an iOS Configuration Profile.
-        - CBx           (Google/Android) CBDT/CBLC with OpenType
-                        ligatures.
+        - sbixTT        (macOS)
+        - sbixOT
+        - sbixTTiOS     (iOS)
+        - sbixOTiOS     (DEVELOPMENT/TESTING)
+        - CBx           (Google/Android)
 
 
 -d      delimiter between ligatured codepoints
         (default: '{DEF_DELIM}')
-
-
 
 --ttx       export an additional ttx (.ttx) file for each format.
 
@@ -75,6 +68,10 @@ OPTIONS:
             if the images in the format subfolders are all the same.
             Only use if you are inputting data where that guarantee
             has already been made and you want to save time.
+
+
+
+look at docs/howto.md for more information on how to use many of these.
 
 '''
 
