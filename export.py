@@ -35,18 +35,17 @@ def writeFile(path, contents, exceptionString):
 
 
 
-def createFont(fontFormat, outputPath, manifest, allGlyphs, ttx_output, dev_ttx_output):
+def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_output):
     """
     Calls the functions that assemble and create a font.
     """
 
-    log.out(f'[{fontFormat}]', 35)
+    log.out(f'[{fontFormat}]', 36)
 
 
     # VARIABLES
     extension = formats[fontFormat]["extension"]
     imageFormat = formats[fontFormat]["imageFormat"]
-    glyphs = allGlyphs[imageFormat]
 
     outputAbsolute = pathlib.Path(outputPath).absolute()
 
@@ -105,12 +104,16 @@ def createFont(fontFormat, outputPath, manifest, allGlyphs, ttx_output, dev_ttx_
 
 
 
-def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output, dev_ttx_output, no_lig, no_vs16):
+def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output, dev_ttx_output, no_lig, no_vs16, nsc):
     """
     Performs a variety of processing and validation tasks
     related to font format, then initiates font creation once those
     have passed.
     """
+
+
+    log.out(f'Export started!', 35)
+
 
     # determine what image formats need to be used
     # (also check if the output formats are valid)
@@ -118,7 +121,7 @@ def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output, de
 
     glyphImageFormats = set()
 
-    log.out(f'Checking output format(s)...', 36)
+    log.out(f'Checking output format(s)...')
     for f in outputFormats:
 
         # check if it's in the list of accepted formats
@@ -140,19 +143,11 @@ def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output, de
     # check the image sets for each format.
     # ------------------------------------------------
 
-    allGlyphs = dict()
+    log.out(f'Checking + getting glyph images...')
+    glyphs = getGlyphs(inputPath, delim, glyphImageFormats, no_lig, no_vs16, nsc)
 
-    log.out(f'Checking glyph images...', 36)
-    for format in glyphImageFormats:
+    log.out(f'Glyphs acquired.', 32)
 
-        formatInput = pathlib.Path(inputPath) / manifest['glyphs'][format]
-        glyphList = getGlyphs(formatInput, delim, format, no_lig, no_vs16)
-
-        if not glyphList:
-            log.out(f'!!! There are no {format} glyph images!!', 31)
-        else:
-            log.out(f'{format} files verified.', 32)
-            allGlyphs[format] = glyphList
 
 
 
@@ -160,5 +155,7 @@ def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output, de
     # assemble each font format.
     # ------------------------------------------------
 
+    log.out(f'Begin font compilation!', 35)
+
     for f in outputFormats:
-        createFont(f, outputPath, manifest, allGlyphs, ttx_output, dev_ttx_output)
+        createFont(f, outputPath, manifest, glyphs, ttx_output, dev_ttx_output)

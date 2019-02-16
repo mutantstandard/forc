@@ -39,16 +39,112 @@ class glyph:
 
 
 
+def getImagesFromDir(dir, formats):
+
+    glyphSet = dict()
+
+    if 'svg' in formats:
+        svgFolders = list(dir.glob("svg"))
+
+        if not svgFolders:
+            raise Exception(f"You don't have an SVG folder in your input!")
 
 
-def getGlyphs(inputPath, delim, extension, no_lig, no_vs16):
-    """
-    - Validates glyph image paths from the input path.
-    - Returns a list of glyph objects, including important special control glyphs.
-    """
+        svgImagePaths = list(svgFolders[0].glob("*.svg"))
 
-    dir = pathlib.Path(inputPath).absolute()
-    inputGlyphs = list(dir.glob("*." + extension))
+        if not svgImagePaths:
+            raise Exception(f"There are no SVG images in your SVG folder!.")
+        else:
+            glyphSet['svg'] = svgImagePaths
+
+
+    if 'png' in formats:
+
+        # checking if there are PNG folders and if they're named correctly.
+        pngFolders = dict()
+
+        for item in list(dir.glob("png*")):
+            if not item.name[0] == '.': # if it's not a hidden file.
+                if not item.suffix: # if it's not a file.
+                    if not item.name[3:].isdigit():
+                        raise Exception(f"One of the strikes in your PNG folder ('{item.name}') doesn't have a number at the end.")
+                    else:
+                        pngFolders[item.name] = item
+
+        if not pngFolders:
+            raise Exception(f"You don't have any PNG folders.")
+
+
+
+        # check if there are images in each strike and get them if they are.
+
+        for name, strike in pngFolders.items():
+            pngImagePaths = list(strike.glob("*.png"))
+
+            if not pngImagePaths:
+                raise Exception(f"There are no PNG images in the folder for the input subfolder {strike.name}.")
+            else:
+                glyphSet[strike.name] = pngImagePaths
+
+
+    return glyphSet
+
+
+
+def areGlyphImagesConsistent(glyphSet):
+
+    if len(glyphSet) > 1:
+
+        # get one of the subfolders and use it as a basis for comparison.
+
+        firstSubfolderName = list(glyphSet.keys())[0]
+        firstSubfolder = glyphSet[firstSubfolderName]
+        firstSubfolderLength = len(firstSubfolder)
+
+
+
+        # check that every subfolder has the same amount of glyhs.
+        # ------------------------------------------------------
+        for key, subfolder in glyphSet.items():
+            if not key == firstSubfolderName:
+                if not len(subfolder) == firstSubfolderLength:
+                    raise Exception(f"The amount of glyphs in your input subfolders don't match. Subfolder '{key}' has {str(len(subfolder))}. The first subfolder I looked at ({firstSubfolderName}) has {firstSubfolderLength}.")
+
+
+
+        # check that every subfolder has the same contents.
+        # ------------------------------------------------------
+
+        # iterate over every image in the folder being used as the basis.
+        for image in firstSubfolder:
+
+            # iterate over every subfolder (apart from the basis one)
+            for key, subfolder in glyphSet.items():
+                if not key == firstSubfolderName:
+
+                    subfolderMatches = []
+
+                    # see if there's an image in each subfolder that matches.
+                    for comparedImageFile in subfolder:
+                        if image.stem == comparedImageFile.stem:
+                            subfolderMatches.append(comparedImageFile)
+
+                    if not subfolderMatches:
+                        raise Exception(f"The contents of your input subfolders don't match. Subfolder '{firstSubfolderName}' has {image.stem}, but I couldn't find the same file in subfolder '{key}'.")
+
+
+
+
+
+def compileGlyphData(dir, delim, no_vs16, glyphImageSet):
+
+
+    # start glyphs
+    # --------------------------------------------------------------------
+
+    firstSubfolderName = list(glyphImageSet.keys())[0]
+    firstSubfolder = glyphImageSet[firstSubfolderName]
+
     glyphs = []
 
     vs16Allowed = not no_vs16
@@ -60,24 +156,36 @@ def getGlyphs(inputPath, delim, extension, no_lig, no_vs16):
 
 
 
-    # process all of the input glyphs
+    # process and check all of the input glyph codepoints
     # --------------------------------------------------------------------
 
     vs16Presence = False
     zwjPresence = False
 
-    for g in inputGlyphs:
+    for i in firstSubfolder:
         codepoints = []
 
         # try to check if every part of the
         # filename stem is a valid hexadecimal number.
 
         try:
-            codepoints = [int(hex, 16) for hex in g.stem.split(delim)]
+            codepoints = [int(hex, 16) for hex in i.stem.split(delim)]
 
         except ValueError as e:
-            log.out(f'!!! One of your glyph files is not named as hexadecimal numbers.', 31)
-            log.out(f'!!! It is \'{g}\'', 31)
+            log.out(f'!!! One of your glyphs is not named as hexadecimal numbers. It is \'{i.name}\'.', 31)
+
+
+
+
+        # compile a glyph file structure.
+
+        structPaths = dict()
+
+        for subfolderName, subfolders in glyphImageSet.items():
+
+            filename = i.stem + "." + subfolderName[:3]
+            structPaths[subfolderName] = pathlib.Path(dir / subfolderName / filename ).absolute()
+
 
 
         # tidy instances of fe0f before adding them to the glyph list
@@ -88,13 +196,13 @@ def getGlyphs(inputPath, delim, extension, no_lig, no_vs16):
             codepoints.remove(int('fe0f', 16))
 
             if len(codepoints) == 1:
-                glyphs.append(glyph(codepoints, None, g, vs16Allowed))
+                glyphs.append(glyph(codepoints, None, structPaths, vs16Allowed))
 
             else:
-                glyphs.append(glyph(codepoints, None, g, False))
+                glyphs.append(glyph(codepoints, None, structPaths, False))
 
         else:
-            glyphs.append(glyph(codepoints, None, g, False))
+            glyphs.append(glyph(codepoints, None, structPaths, False))
 
         if int('200d', 16) in codepoints:
             zwjPresence = True
@@ -117,13 +225,12 @@ def getGlyphs(inputPath, delim, extension, no_lig, no_vs16):
 
         glyphs.append(glyph([0x200d], 'u200d', None))
 
+    return glyphs
 
 
 
 
-    # test for duplicates
-    # --------------------------------------------------------------------
-
+def postVS16DupeTest(glyphs):
     for id1, g1 in enumerate(glyphs):
         for id2, g2 in enumerate(glyphs):
             if g1.name == g2.name:
@@ -132,11 +239,7 @@ def getGlyphs(inputPath, delim, extension, no_lig, no_vs16):
 
 
 
-
-
-    # validate ligatures
-    # --------------------------------------------------------------------
-
+def areGlyphLigaturesSafe(glyphs):
     singleGlyphCodepoints = []
     ligatures = []
 
@@ -150,14 +253,51 @@ def getGlyphs(inputPath, delim, extension, no_lig, no_vs16):
             singleGlyphCodepoints.append(g.codepoints[0])
             singleGlyphs.append(g)
 
-    if not no_lig:
-        for g in ligatures:
-            for codepoint in g.codepoints:
-                if codepoint not in singleGlyphCodepoints:
-                    raise Exception(f"One of your ligatures ({g.imagePath}) does not have all non-service codepoints represented as glyphs ({glyphName(codepoint)}). All components of all ligatures must be represented as glyphs (apart from fe0f and 200d).")
+
+    for g in ligatures:
+        for codepoint in g.codepoints:
+            if codepoint not in singleGlyphCodepoints:
+                raise Exception(f"One of your ligatures ({g.imagePath}) does not have all non-service codepoints represented as glyphs ({glyphName(codepoint)}). All components of all ligatures must be represented as glyphs (apart from fe0f and 200d).")
+
+
+
+def getGlyphs(inputPath, delim, formats, no_lig, no_vs16, nfcc):
+    """
+    - Validates glyph image paths from the input path.
+    - Returns a list of glyph objects, including important special control glyphs.
+    """
+
+    dir = pathlib.Path(inputPath).absolute()
+
+
+    log.out(f'Checking + getting file paths...', 90)
+    glyphImageSet = getImagesFromDir(dir, formats)
+
+
+    if not nfcc:
+        log.out(f'Checking file consistency...', 90)
+        areGlyphImagesConsistent(glyphImageSet)
+
+
+    log.out(f'Compiling glyph data...', 90)
+    glyphs = compileGlyphData(dir, delim, no_vs16, glyphImageSet)
+
+
+    log.out(f'Validating glyph data...', 90)
+    postVS16DupeTest(glyphs)
 
 
     if no_lig:
+        log.out(f'Stripping any ligatures...', 90)
+        singleGlyphs = []
+
+        for g in glyphs:
+            if len(g.codepoints) == 1:
+                singleGlyphs.append(g)
+
         return singleGlyphs
+
     else:
+        log.out(f'Validating ligatures...', 90)
+        areGlyphLigaturesSafe(glyphs)
         return glyphs

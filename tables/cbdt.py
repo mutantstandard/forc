@@ -1,19 +1,12 @@
 from lxml.etree import Element
 
-def cbdt(metrics, glyphs):
-    """
-    Generates and returns a glyf table with dummy data.
-    """
-
-    cbdt = Element("CBDT")
-
-    cbdt.append(Element("header", {"version": "3.0"})) # hard-coded
 
 
+def strike(metrics, strikeIndex, strikeRes, subfolder, glyphs):
     # start of strikes
     # (which we're fudging right now)
     # ------------------------------------------------------------
-    strike = Element("strikedata", {"index": "0"})
+    strike = Element("strikedata", {"index": strikeIndex})
 
     for g in glyphs:
 
@@ -33,7 +26,7 @@ def cbdt(metrics, glyphs):
 
             rawImageData = Element("rawimagedata")
 
-            with open(g.imagePath, "rb") as read_file:
+            with open(g.imagePath[subfolder], "rb") as read_file:
                 pngHexdump = read_file.read().hex()
 
             rawImageData.text = pngHexdump
@@ -42,7 +35,40 @@ def cbdt(metrics, glyphs):
 
             strike.append(bitmapTable)
 
-    cbdt.append(strike)
+    return strike
+
+
+
+
+def cbdt(metrics, glyphs):
+    """
+    Generates and returns a glyf table with dummy data.
+    """
+
+    cbdt = Element("CBDT")
+
+    cbdt.append(Element("header", {"version": "3.0"})) # hard-coded
+
+
+
+    # get basic strike information.
+
+    for g in glyphs:
+        if g.imagePath:
+            firstGlyphWithStrikes = g
+            break
+
+
+    # iterate over each strike.
+
+    strikeIndex = 0
+
+    for formatName, format in firstGlyphWithStrikes.imagePath.items():
+        if formatName[:3] == "png":
+            strikeRes = formatName[3:]
+            cbdt.append(strike(metrics, str(strikeIndex), strikeRes, formatName, glyphs))
+            strikeIndex += 1
+
 
 
     return cbdt

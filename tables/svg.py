@@ -115,76 +115,77 @@ def svg(metrics, glyphs):
 
     for ID, g in enumerate(glyphs):
         if g.imagePath:
-            svgDoc = etree.Element("svgDoc", {"startGlyphID": str(ID), "endGlyphID" : str(ID) })
+            if g.imagePath['svg']:
+                svgDoc = etree.Element("svgDoc", {"startGlyphID": str(ID), "endGlyphID" : str(ID) })
 
-            # lxml can't parse from Path objects, so it has to give a string representation.
-            svgImage = etree.parse(g.imagePath.as_uri())
-
-
-            # we have to see if there's a viewBox and if there is, remove it and use
-            # transforms to rectify the image's metrics.
-            #
-            # (viewBox is technically supported but behaves erratically in
-            # most SVGinOT renderers)
-
-            cdata = etree.CDATA("")
+                # lxml can't parse from Path objects, so it has to give a string representation.
+                svgImage = etree.parse(g.imagePath['svg'].as_uri())
 
 
-            # Throw an error if any of these elements are present.
-            # -------------------------------------------------------------------------------------
+                # we have to see if there's a viewBox and if there is, remove it and use
+                # transforms to rectify the image's metrics.
+                #
+                # (viewBox is technically supported but behaves erratically in
+                # most SVGinOT renderers)
 
-            restrictedElements = [ 'text'
-                                 , 'font'
-                                 , 'foreignObject'
-                                 , 'switch'
-                                 , 'script'
-                                 , 'a'
-                                 , 'view'
-                                 ]
-
-            notRequiredElements = [ 'filter'
-                                  , 'pattern'
-                                  , 'mask'
-                                  , 'marker'
-                                  , 'symbol'
-                                  , 'style'
-                                  , 'cursor'
-                                  ]
+                cdata = etree.CDATA("")
 
 
-            for elem in restrictedElements:
-                if svgImage.find('//*' + NAMESPACE + elem) is not None:
-                    raise Exception(f"SVG image {g.imagePath} has a {elem} element. These are not compatible in SVGinOT fonts.")
+                # Throw an error if any of these elements are present.
+                # -------------------------------------------------------------------------------------
 
-            for elem in notRequiredElements:
-                if svgImage.find('//*' + NAMESPACE + elem) is not None:
-                    log.out(f"SVG image {g.imagePath} has a {elem} element. Compatibility with this is not mandatory.", 31)
+                restrictedElements = [ 'text'
+                                     , 'font'
+                                     , 'foreignObject'
+                                     , 'switch'
+                                     , 'script'
+                                     , 'a'
+                                     , 'view'
+                                     ]
 
-            #if svgImage.find(f"//*[@style]") is not None:
-                #stripStyles(svgImage)
-                #raise Exception(f"SVG image {g.imagePath} has a 'style' attribute. These are not compatible in SVGinOT fonts.")
-
-
-            finishedSVG = etree.ElementTree(etree.Element("svg"))
-
-
-
-
-            # check if there's a viewBox and compensate for it if that's the case.
-            # if not, just pass it on.
-            # -------------------------------------------------------------------------------------
-            if svgImage.find(".[@viewBox]") is not None:
-                compensated = viewboxCompensate(metrics, svgImage, ID)
-                finishedSVG = svgAttrNormalisation(compensated, ID)
-
-            else:
-                finishedSVG = svgAttrNormalisation(svgImage, ID)
+                notRequiredElements = [ 'filter'
+                                      , 'pattern'
+                                      , 'mask'
+                                      , 'marker'
+                                      , 'symbol'
+                                      , 'style'
+                                      , 'cursor'
+                                      ]
 
 
-            cdata = etree.CDATA(etree.tostring(finishedSVG, method="xml", pretty_print=False, xml_declaration=True, encoding="UTF-8"))
+                for elem in restrictedElements:
+                    if svgImage.find('//*' + NAMESPACE + elem) is not None:
+                        raise Exception(f"SVG image {g.imagePath} has a {elem} element. These are not compatible in SVGinOT fonts.")
 
-            svgDoc.text = cdata
-            svgTable.append(svgDoc)
+                for elem in notRequiredElements:
+                    if svgImage.find('//*' + NAMESPACE + elem) is not None:
+                        log.out(f"SVG image {g.imagePath} has a {elem} element. Compatibility with this is not mandatory.", 31)
+
+                #if svgImage.find(f"//*[@style]") is not None:
+                    #stripStyles(svgImage)
+                    #raise Exception(f"SVG image {g.imagePath} has a 'style' attribute. These are not compatible in SVGinOT fonts.")
+
+
+                finishedSVG = etree.ElementTree(etree.Element("svg"))
+
+
+
+
+                # check if there's a viewBox and compensate for it if that's the case.
+                # if not, just pass it on.
+                # -------------------------------------------------------------------------------------
+                if svgImage.find(".[@viewBox]") is not None:
+                    compensated = viewboxCompensate(metrics, svgImage, ID)
+                    finishedSVG = svgAttrNormalisation(compensated, ID)
+
+                else:
+                    finishedSVG = svgAttrNormalisation(svgImage, ID)
+
+
+                cdata = etree.CDATA(etree.tostring(finishedSVG, method="xml", pretty_print=False, xml_declaration=True, encoding="UTF-8"))
+
+                svgDoc.text = cdata
+                svgTable.append(svgDoc)
 
 
 
