@@ -3,7 +3,6 @@
 import getopt
 import os
 import sys
-import json
 from io import StringIO
 
 import log
@@ -127,10 +126,7 @@ def main():
         print(HELP)
         sys.exit(2)
     try:
-        with open(manifest_path, "r") as read_file:
-            m = json.load(read_file)
-
-        export(m, input_path, output_path, output_formats, delim, ttx_output, dev_ttx_output, no_lig, no_vs16, nfcc)
+        export(manifest_path, input_path, output_path, output_formats, delim, ttx_output, dev_ttx_output, no_lig, no_vs16, nfcc)
 
     except Exception as e:
         log.out(f'!!! {e}', 31)

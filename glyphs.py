@@ -266,12 +266,9 @@ def getGlyphs(inputPath, delim, formats, no_lig, no_vs16, nfcc):
     - Validates glyph image paths from the input path.
     - Returns a list of glyph objects, including important special control glyphs.
     """
-
-    dir = pathlib.Path(inputPath).absolute()
-
-
+    
     log.out(f'Checking + getting file paths...', 90)
-    glyphImageSet = getImagesFromDir(dir, formats)
+    glyphImageSet = getImagesFromDir(inputPath, formats)
 
 
     if not nfcc:
@@ -280,7 +277,7 @@ def getGlyphs(inputPath, delim, formats, no_lig, no_vs16, nfcc):
 
 
     log.out(f'Compiling glyph data...', 90)
-    glyphs = compileGlyphData(dir, delim, no_vs16, glyphImageSet)
+    glyphs = compileGlyphData(inputPath, delim, no_vs16, glyphImageSet)
 
 
     log.out(f'Validating glyph data...', 90)

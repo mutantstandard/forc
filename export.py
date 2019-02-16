@@ -1,118 +1,54 @@
-import subprocess
 import pathlib
+import json
 
 import log
-from assembler import assembler
+from create import createFont
 from glyphs import getGlyphs
-from ios import compileiOSConfig
 from format import formats
 
-def compileTTX(input, output):
-    """
-    Invokes ttx
-
-    Making this it's own function now so I can selectively invoke it.
-    """
-
-    # feed the assembled TTX as input to the ttx commaand line tool.
-    cmd_ttx = ['ttx', '-q', '-o', output, input]
-
-    # try to export temporary PNG
-    try:
-        r = subprocess.run(cmd_ttx, stdout=subprocess.DEVNULL).returncode
-    except Exception as e:
-        raise Exception('TTX compiler invocation failed: ' + str(e))
-    if r:
-        raise Exception('TTX compiler returned error code: ' + str(r))
-
-
-def writeFile(path, contents, exceptionString):
-    try:
-        with open(path, 'wb') as file:
-            file.write(contents)
-    except Exception:
-        raise Exception(exceptionString)
 
 
 
-def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_output):
-    """
-    Calls the functions that assemble and create a font.
-    """
-
-    log.out(f'[{fontFormat}]', 36)
-
-
-    # VARIABLES
-    extension = formats[fontFormat]["extension"]
-    imageFormat = formats[fontFormat]["imageFormat"]
-
-    outputAbsolute = pathlib.Path(outputPath).absolute()
-
-
-
-
-
-    # assemble TTX
-    log.out(f'Assembling initial TTX...')
-    originalTTX = assembler(fontFormat, manifest, glyphs)
-    log.out(f'Initial TTX successfully assembled.', 32)
-
-
-    # save TTX
-    log.out(f'Saving initial TTX to file...')
-    originalTTXPath = outputAbsolute / (f"{fontFormat}_initial.ttx")
-    writeFile(originalTTXPath, originalTTX, 'Could not write initial TTX to file')
-    log.out(f'Initial TTX saved.', 32)
-
-
-    # compile TTX to font
-    log.out(f'Compiling font...')
-    outputFontPath = outputAbsolute / (fontFormat + extension)
-    compileTTX(originalTTXPath, outputFontPath)
-    log.out(f'Font compiled.', 32)
-
-
-    # --dev-ttx flag
-    if not dev_ttx_output:
-        log.out(f'Deleting initial TTX...')
-        originalTTXPath.unlink() #delete
-
-
-    # -ttx flag
-    if ttx_output:
-        log.out(f'Compiling finished TTX..')
-        afterExportTTX = outputAbsolute / (f"{fontFormat}_finished.ttx")
-        compileTTX(outputFontPath, afterExportTTX)
-
-
-    # iOS Configuration Profile compilation
-    # (must come after everything else)
-    if formats[fontFormat]["iOSCompile"]:
-        log.out(f'Compiling iOS Configuration Profile...')
-        configString = compileiOSConfig(manifest, outputFontPath, outputPath)
-        configPath = outputAbsolute / (f"{fontFormat}.mobileconfig")
-        writeFile(configPath, configString, 'Could not write iOS Configuration Profile to file')
-
-        log.out(f'Deleting the original Font...')
-        outputFontPath.unlink() #delete
-
-    log.out(f'Done!!!', 32)
-
-
-
-
-
-
-def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output, dev_ttx_output, no_lig, no_vs16, nsc):
+def export(manifestPath, inputPath, outputPath, outputFormats, delim, ttx_output, dev_ttx_output, no_lig, no_vs16, nsc):
     """
     Performs a variety of processing and validation tasks
     related to font format, then initiates font creation once those
     have passed.
     """
 
-
     log.out(f'Export started!', 35)
+
+    # check if the input and output folders are valid.
+    inputPathPath = pathlib.Path(inputPath).absolute()
+    outputPathPath = pathlib.Path(outputPath).absolute()
+    manifestPathPath = pathlib.Path(manifestPath).absolute()
+
+
+
+
+    # check if the input and output folders are valid.
+    # ------------------------------------------------
+
+    log.out(f'Checking input/output directories...')
+    if not inputPathPath.exists():
+        raise ValueError(f"Your input folder - {inputPathPath} - is not a real directory.")
+    elif inputPathPath.is_file():
+        raise ValueError(f"Your input folder - {inputPathPath} - is a file, not a directory.")
+
+    if not outputPathPath.exists():
+        raise ValueError(f"Your output folder - {outputPathPath} - is not a real directory.")
+    elif outputPathPath.is_file():
+        raise ValueError(f"Your output folder - {outputPathPath} - is a file, not a directory.")
+
+    if not manifestPathPath.exists():
+        raise ValueError(f"Your manifest - {manifestPathPath} - is not a real directory.")
+    elif manifestPathPath.is_dir():
+        raise ValueError(f"Your manifest - {manifestPathPath} - is a directory, not a file.")
+
+
+    log.out(f'Input/output directories verified.', 32)
+
+
 
 
     # determine what image formats need to be used
@@ -126,14 +62,13 @@ def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output, de
 
         # check if it's in the list of accepted formats
         if f not in formats:
-            raise ValueError(f"Invalid output format: {f}")
+            raise ValueError(f"'{f}' isn't an output format!")
 
         # check what formats are needed
         if formats[f]["imageFormat"] == 'svg':
             glyphImageFormats.add('svg')
         elif formats[f]["imageFormat"] == 'png':
             glyphImageFormats.add('png')
-
 
     log.out(f'Output format(s) verified.', 32)
 
@@ -144,12 +79,23 @@ def export(manifest, inputPath, outputPath, outputFormats, delim, ttx_output, de
     # ------------------------------------------------
 
     log.out(f'Checking + getting glyph images...')
-    glyphs = getGlyphs(inputPath, delim, glyphImageFormats, no_lig, no_vs16, nsc)
+    glyphs = getGlyphs(inputPathPath, delim, glyphImageFormats, no_lig, no_vs16, nsc)
 
     log.out(f'Glyphs acquired.', 32)
 
 
 
+    # try to load and check the manifest.
+    # ------------------------------------------------
+
+    log.out(f'Loading manifest JSON...')
+    try:
+        with open(manifestPath, "r") as read_file:
+            manifest = json.load(read_file)
+    except Exception as e:
+        raise Exception('Loading the manifest file failed!' + str(e))
+
+    log.out(f'Manifest loaded.', 32)
 
 
     # assemble each font format.
