@@ -36,8 +36,10 @@ def export( manifestPath
 
 
 
-    # check if the input and output folders are valid.
+    # deal with input/output/manifest directories
     # ------------------------------------------------
+
+    # check if the input directory exists.
 
     log.out(f'Checking input/output directories...')
     if not inputPathPath.exists():
@@ -45,10 +47,13 @@ def export( manifestPath
     elif inputPathPath.is_file():
         raise ValueError(f"Your input folder - {inputPathPath} - is a file, not a directory.")
 
+    # try to make the output directory.
     if not outputPathPath.exists():
-        raise ValueError(f"Your output folder - {outputPathPath} - is not a real directory.")
-    elif outputPathPath.is_file():
-        raise ValueError(f"Your output folder - {outputPathPath} - is a file, not a directory.")
+        try:
+            outputPathPath.mkdir(parents=True, exist_ok=True)
+        except Exception as e:
+            raise Exception("Couldn't make the output folder '{outputPathPath}':" + str(e))
+
 
     if not manifestPathPath.exists():
         raise ValueError(f"Your manifest - {manifestPathPath} - is not a real directory.")

@@ -8,6 +8,8 @@ def glyphName(int):
     return (hex(int)[2:])
 
 
+
+
 class glyph:
 
     def __init__(self, codepoints, name, imagePath=None, vs16=False):
@@ -97,6 +99,9 @@ def getImagesFromDir(dir, formats):
 
 
 
+
+
+
 def areGlyphImagesConsistent(glyphSet):
 
     if len(glyphSet) > 1:
@@ -137,6 +142,7 @@ def areGlyphImagesConsistent(glyphSet):
 
                     if not subfolderMatches:
                         raise Exception(f"The contents of your input subfolders don't match. Subfolder '{firstSubfolderName}' has {image.stem}, but I couldn't find the same file in subfolder '{key}'.")
+
 
 
 
@@ -236,12 +242,18 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
 
 
 
+
+
+
 def postVS16DupeTest(glyphs):
     for id1, g1 in enumerate(glyphs):
         for id2, g2 in enumerate(glyphs):
             if g1.name == g2.name:
                 if id1 != id2:
                     raise Exception(f"One of your glyphs ({g1.imagePath}), when stripped of VS16 (fe0f), matches another ({g2.imagePath}). There can't be duplicates in this scenario.")
+
+
+
 
 
 
@@ -264,6 +276,14 @@ def areGlyphLigaturesSafe(glyphs):
         for codepoint in g.codepoints:
             if codepoint not in singleGlyphCodepoints:
                 raise Exception(f"One of your ligatures ({g.imagePath}) does not have all non-service codepoints represented as glyphs ({glyphName(codepoint)}). All components of all ligatures must be represented as glyphs (apart from fe0f and 200d).")
+
+
+
+
+
+
+
+
 
 
 
