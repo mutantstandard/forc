@@ -16,6 +16,7 @@ def glyf(glyphs):
             # for some reason (according to macOS validation) it's important.
             # the others can be blank
 
+            # These attributes will be calculated by the compiler.
             dummyDataNotDef = Element("TTGlyph",    {"name": g.name
                                                     ,"xMin": "0"
                                                     ,"xMax": "0"
@@ -33,7 +34,7 @@ def glyf(glyphs):
         else:
             # make the others blank because nothing is depending on
             # them actually having glyf contours and we don't want them.
-            
+
             glyfTable.append(Element("TTGlyph", {"name": g.name}))
 
 

@@ -3,6 +3,7 @@ import json
 
 import log
 from create import createFont
+from manifest import validateManifest
 from glyphs import getGlyphs
 from format import formats
 
@@ -93,7 +94,7 @@ def export( manifestPath
     # check the image sets for each format.
     # ------------------------------------------------
 
-    log.out(f'Checking + getting glyph images...')
+    log.out(f'Getting + checking glyph images...')
     glyphs = getGlyphs(inputPathPath, delim_codepoint, glyphImageFormats, no_lig, no_vs16, nsc)
 
     log.out(f'Glyphs acquired.', 32)
@@ -103,14 +104,16 @@ def export( manifestPath
     # try to load and check the manifest.
     # ------------------------------------------------
 
-    log.out(f'Loading manifest JSON...')
+    log.out(f'Getting + Checking manifest JSON...')
     try:
         with open(manifestPath, "r") as read_file:
             manifest = json.load(read_file)
     except Exception as e:
         raise Exception('Loading the manifest file failed!' + str(e))
 
-    log.out(f'Manifest loaded.', 32)
+    validateManifest(outputFormats, manifest)
+
+    log.out(f'Manifest verified.', 32)
 
 
 

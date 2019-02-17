@@ -27,6 +27,7 @@ This is an insider tool that has been open sourced, but feature requests and col
 - Support for VS16.
 - Support for ZWJ.
 - Can be used from [orxporter](https://github.com/mutantstandard/orxporter) for seamlessly building an entire set of emoji.
+- Strict validation of codepoints and metadata, making sure you make valid and highly compatible fonts.
 
 
 ## Limitations

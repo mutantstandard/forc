@@ -65,10 +65,10 @@ def assembler(chosenFormat, m, glyphs):
     root.append(glyphOrder(glyphs))
 
     log.out('Assembling head table...', 90)
-    root.append(head(metrics, created))
+    root.append(head(m, created))
 
     log.out('Assembling OS/2 table...', 90)
-    root.append(os2(metrics, OS2VendorID))
+    root.append(os2(OS2VendorID, metrics, glyphs))
 
     log.out('Assembling post table...', 90)
     root.append(post(glyphs))

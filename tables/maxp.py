@@ -9,7 +9,7 @@ def maxp():
     maxp = Element("maxp")
 
     maxp.append(Element("tableVersion", {'value': '0x10000'})) # hard-coded
-    maxp.append(Element("numGlyphs", {'value': '5'}))
+    maxp.append(Element("numGlyphs", {'value': '0'}))
     maxp.append(Element("maxPoints", {'value': '0'}))
     maxp.append(Element("maxContours", {'value': '0'}))
     maxp.append(Element("maxCompositePoints", {'value': '0'}))
