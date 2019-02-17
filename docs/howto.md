@@ -7,23 +7,23 @@
 - Needs to contain subfolders representing the formats and/or raster strikes.
 - These subfolders need to contain the images in a flat structure.
 - The codepoints of images in these subfolders must be identical between each other.
-- PNG folder(s) should be in the format `png<strike size>`, 'strike size' being the resolution of the emoji on a low-DPI screen.
+- PNG folder(s) should be in the format `png-<strike size>`, 'strike size' being the resolution of the emoji on a low-DPI screen.
 - they should all be lowercase.
 
 ```
 in
 |- svg
 |	|-[images]
-|	
-|- png32
+|
+|- png-32
 |	|-[images]
-|	
-|- png64
+|
+|- png-64
 |	|-[images]
-|	
-|- png128
+|
+|- png-128
 	|-[images]
-          
+
 ```
 
 ### Image formats
@@ -111,4 +111,3 @@ This is just a development/research thing and will probably be removed in the fi
 This is specifically designed to mimic how Google encodes their emoji fonts.
 
 'CBDT/CBLC' is more commonly used to refer to this format, but in forc it's simplified to 'CBx' to make it easier to remember.
-

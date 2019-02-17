@@ -117,8 +117,8 @@ def cblc(metrics, glyphs):
     strikeIndex = 0
 
     for formatName, format in firstGlyphWithStrikes.imagePath.items():
-        if formatName[:3] == "png":
-            strikeRes = formatName[3:]
+        if formatName.split('-')[0] == "png":
+            strikeRes = formatName.split('-')[1]
             cblc.append(strike(metrics, str(strikeIndex), strikeRes, glyphs))
             strikeIndex += 1
 

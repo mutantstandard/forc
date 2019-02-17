@@ -17,7 +17,7 @@ DEF_OUTPUT_PATH = 'out'
 DEF_OUTPUT_FORMATS = ['SVGinOT']
 DEF_TTX_OUTPUT = False
 DEF_DEV_TTX = False
-DEF_DELIM = "-"
+DEF_DELIM_CODEPOINT = "-"
 
 DEF_NO_LIG = False
 DEF_NO_VS16 = False
@@ -31,19 +31,19 @@ USAGE: forc.py [options...]
 
 OPTIONS:
 
--h      prints this help message
+-h      Prints this help message.
 
--i      input directory (default: {DEF_INPUT_PATH})
--o      output directory (default: {DEF_OUTPUT_PATH})
--m      manifest file (default: {DEF_MANIFEST})
+-i      Input directory (default: {DEF_INPUT_PATH})
+-o      Output directory (default: {DEF_OUTPUT_PATH})
+-m      Manifest file (default: {DEF_MANIFEST})
 
 
--F      format (default: {DEF_OUTPUT_FORMATS})
+-F      Format (default: {DEF_OUTPUT_FORMATS})
 
-        formats that require SVG images:
+        Formats that require SVG images:
         - SVGinOT       (Many platforms)
 
-        formats that require PNG images:
+        Formats that require PNG images:
         - sbixTT        (macOS)
         - sbixOT
         - sbixTTiOS     (iOS)
@@ -51,23 +51,23 @@ OPTIONS:
         - CBx           (Google/Android)
 
 
--d      delimiter between ligatured codepoints
-        (default: '{DEF_DELIM}')
+-d      Delimiter between ligatured codepoints
+        (default: '{DEF_DELIM_CODEPOINT}')
 
---ttx       export an additional ttx (.ttx) file for each format.
+--ttx       Export a matching ttx (.ttx) file for each format.
 
---dev-ttx   keep the initial ttx that forc compiles before
-            passing it to fonttools.
+--dev-ttx   Keep the initial ttx that forc compiles before
+            passing it to fonttools. This is different to the above,
+            which is a full representation of the font file..
 
---no-lig    (DEVELOPMENT OPTION) strip ligatures from the output.
+--no-lig    (DEVELOPMENT OPTION) Strip ligatures from the output.
 
---no-vs16   (DEVELOPMENT OPTION) strip any presence of VS16 (U+fe0f)
+--no-vs16   (DEVELOPMENT OPTION) Strip any presence of VS16 (U+fe0f)
             from the output.
 
---nfcc      No File Consistency Checking. Stops forc from checking
-            if the images in the format subfolders are all the same.
-            Only use if you are inputting data where that guarantee
-            has already been made and you want to save time.
+--nfcc      (DEVELOPMENT OPTION) No File Consistency Checking.
+            Stops forc from checking if the images in the format
+            subfolders are all the same.
 
 
 
@@ -84,7 +84,7 @@ def main():
     output_formats = DEF_OUTPUT_FORMATS
     ttx_output = DEF_TTX_OUTPUT
     dev_ttx_output = DEF_DEV_TTX
-    delim = DEF_DELIM
+    delim_codepoint = DEF_DELIM_CODEPOINT
 
     no_lig = DEF_NO_LIG
     no_vs16 = DEF_NO_VS16
@@ -107,7 +107,7 @@ def main():
             elif opt == '-F':
                 output_formats = arg.split(',')
             elif opt =='-d':
-                delim = arg
+                delim_codepoint = arg
             elif opt =='--ttx':
                 ttx_output = True
             elif opt =='--dev-ttx':
@@ -123,7 +123,17 @@ def main():
         print(HELP)
         sys.exit(2)
     try:
-        export(manifest_path, input_path, output_path, output_formats, delim, ttx_output, dev_ttx_output, no_lig, no_vs16, nfcc)
+        export( manifest_path
+              , input_path
+              , output_path
+              , output_formats
+              , delim_codepoint
+              , ttx_output
+              , dev_ttx_output
+              , no_lig
+              , no_vs16
+              , nfcc
+              )
 
     except Exception as e:
         log.out(f'!!! {e}', 31)

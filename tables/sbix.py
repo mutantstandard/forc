@@ -73,8 +73,8 @@ def sbix(glyphs):
     # iterate over each strike.
 
     for formatName, format in firstGlyphWithStrikes.imagePath.items():
-        if formatName[:3] == "png":
-            strikeRes = formatName[3:]
+        if formatName.split('-')[0] == "png":
+            strikeRes = formatName.split('-')[1]
             sbix.append(strike(strikeRes, "72", formatName, glyphs))
 
 

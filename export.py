@@ -9,7 +9,17 @@ from format import formats
 
 
 
-def export(manifestPath, inputPath, outputPath, outputFormats, delim, ttx_output, dev_ttx_output, no_lig, no_vs16, nsc):
+def export( manifestPath
+          , inputPath
+          , outputPath
+          , outputFormats
+          , delim_codepoint
+          , ttx_output
+          , dev_ttx_output
+          , no_lig
+          , no_vs16
+          , nsc
+          ):
     """
     Performs a variety of processing and validation tasks
     related to font format, then initiates font creation once those
@@ -79,7 +89,7 @@ def export(manifestPath, inputPath, outputPath, outputFormats, delim, ttx_output
     # ------------------------------------------------
 
     log.out(f'Checking + getting glyph images...')
-    glyphs = getGlyphs(inputPathPath, delim, glyphImageFormats, no_lig, no_vs16, nsc)
+    glyphs = getGlyphs(inputPathPath, delim_codepoint, glyphImageFormats, no_lig, no_vs16, nsc)
 
     log.out(f'Glyphs acquired.', 32)
 
@@ -96,6 +106,7 @@ def export(manifestPath, inputPath, outputPath, outputFormats, delim, ttx_output
         raise Exception('Loading the manifest file failed!' + str(e))
 
     log.out(f'Manifest loaded.', 32)
+
 
 
     # assemble each font format.

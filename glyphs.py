@@ -15,7 +15,7 @@ class glyph:
         if codepoints:
             self.codepoints = codepoints
         elif imagePath:
-            self.codepoints = [int(hex, 16) for hex in imagePath.stem.split(delim)]
+            self.codepoints = [int(hex, 16) for hex in imagePath.stem.split(delim_codepoint)]
         else:
             raise ValueError(f"Tried to make glyph object '{name}' but doesn't have a codepoint AND it doesn't have an image path.")
 
@@ -66,13 +66,19 @@ def getImagesFromDir(dir, formats):
         for item in list(dir.glob("png*")):
             if not item.name[0] == '.': # if it's not a hidden file.
                 if not item.suffix: # if it's not a file.
-                    if not item.name[3:].isdigit():
-                        raise Exception(f"One of the strikes in your PNG folder ('{item.name}') doesn't have a number at the end.")
+
+                    if len(item.name.split('-')) < 2:
+                        raise Exception(f"One of your PNG strikes ('{item.name}') is not formatted properly.")
+                    else:
+                        strikeNum = item.name.split('-')[1]
+
+                    if not strikeNum.isdigit():
+                        raise Exception(f"One of your PNG strikes ('{item.name}') doesn't have a number at the end.")
                     else:
                         pngFolders[item.name] = item
 
         if not pngFolders:
-            raise Exception(f"You don't have any PNG folders.")
+            raise Exception(f"You're exporting to PNG-based font formats but you don't have any PNG subfolders in your input folder.")
 
 
 
@@ -82,7 +88,7 @@ def getImagesFromDir(dir, formats):
             pngImagePaths = list(strike.glob("*.png"))
 
             if not pngImagePaths:
-                raise Exception(f"There are no PNG images in the folder for the input subfolder {strike.name}.")
+                raise Exception(f"There are no PNG images in '{strike.name}'.")
             else:
                 glyphSet[strike.name] = pngImagePaths
 
@@ -136,7 +142,7 @@ def areGlyphImagesConsistent(glyphSet):
 
 
 
-def compileGlyphData(dir, delim, no_vs16, glyphImageSet):
+def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
 
 
     # start glyphs
@@ -169,7 +175,7 @@ def compileGlyphData(dir, delim, no_vs16, glyphImageSet):
         # filename stem is a valid hexadecimal number.
 
         try:
-            codepoints = [int(hex, 16) for hex in i.stem.split(delim)]
+            codepoints = [int(hex, 16) for hex in i.stem.split(delim_codepoint)]
 
         except ValueError as e:
             log.out(f'!!! One of your glyphs is not named as hexadecimal numbers. It is \'{i.name}\'.', 31)
@@ -183,7 +189,7 @@ def compileGlyphData(dir, delim, no_vs16, glyphImageSet):
 
         for subfolderName, subfolders in glyphImageSet.items():
 
-            filename = i.stem + "." + subfolderName[:3]
+            filename = i.stem + "." + subfolderName.split('-')[0]
             structPaths[subfolderName] = pathlib.Path(dir / subfolderName / filename ).absolute()
 
 
@@ -261,12 +267,12 @@ def areGlyphLigaturesSafe(glyphs):
 
 
 
-def getGlyphs(inputPath, delim, formats, no_lig, no_vs16, nfcc):
+def getGlyphs(inputPath, delim_codepoint, formats, no_lig, no_vs16, nfcc):
     """
     - Validates glyph image paths from the input path.
     - Returns a list of glyph objects, including important special control glyphs.
     """
-    
+
     log.out(f'Checking + getting file paths...', 90)
     glyphImageSet = getImagesFromDir(inputPath, formats)
 
@@ -277,7 +283,7 @@ def getGlyphs(inputPath, delim, formats, no_lig, no_vs16, nfcc):
 
 
     log.out(f'Compiling glyph data...', 90)
-    glyphs = compileGlyphData(inputPath, delim, no_vs16, glyphImageSet)
+    glyphs = compileGlyphData(inputPath, delim_codepoint, no_vs16, glyphImageSet)
 
 
     log.out(f'Validating glyph data...', 90)
