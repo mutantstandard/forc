@@ -3,10 +3,29 @@ from lxml.etree import Element
 
 def head(m, created):
 
+
+
+    # creating an OpenType-compliant fontRevision number based on best practices.
+    # https://silnrsi.github.io/FDBP/en-US/Versioning.html
+    # TTX doesn't accept this, but I'm still gonna keep this here for now.
+
+    headVersionComponents = m['metadata']['headVersion'].split('.')
+
+    try:
+        headVersion1 = int(headVersionComponents[0])
+        headVersion2 = int(( int(headVersionComponents[1]) / 1000 ) * 65536)
+    except:
+        raise Exception('Converting headVersion to an int failed for some reason!' + str(e))
+
+    headVersionHex = '0x{0:0{1}X}'.format(headVersion1, 4) + '{0:0{1}X}'.format(headVersion2, 4)
+
+
+
+
     head = Element("head")
 
     head.append(Element("tableVersion", {'value': '1.0'})) # hard-coded
-    head.append(Element("fontRevision", {'value': str(m['metadata']['headVersion'])}))
+    head.append(Element("fontRevision", {'value': m['metadata']['headVersion'] }))
 
     head.append(Element("checkSumAdjustment", {'value': '0'})) # TTX changes this at compilation
     head.append(Element("magicNumber", {'value': '0x5f0f3cf5'})) # hard-coded
