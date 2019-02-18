@@ -161,9 +161,7 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
 
     vs16Allowed = not no_vs16
 
-
-    glyphs.append(glyph([0x0], '.notdef', None))
-    glyphs.append(glyph([0xd], 'CR', None))
+    # only add space. do not add characters below 0x20.
     glyphs.append(glyph([0x20], 'space', None))
 
 
@@ -187,7 +185,12 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
             log.out(f'!!! One of your glyphs is not named as hexadecimal numbers. It is \'{i.name}\'.', 31)
 
 
+        for c in codepoints:
+            if c < int('20', 16):
+                raise Exception(f"A codepoint in one of your glyphs ('{i}') is below U+20. You cannot encode glyphs below this number because various typing environments get confused when you do.")
 
+            if c == int('20', 16):
+                raise Exception(f"A codepoint in one of your glyphs ('{i}') is U+20. This is space - you shouldn't be using a glyph here.")
 
         # compile a glyph file structure.
 
