@@ -100,7 +100,7 @@ def cmap(glyphs):
 
         # platform ID 3 (Microsoft)
         cmap12_3 = Element("cmap_format_12",    { "platformID": "3"
-                                                , "platEncID": "1"
+                                                , "platEncID": "10"
                                                 , "language": "0"
                                                 , "format": "12"
                                                 , "reserved": "0"

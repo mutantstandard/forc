@@ -161,8 +161,9 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
 
     vs16Allowed = not no_vs16
 
-    # only add space. do not add characters below 0x20.
+    # add both types of spaces (breaking (20) and non-breaking (A0))
     glyphs.append(glyph([0x20], 'u20', None))
+    glyphs.append(glyph([0xa0], 'ua0', None))
 
 
 

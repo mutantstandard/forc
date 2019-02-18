@@ -33,15 +33,10 @@ def hmtx(metrics, glyphs):
     hmtx = Element("hmtx")
 
     for g in glyphs:
-        if g.name is 'space':
+        if g.name in ['u20', 'ua0']:
             hmtx.append(Element("mtx",  {"name": g.name
                                         ,"width": str(metrics['spaceHLength'])
                                         ,"lsb": str(metrics['normalLSB'])
-                                        }))
-        elif g.name is 'CR':
-            hmtx.append(Element("mtx", {"name": g.name
-                                        ,"width": "0"
-                                        ,"lsb": "0"
                                         }))
         else:
             hmtx.append(Element("mtx", {"name": g.name
