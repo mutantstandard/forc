@@ -39,6 +39,9 @@ class glyph:
     def __repr__(self):
         return self.__str__()
 
+    def __lt__(self, other):
+         return self.codepoints < other.codepoints
+
 
 
 def getImagesFromDir(dir, formats):
@@ -240,6 +243,11 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
         # DO NOT CHANGE IT.
 
         glyphs.append(glyph([0x200d], 'u200d', None))
+
+
+    # sort glyphs from lowest codepoints to highest.
+    glyphs.sort()
+
 
     return glyphs
 

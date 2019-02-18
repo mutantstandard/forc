@@ -36,15 +36,9 @@ def vmtx(metrics, glyphs):
     vmtx = Element("vmtx")
 
     for g in glyphs:
-        if g.name in ['u20', 'ua0']:
-            vmtx.append(Element("mtx",  {"name": g.name
-                                        ,"height": str(metrics['spaceVLength'])
-                                        ,"tsb": str(metrics['normalTSB'])
-                                        }))
-        else:
-            vmtx.append(Element("mtx", {"name": g.name
-                                        ,"height": str(metrics['normalHeight'])
-                                        ,"tsb": str(metrics['normalTSB'])
-                                        }))
+        vmtx.append(Element("mtx", {"name": g.name
+                                    ,"height": str(metrics['normalHeight'])
+                                    ,"tsb": str(metrics['normalTSB'])
+                                    }))
 
     return vmtx
