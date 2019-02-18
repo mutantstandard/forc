@@ -9,6 +9,7 @@ from tables.os2  import os2
 from tables.post import post
 from tables.name import name
 from tables.maxp import maxp
+from tables.dsig import dsig
 
 from tables.horizontalMetrics import hhea, hmtx
 from tables.verticalMetrics import vhea, vmtx
@@ -78,6 +79,9 @@ def assembler(chosenFormat, m, glyphs):
 
     log.out('Making placeholder loca table...', 90)
     root.append(Element("loca")) # just to please macOS, it's supposed to be empty.
+
+    log.out('Making placeholder DSIG table...', 90)
+    root.append(dsig())
 
 
 

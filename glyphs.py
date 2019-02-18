@@ -162,7 +162,7 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
     vs16Allowed = not no_vs16
 
     # only add space. do not add characters below 0x20.
-    glyphs.append(glyph([0x20], 'space', None))
+    glyphs.append(glyph([0x20], 'u20', None))
 
 
 
@@ -227,7 +227,7 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
     # processed codepoint chains contains U+fe0f.
 
     if vs16Presence:
-        glyphs.append(glyph([0xfe0f], 'VS16', None))
+        glyphs.append(glyph([0xfe0f], 'ufe0f', None))
 
     # Add ZWJ to the glyphs if one of the
     # processed codepoint chains contains U+200d.

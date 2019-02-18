@@ -93,7 +93,7 @@ def os2(OS2VendorID, metrics, glyphs):
     os2.append(Element("usLastCharIndex", {'value': usLastCharIndex}))
 
     os2.append(Element("sTypoAscender", {'value': str(metrics['yMax']) }))
-    os2.append(Element("sTypoDescender", {'value': str(metrics['OS2WeirdDescent']) }))
+    os2.append(Element("sTypoDescender", {'value': str(metrics['yMin']) }))                     # this should be this way based on validators and best practices.
     os2.append(Element("sTypoLineGap", {'value': "0" }))                                        # hard-coded based on best practices
     os2.append(Element("usWinAscent", {'value': str(metrics['yMax']) }))
     os2.append(Element("usWinDescent", {'value': str(metrics['OS2WeirdDescent']) }))
