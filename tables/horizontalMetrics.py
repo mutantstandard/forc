@@ -7,7 +7,7 @@ def hhea(metrics):
 
     hhea.append(Element("ascent", {'value': str(metrics['yMax']) }))
     hhea.append(Element("descent", {'value': str(metrics['yMin']) }))
-    hhea.append(Element("lineGap", {'value': str(metrics['lineGap']) }))
+    hhea.append(Element("lineGap", {'value': "0" })) # hard-coded based on best practices
 
     hhea.append(Element("advanceWidthMax", {'value': '2048'}))
     hhea.append(Element("minLeftSideBearing", {'value': '0'}))

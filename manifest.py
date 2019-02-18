@@ -31,7 +31,6 @@ def validateMetadata(outputFormats, metadata):
         if not metadata['headVersion']:
             raise ValueError(f"You don't have a headVersion in your manifest!")
 
-
         try:
             float(metadata['headVersion'])
         except ValueError:

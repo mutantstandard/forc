@@ -8,7 +8,7 @@ def vhea(metrics):
 
     vhea.append(Element("ascent", {'value': str(metrics['xMax']) }))
     vhea.append(Element("descent", {'value': str(metrics['xMin']) }))
-    vhea.append(Element("lineGap", {'value': str(metrics['lineGap']) }))
+    vhea.append(Element("lineGap", {'value': "0" })) # hard-coded based on best practices
 
     vhea.append(Element("advanceHeightMax", {'value': str(metrics['yMax']) }))
     vhea.append(Element("minTopSideBearing", {'value': str(metrics['xMin']) }))
