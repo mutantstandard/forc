@@ -39,8 +39,14 @@ class glyph:
     def __repr__(self):
         return self.__str__()
 
+
     def __lt__(self, other):
-         return self.codepoints < other.codepoints
+        if len(self.codepoints) < len(other.codepoints):
+            return True
+        elif len(self.codepoints) == len(other.codepoints):
+            return self.codepoints < other.codepoints
+        return False
+
 
 
 
@@ -253,7 +259,7 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
     #
     # IF CERTAIN LOW-NUMBER CHARACTERS HAVE GLYPHIDS OUR OF THEIR
     # PARTICULAR HEXADECIMAL RANGES, IT WONT COMPILE.
-    
+
     glyphs.sort()
 
 

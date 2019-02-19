@@ -37,6 +37,8 @@ def export( manifestPath
 
 
 
+
+
     # deal with input/output/manifest directories
     # ------------------------------------------------
 
@@ -89,6 +91,9 @@ def export( manifestPath
     log.out(f'Output format(s) verified.', 32)
 
 
+
+
+
     # try to load and check the manifest.
     # ------------------------------------------------
 
@@ -102,6 +107,9 @@ def export( manifestPath
     validateManifest(outputFormats, manifest)
 
     log.out(f'Manifest verified.', 32)
+
+
+
 
 
 

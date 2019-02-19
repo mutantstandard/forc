@@ -34,7 +34,7 @@ def gpos():
 
 
     # FeatureList
-    # all of the way this is is hardcoded for a reason.
+    # no features
 
     gpos.append(fromstring("""
         <FeatureList>
@@ -42,7 +42,7 @@ def gpos():
     """))
 
     # LookupList
-    # all of the way this is is hardcoded for a reason.
+    # no lookups
 
     gpos.append(fromstring("""
         <LookupList>
