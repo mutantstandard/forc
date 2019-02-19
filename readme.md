@@ -1,12 +1,14 @@
 # forc
 
-Forc (a terrible portmanteau of font and orc) is an emoji font compiler, taking in folders of codepoint-named images and a manifest file and returning fonts that are compatible with a variety of platforms.
+Forc (a terrible portmanteau of font and orc) is an emoji font compiler, taking in folders of codepoint-named images and a manifest file and returning highly-compatible emoji fonts that can work in a wide variety of platforms.
 
-This can either be used by itself or (eventually) from orxporter as part of an emoji build.
+This software can either be used by itself or (eventually) from orxporter as part of an emoji build.
 
 ## Disclaimer
 
-This is an insider tool that has been open sourced, but feature requests and collaboration are welcome to make it more useful for other people. Any collaborators must follow [Mutant Standard's code of conduct](code_of_conduct.md).
+This is an insider tool that has been open sourced, some effort has been made to make it friendly to use for other people, but maybe not enough.
+
+Feature requests and collaboration are welcome. Any collaborators must follow [Mutant Standard's code of conduct](code_of_conduct.md).
 
 ## Features
 

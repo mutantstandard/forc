@@ -10,7 +10,13 @@ def os2(OS2VendorID, metrics, glyphs):
     singleCodepoints = []
     twoByte = []
 
+    # one of the only bits in ulUnicodeRange that's really necessary to set.
+    supplementaryPlane = False
+
     for g in glyphs:
+        if g.codepoints[0] >= int('0x10000', 16) and g.codepoints[0] <= int('0x10ffff', 16):
+            supplementaryPlane = True
+
         if len(g.codepoints) == 1:
             singleCodepoints.append(g.codepoints[0])
 
@@ -21,6 +27,9 @@ def os2(OS2VendorID, metrics, glyphs):
     # ttx actually cannibalises this, but screw it, I'll do it anyway.
     usFirstCharIndex = str(hex(min(twoByte)))
     usLastCharIndex = str(hex(max(twoByte)))
+
+
+
 
 
 
@@ -81,7 +90,7 @@ def os2(OS2VendorID, metrics, glyphs):
 
 
     os2.append(Element("ulUnicodeRange1", {'value': '00000000 00000000 00000000 00000000'}))
-    os2.append(Element("ulUnicodeRange2", {'value': '00000000 00000000 00000000 00000000'}))
+    os2.append(Element("ulUnicodeRange2", {'value': '000000'+ str(int(supplementaryPlane)) + '0 00000000 00000000 00000000'})) #it's Big-endian
     os2.append(Element("ulUnicodeRange3", {'value': '00000000 00000000 00000000 00000000'}))
     os2.append(Element("ulUnicodeRange4", {'value': '00000000 00000000 00000000 00000000'}))
 
