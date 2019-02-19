@@ -245,7 +245,15 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
         glyphs.append(glyph([0x200d], 'u200d', None))
 
 
+
+
     # sort glyphs from lowest codepoints to highest.
+    #
+    # THIS IS REALLY IMPORTANT BECAUSE IT DETERMINES THE GLYPHID
+    #
+    # IF CERTAIN LOW-NUMBER CHARACTERS HAVE GLYPHIDS OUR OF THEIR
+    # PARTICULAR HEXADECIMAL RANGES, IT WONT COMPILE.
+    
     glyphs.sort()
 
 

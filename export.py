@@ -89,18 +89,6 @@ def export( manifestPath
     log.out(f'Output format(s) verified.', 32)
 
 
-
-
-    # check the image sets for each format.
-    # ------------------------------------------------
-
-    log.out(f'Getting + checking glyph images...')
-    glyphs = getGlyphs(inputPathPath, delim_codepoint, glyphImageFormats, no_lig, no_vs16, nsc)
-
-    log.out(f'Glyphs acquired.', 32)
-
-
-
     # try to load and check the manifest.
     # ------------------------------------------------
 
@@ -114,6 +102,19 @@ def export( manifestPath
     validateManifest(outputFormats, manifest)
 
     log.out(f'Manifest verified.', 32)
+
+
+
+    # check the image sets for each format.
+    # ------------------------------------------------
+
+    log.out(f'Getting + checking glyph images...')
+    glyphs = getGlyphs(inputPathPath, delim_codepoint, glyphImageFormats, no_lig, no_vs16, nsc)
+
+    log.out(f'Glyphs acquired.', 32)
+
+
+
 
 
 
