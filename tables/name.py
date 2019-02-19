@@ -38,6 +38,7 @@ def name(format, macLangID, msftLangID, nameRecords):
         record.text = value
         name.append(record)
 
+
     # macintosh
     for id, value in compiledNameRecords.items():
         record = Element("namerecord",  { "nameID" : id
@@ -48,6 +49,7 @@ def name(format, macLangID, msftLangID, nameRecords):
         record.text = value
         name.append(record)
 
+
     # microsoft
     for id, value in compiledNameRecords.items():
         record = Element("namerecord",  { "nameID" : id
@@ -57,5 +59,24 @@ def name(format, macLangID, msftLangID, nameRecords):
                                         })
         record.text = value
         name.append(record)
+
+
+
+    # if the Microsoft Language ID is not American English (0x409),
+    # make an additional entry with the PostScript name for American English.
+    #
+    # (this makes Microsoft's font validator happy)
+
+
+
+    if int(msftLangID, 16) != int('0x0409', 16):
+        americanMsftPostScript = Element("namerecord", { "nameID" : "6"
+                                          , "platformID" : "3"
+                                          , "platEncID" : "1"
+                                          , "langID" : "0x0409"
+                                          })
+        americanMsftPostScript.text = compiledNameRecords["6"]
+        name.append(americanMsftPostScript)
+
 
     return name

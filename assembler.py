@@ -129,11 +129,11 @@ def assembler(chosenFormat, m, glyphs):
     if ligatures:
 
         if formats[chosenFormat]["ligatureFormat"] == "OpenType":
-            log.out ('Assembling GDEF table...', 90)
-            root.append(gdef(glyphs))
+            #log.out ('Assembling GDEF table...', 90)
+            #root.append(gdef(glyphs))
 
-            log.out ('Assembling GPOS table...', 90)
-            root.append(gpos())
+            #log.out ('Assembling GPOS table...', 90)
+            #root.append(gpos())
 
             log.out('Assembling GSUB table...', 90)
             root.append(gsub(glyphs))
