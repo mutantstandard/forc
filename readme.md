@@ -37,11 +37,6 @@ Feature requests and collaboration are welcome. Any collaborators must follow [M
 forc is still in development and is not ready for use. Various exports will only either work in limited contexts, with certain kinds of inputs or will not be complete, valid fonts.
 
 
-## Planned Limitations
-
-Black and white fallbacks will not be produced. forc just inserts dummy and empty `glyf` data to please font validation processes. forc expects that you only want to compile and see colour emoji data. forc font exports can only be seen in computing environments that support colour glyphs.
-
-
 ## Dependencies
 
 - Python 3.6+

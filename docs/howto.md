@@ -1,5 +1,20 @@
 # how to use forc
 
+## Limitations
+
+#### Square glyphs only
+
+forc produces monospaced fonts with a square aspect ratio only.
+
+#### Colour glyphs only
+
+forc expects that you only want to compile and see colour emoji data.
+
+Black and white fallback glyphs in `glyf`/`CFF`-style data will not be produced. forc just inserts dummy and empty `glyf` data to please font validation processes.
+
+If a text rendering environment doesn't support colour glyphs, the font will be invisible.
+
+
 ## Input directory path
 
 ### Folder structure

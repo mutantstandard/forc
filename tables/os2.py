@@ -10,7 +10,7 @@ def os2(OS2VendorID, metrics, glyphs):
     singleCodepoints = []
     twoByte = []
 
-    # one of the only bits in ulUnicodeRange that's really necessary to set.
+    # the only bit in ulUnicodeRange that's *really* necessary to set.
     supplementaryPlane = False
 
     for g in glyphs:

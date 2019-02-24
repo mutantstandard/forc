@@ -3,6 +3,19 @@ from lxml.etree import Element
 
 
 def strike(metrics, strikeIndex, strikeRes, subfolder, glyphs):
+
+    height =          round( (metrics['height'] / metrics['unitsPerEm']) * 128 )
+    width =           round( (metrics['width'] / metrics['unitsPerEm']) * 128 )
+
+    horiBearingX =    round( (metrics['xMin'] / metrics['unitsPerEm']) * 128 )
+    horiBearingY =    round( (metrics['yMin'] / metrics['unitsPerEm']) * 128 )
+    horiAdvance =     width
+
+    vertBearingX =    round( (metrics['xMin'] / metrics['unitsPerEm']) * 128 )
+    vertBearingY =    round( (metrics['yMin'] / metrics['unitsPerEm']) * 128 )
+    vertAdvance =     height
+
+
     # start of strikes
     # (which we're fudging right now)
     # ------------------------------------------------------------
@@ -12,16 +25,21 @@ def strike(metrics, strikeIndex, strikeRes, subfolder, glyphs):
 
         # you only put them in if there's an actual image
         if g.imagePath:
-            bitmapTable = Element("cbdt_bitmap_format_17", {"name": g.name})
 
-            smallGlyphMetrics = Element("SmallGlyphMetrics")
-            smallGlyphMetrics.append(Element("height", {"value": "0"}))
-            smallGlyphMetrics.append(Element("width", {"value": "0"}))
-            smallGlyphMetrics.append(Element("BearingX", {"value": "0"}))
-            smallGlyphMetrics.append(Element("BearingY", {"value": "0"}))
-            smallGlyphMetrics.append(Element("Advance", {"value": "0"}))
+            # format 18 for big metrics and PNG data.
+            bitmapTable = Element("cbdt_bitmap_format_18", {"name": g.name})
 
-            bitmapTable.append(smallGlyphMetrics)
+            glyphMetrics = Element("BigGlyphMetrics")
+            glyphMetrics.append(Element("height",          {"value": str(height) }))
+            glyphMetrics.append(Element("width",           {"value": str(width) }))
+            glyphMetrics.append(Element("horiBearingX",    {"value": str(horiBearingX) }))
+            glyphMetrics.append(Element("horiBearingY",    {"value": str(horiBearingY) }))
+            glyphMetrics.append(Element("horiAdvance",     {"value": str(horiAdvance) }))
+            glyphMetrics.append(Element("vertBearingX",    {"value": str(vertBearingX) }))
+            glyphMetrics.append(Element("vertBearingY",    {"value": str(vertBearingY) }))
+            glyphMetrics.append(Element("vertAdvance",     {"value": str(vertAdvance) }))
+
+            bitmapTable.append(glyphMetrics)
 
 
             rawImageData = Element("rawimagedata")

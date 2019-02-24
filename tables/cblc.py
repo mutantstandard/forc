@@ -3,9 +3,25 @@ from lxml.etree import Element
 
 
 def strike(metrics, strikeIndex, ppem, glyphs):
-        # start of strikes
-        # (which we're fudging right now)
-        # ------------------------------------------------------------
+
+
+
+
+        # metrics in CBLC/EBLC tables are done as 8-bit integers (which are signed, apart from widthMax).
+        # the key to handling CBLC/EBLC metrics is to make the numbers small and proportional enough to fit into this.
+
+
+
+        horiAscender =  round( (metrics['yMax'] / metrics['unitsPerEm']) * 128 )
+        horiDescender = round( (metrics['yMin'] / metrics['unitsPerEm']) * 128 )
+        horiWidthMax =  round( (metrics['width'] / metrics['unitsPerEm']) * 128 )
+
+        vertAscender = horiAscender
+        vertDescender = horiDescender
+        vertWidthMax = horiWidthMax
+
+
+
         strike = Element("strike", {"index": strikeIndex})
 
 
@@ -15,14 +31,19 @@ def strike(metrics, strikeIndex, ppem, glyphs):
 
         bSizeTable = Element("bitmapSizeTable")
 
-        horizontalMetrics = Element("sbitLineMetrics", {"direction": "hori"})
-        horizontalMetrics.append(Element("ascender", {"value": "0"}))
-        horizontalMetrics.append(Element("descender", {"value": "0"}))
-        horizontalMetrics.append(Element("widthMax", {"value": "0" }))
 
-        horizontalMetrics.append(Element("caretSlopeNumerator", {"value": "0"}))
-        horizontalMetrics.append(Element("caretSlopeDenominator", {"value": "0"}))
-        horizontalMetrics.append(Element("caretOffset", {"value": "0"}))
+
+        # horizontal metrics
+
+        horizontalMetrics = Element("sbitLineMetrics", {"direction": "hori"})
+
+        horizontalMetrics.append(Element("ascender", {"value": str(horiAscender) }))
+        horizontalMetrics.append(Element("descender", {"value": str(horiDescender) }))
+        horizontalMetrics.append(Element("widthMax", {"value": str(horiWidthMax) }))
+
+        horizontalMetrics.append(Element("caretSlopeNumerator", {"value": "0"}))    # hard-coded
+        horizontalMetrics.append(Element("caretSlopeDenominator", {"value": "0"}))  # hard-coded
+        horizontalMetrics.append(Element("caretOffset", {"value": "0"}))            # hard-coded
 
         horizontalMetrics.append(Element("minOriginSB", {"value": "0"}))
         horizontalMetrics.append(Element("minAdvanceSB", {"value": "0" }))
@@ -34,14 +55,21 @@ def strike(metrics, strikeIndex, ppem, glyphs):
 
         bSizeTable.append(horizontalMetrics)
 
-        verticalMetrics = Element("sbitLineMetrics", {"direction": "vert"})
-        verticalMetrics.append(Element("ascender", {"value": "0"}))
-        verticalMetrics.append(Element("descender", {"value": "0"}))
-        verticalMetrics.append(Element("widthMax", {"value": "0" }))
 
-        verticalMetrics.append(Element("caretSlopeNumerator", {"value": "0"}))
-        verticalMetrics.append(Element("caretSlopeDenominator", {"value": "0"}))
-        verticalMetrics.append(Element("caretOffset", {"value": "0"}))
+
+
+
+        # vertical metrics
+
+        verticalMetrics = Element("sbitLineMetrics", {"direction": "vert"})
+
+        verticalMetrics.append(Element("ascender", {"value": str(vertAscender) }))
+        verticalMetrics.append(Element("descender", {"value": str(vertDescender) }))
+        verticalMetrics.append(Element("widthMax", {"value": str(vertWidthMax) }))
+
+        verticalMetrics.append(Element("caretSlopeNumerator", {"value": "0"}))      # hard-coded
+        verticalMetrics.append(Element("caretSlopeDenominator", {"value": "0"}))    # hard-coded
+        verticalMetrics.append(Element("caretOffset", {"value": "0"}))              # hard-coded
 
         verticalMetrics.append(Element("minOriginSB", {"value": "0"}))
         verticalMetrics.append(Element("minAdvanceSB", {"value": "0" }))
@@ -53,13 +81,18 @@ def strike(metrics, strikeIndex, ppem, glyphs):
 
         bSizeTable.append(verticalMetrics)
 
+
+
+
+        # other stuff
+
         bSizeTable.append(Element("colorRef", {"value": "0"}))
 
         bSizeTable.append(Element("startGlyphIndex", {"value": "0"}))
         bSizeTable.append(Element("endGlyphIndex", {"value": "0"}))
 
-        bSizeTable.append(Element("ppemX", {"value": "128"}))
-        bSizeTable.append(Element("ppemY", {"value": "128"}))
+        bSizeTable.append(Element("ppemX", {"value": str(ppem) }))
+        bSizeTable.append(Element("ppemY", {"value": str(ppem) }))
 
         bSizeTable.append(Element("bitDepth", {"value": "32"}))
         bSizeTable.append(Element("flags", {"value": "1"}))
@@ -67,6 +100,10 @@ def strike(metrics, strikeIndex, ppem, glyphs):
         strike.append(bSizeTable)
 
         eblcSub = Element("eblc_index_sub_table_1", {"imageFormat": "17"})
+
+
+
+
 
         # EBLC index subtable
         # --------------------------------
