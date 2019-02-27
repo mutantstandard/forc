@@ -47,6 +47,8 @@ class glyph:
             return self.codepoints < other.codepoints
         return False
 
+    def __len__(self):
+        return len(self.codepoints)
 
 
 

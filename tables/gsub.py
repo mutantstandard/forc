@@ -54,7 +54,7 @@ def gsub(glyphs):
     gsub.append(fromstring("""
         <FeatureList>
           <FeatureRecord index="0">
-            <FeatureTag value="ccmp"/>
+            <FeatureTag value="liga"/>
             <Feature>
                 <LookupListIndex index="0" value="0"/>
             </Feature>
@@ -87,8 +87,15 @@ def gsub(glyphs):
                 ligatureList[singleGlyphName(g)] = []
                 ligatureList[singleGlyphName(g)].append(g)
 
+
+
     # generating ligature XML
     for id, ligatureSet in ligatureList.items():
+
+        # Ligature subtables MUST be ordered from the longest lists to the shortest.
+        # Otherwise, the text client probably won't find them.
+        ligatureSet.sort(key=len, reverse=True)
+
         ligatureSetXML = Element("LigatureSet", {"glyph": id})
 
         for g in ligatureSet:

@@ -44,7 +44,7 @@ def head(m, created):
     head.append(Element("macStyle", {'value': '00000000 00000000'})) # hard-coded. Must agree with os2's fsType.
     head.append(Element("lowestRecPPEM", {'value': str(m['metrics']['lowestRecPPEM']) }))
 
-    head.append(Element("fontDirectionHint", {'value': '2'})) # hard-coded
+    head.append(Element("fontDirectionHint", {'value': '2'})) # depreciated, hard-coded
     head.append(Element("indexToLocFormat", {'value': '0'})) # not important, hard-coded
     head.append(Element("glyphDataFormat", {'value': '0'})) # not important, hard-coded
 
