@@ -63,7 +63,7 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
 
 
     # save TTX
-    log.out(f'Saving initial TTX to file...')
+    log.out(f"Saving forc's assembled (initial) TTX to file...")
     originalTTXPath = outputAbsolute / (f"{fontFormat}_initial.ttx")
     writeFile(originalTTXPath, originalTTX, 'Could not write initial TTX to file')
     log.out(f'Initial TTX saved.', 32)
@@ -78,13 +78,13 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
 
     # --dev-ttx flag
     if not dev_ttx_output:
-        log.out(f'Deleting initial TTX...')
+        log.out(f'Deleting the initial TTX...')
         originalTTXPath.unlink() #delete
 
 
     # -ttx flag
     if ttx_output:
-        log.out(f'Compiling finished TTX..')
+        log.out(f'Compiling a finished TTX from the font file..')
         afterExportTTX = outputAbsolute / (f"{fontFormat}_finished.ttx")
         compileTTX(outputFontPath, afterExportTTX)
 

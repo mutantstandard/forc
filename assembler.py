@@ -123,7 +123,7 @@ def assembler(chosenFormat, m, glyphs):
 
     # check for presence of ligatures
     for g in glyphs:
-        if len(g.codepoints) > 1:
+        if len(g) > 1:
             ligatures = True
 
     if ligatures:

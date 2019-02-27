@@ -1,21 +1,6 @@
 import lxml.etree as etree
+import lxml.builder as builder
 from io import BytesIO
-
-
-
-
-def strip_ns_prefix(tree):
-    #xpath query for selecting all element nodes in namespace
-    query = "descendant-or-self::*[namespace-uri()!='']"
-    #for each element returned by the above xpath query...
-    for element in tree.xpath(query):
-        #replace element name with its local name
-        element.tag = etree.QName(element).localname
-
-    etree.cleanup_namespaces(tree)
-
-    return tree
-
 
 
 
@@ -49,7 +34,7 @@ def viewboxCompensate(metrics, svgTree, ID):
     viewBoxWidth = svgImage.attrib['viewBox'].split(' ')[2] # get the 3rd viewBox number (width)
 
     xPos = str(metrics['xMin'])
-    yPos = str(-(metrics['yMax'])) # negate and make into a string
+    yPos = str(-(metrics['yMax'])) # negate
     scale = metrics['unitsPerEm'] / int(viewBoxWidth) # determine the scale for the glyph based on UPEM.
 
 
@@ -65,9 +50,12 @@ def viewboxCompensate(metrics, svgTree, ID):
 
     # make a new SVG tag without the viewbox and append the transform group to it.
     # ---------------------------------------------------------------------------
-    svgcdata = etree.Element(svgImage.tag, svgImage.attrib)
+    nsmap = { None: "http://www.w3.org/2000/svg"
+            , "xlink" : "http://www.w3.org/1999/xlink"
+            }
+    svgcdata = etree.Element(svgImage.tag, svgImage.attrib, nsmap = nsmap)
     svgcdata.attrib.pop("viewBox")
-    etree.cleanup_namespaces(svgcdata)
+    svgcdata.attrib["version"] = "1.1"
     svgcdata.append(transformGroup)
 
 
@@ -75,7 +63,6 @@ def viewboxCompensate(metrics, svgTree, ID):
     # because lxml has a thing for annoying namespaces, you've gotta strip those out
     # ---------------------------------------------------------------------------
     svgcdatatree = svgcdata.getroottree()
-    strip_ns_prefix(svgcdatatree)
 
 
     return svgcdatatree
@@ -84,16 +71,14 @@ def viewboxCompensate(metrics, svgTree, ID):
 
 
 
-def svgAttrNormalisation(svgTree, ID):
+def addGlyphID(svgTree, ID):
     """
-    Adds necessary attributes to the SVG XML for the SVG to render in text clients.
+    Adds the glyph ID to the SVG.
     """
     svg = svgTree.getroot()
 
-    svg.attrib["id"] = f"glyph{ID}"
-    svg.attrib["xmlns"] = "http://www.w3.org/2000/svg"
-    svg.attrib["xlink"] = "http://www.w3.org/1999/xlink"
 
+    svg.attrib["id"] = f"glyph{ID}"
     newSVGTree = svg.getroottree()
 
     return newSVGTree
@@ -161,8 +146,8 @@ def svg(metrics, glyphs):
                     if svgImage.find('//*' + NAMESPACE + elem) is not None:
                         log.out(f"SVG image {g.imagePath} has a {elem} element. Compatibility with this is not mandatory.", 31)
 
-                #if svgImage.find(f"//*[@style]") is not None:
-                    #stripStyles(svgImage)
+                if svgImage.find(f"//*[@style]") is not None:
+                    stripStyles(svgImage)
                     #raise Exception(f"SVG image {g.imagePath} has a 'style' attribute. These are not compatible in SVGinOT fonts.")
 
 
@@ -176,10 +161,10 @@ def svg(metrics, glyphs):
                 # -------------------------------------------------------------------------------------
                 if svgImage.find(".[@viewBox]") is not None:
                     compensated = viewboxCompensate(metrics, svgImage, ID)
-                    finishedSVG = svgAttrNormalisation(compensated, ID)
+                    finishedSVG = addGlyphID(compensated, ID)
 
                 else:
-                    finishedSVG = svgAttrNormalisation(svgImage, ID)
+                    finishedSVG = addGlyphID(svgImage, ID)
 
 
                 cdata = etree.CDATA(etree.tostring(finishedSVG, method="xml", pretty_print=False, xml_declaration=True, encoding="UTF-8"))
