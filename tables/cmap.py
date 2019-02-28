@@ -2,6 +2,19 @@ from lxml.etree import Element
 
 
 
+def makeGlyphSubtable(tag, attrs, glyphs):
+    subtable = Element(tag, attrs)
+
+    for g in glyphs:
+        subtable.append(Element("map", {"code": hex(g.codepoints[0]), "name": g.name}))
+
+    return subtable
+
+
+
+
+
+
 def cmap(glyphs):
     cmap = Element("cmap")
     cmap.append(Element("tableVersion", {"version": "0"}))
@@ -18,7 +31,7 @@ def cmap(glyphs):
         if g.vs16:
             vs16Presence = True
 
-        if len(g.codepoints) == 1:
+        if len(g) == 1:
             if g.codepoints[0] < int('ff', 16):
                 oneByte.append(g)
             if g.codepoints[0] < int('ffff', 16):
@@ -32,15 +45,13 @@ def cmap(glyphs):
     # ---------------------------------------------------------
 
     if oneByte:
-        cmap0 = Element("cmap_format_0",    { "platformID": "1"
+        cmap.append(makeGlyphSubtable(  "cmap_format_0",
+                                            { "platformID": "1"
                                             , "platEncID": "0"
                                             , "language": "0"
-                                            })
-
-        for g in oneByte:
-            cmap0.append(Element("map", {"code": hex(g.codepoints[0]), "name": g.name}))
-
-        cmap.append(cmap0)
+                                            }
+                                        , oneByte
+                                        ))
 
 
 
@@ -51,27 +62,27 @@ def cmap(glyphs):
     if twoByte:
 
         # platform ID 0 (Unicode)
-        cmap4_0 = Element("cmap_format_4",    { "platformID": "0"
-                                                , "platEncID": "3"
-                                                , "language": "0"
-                                                })
-        for g in twoByte:
-            cmap4_0.append(Element("map", {"code": hex(g.codepoints[0]), "name": g.name}))
-
-        cmap.append(cmap4_0)
+        cmap.append(makeGlyphSubtable(  "cmap_format_4",
+                                            { "platformID": "0"
+                                            , "platEncID": "3"
+                                            , "language": "0"
+                                            }
+                                        , twoByte
+                                        ))
 
 
 
         # platform ID 3 (Microsoft)
-        cmap4_3 = Element("cmap_format_4",    { "platformID": "3"
-                                                , "platEncID": "1"
-                                                , "language": "0"
-                                                })
-        for g in twoByte:
-            cmap4_3.append(Element("map", {"code": hex(g.codepoints[0]), "name": g.name}))
 
-        cmap.append(cmap4_3)
-
+        # platEncID should be 1. This is what is required to make
+        # this particular cmap subtable format work.
+        cmap.append(makeGlyphSubtable(  "cmap_format_4",
+                                            { "platformID": "3"
+                                            , "platEncID": "1" #necessary
+                                            , "language": "0"
+                                            }
+                                        , twoByte
+                                        ))
 
 
 
@@ -83,36 +94,34 @@ def cmap(glyphs):
     if fourByte:
 
         # platform ID 0 (Unicode)
-        cmap12_1 = Element("cmap_format_12",    { "platformID": "0"
-                                                , "platEncID": "10"
-                                                , "language": "0"
-                                                , "format": "12"
-                                                , "reserved": "0"
-                                                , "length": "0"
-                                                , "nGroups": "0"
-                                                })
-        for g in fourByte:
-            cmap12_1.append(Element("map", {"code": hex(g.codepoints[0]), "name": g.name}))
-
-        cmap.append(cmap12_1)
-
+        cmap.append(makeGlyphSubtable(  "cmap_format_12",
+                                            { "platformID": "0"
+                                            , "platEncID": "10"
+                                            , "language": "0"
+                                            , "format": "12"
+                                            , "reserved": "0"
+                                            , "length": "0"
+                                            , "nGroups": "0"
+                                            }
+                                        , fourByte
+                                        ))
 
 
         # platform ID 3 (Microsoft)
-        cmap12_3 = Element("cmap_format_12",    { "platformID": "3"
-                                                , "platEncID": "10"
-                                                , "language": "0"
-                                                , "format": "12"
-                                                , "reserved": "0"
-                                                , "length": "0"
-                                                , "nGroups": "0"
-                                                })
 
-        for g in fourByte:
-            cmap12_3.append(Element("map", {"code": hex(g.codepoints[0]), "name": g.name}))
-
-        cmap.append(cmap12_3)
-
+        # platEncID should be 10. This is what is required to make
+        # this particular cmap subtable format work.
+        cmap.append(makeGlyphSubtable(  "cmap_format_12",
+                                            { "platformID": "3"
+                                            , "platEncID": "10" #necessary
+                                            , "language": "0"
+                                            , "format": "12"
+                                            , "reserved": "0"
+                                            , "length": "0"
+                                            , "nGroups": "0"
+                                            }
+                                        , fourByte
+                                        ))
 
 
 
