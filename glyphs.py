@@ -204,6 +204,10 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
             if c == int('20', 16):
                 raise Exception(f"A codepoint in one of your glyphs ('{i}') is U+20. This is space - you shouldn't be using a glyph here.")
 
+            if c > int('10FFFF', 16):
+                raise Exception(f"A codepoint in one of your glyphs ('{i}') is above U+10FFFF. The Unicode Standard currently does not support codepoints above this number.")
+
+
         # compile a glyph file structure.
 
         structPaths = dict()
