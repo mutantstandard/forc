@@ -12,9 +12,10 @@ def stripStyles(svgImage):
         styleListPre = styleString.split(";")
 
         for style in styleListPre:
-            splitStyle = style.split(":")
+            if style: # if it's not blank because splits can generate blank ends if there's only one style.
+                splitStyle = style.split(":")
 
-            e.attrib[splitStyle[0]] = splitStyle[1]
+                e.attrib[splitStyle[0]] = splitStyle[1]
 
         e.attrib.pop("style")
 

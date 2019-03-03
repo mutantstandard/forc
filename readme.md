@@ -24,7 +24,7 @@ Feature requests and collaboration are welcome. Any collaborators must follow [M
 
 **Other features:**
 
-- Arbitrary Unicode codepoints - you can use whatever codepoints you want, including PUA.
+- Full range of unicode codepoints supported, including the SPUA planes.
 - Support for ligatures.
 - Support for VS16.
 - Support for ZWJ.
