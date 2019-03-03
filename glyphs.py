@@ -202,7 +202,10 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
                 raise Exception(f"A codepoint in one of your glyphs ('{i}') is below U+20. You cannot encode glyphs below this number because various typing environments get confused when you do.")
 
             if c == int('20', 16):
-                raise Exception(f"A codepoint in one of your glyphs ('{i}') is U+20. This is space - you shouldn't be using a glyph here.")
+                raise Exception(f"A codepoint in one of your glyphs ('{i}') is U+20. This is space - you shouldn't be using a glyph for this.")
+
+            if c == int('a0', 16):
+                raise Exception(f"A codepoint in one of your glyphs ('{i}') is U+A0. This is a space character - you shouldn't be using a glyph for this.")
 
             if c > int('10FFFF', 16):
                 raise Exception(f"A codepoint in one of your glyphs ('{i}') is above U+10FFFF. The Unicode Standard currently does not support codepoints above this number.")
