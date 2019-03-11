@@ -97,8 +97,6 @@ def svg(metrics, glyphs):
 
     svgTable = etree.Element("SVG")
 
-    NAMESPACE = '{http://www.w3.org/2000/svg}'
-
     for ID, g in enumerate(glyphs):
         if g.imagePath:
             if g.imagePath['svg']:
@@ -116,36 +114,6 @@ def svg(metrics, glyphs):
 
                 cdata = etree.CDATA("")
 
-
-                # Throw an error if any of these elements are present.
-                # -------------------------------------------------------------------------------------
-
-                restrictedElements = [ 'text'
-                                     , 'font'
-                                     , 'foreignObject'
-                                     , 'switch'
-                                     , 'script'
-                                     , 'a'
-                                     , 'view'
-                                     ]
-
-                notRequiredElements = [ 'filter'
-                                      , 'pattern'
-                                      , 'mask'
-                                      , 'marker'
-                                      , 'symbol'
-                                      , 'style'
-                                      , 'cursor'
-                                      ]
-
-
-                for elem in restrictedElements:
-                    if svgImage.find('//*' + NAMESPACE + elem) is not None:
-                        raise Exception(f"SVG image {g.imagePath} has a {elem} element. These are not compatible in SVGinOT fonts.")
-
-                for elem in notRequiredElements:
-                    if svgImage.find('//*' + NAMESPACE + elem) is not None:
-                        log.out(f"SVG image {g.imagePath} has a {elem} element. Compatibility with this is not mandatory.", 31)
 
                 if svgImage.find(f"//*[@style]") is not None:
                     stripStyles(svgImage)

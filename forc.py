@@ -139,7 +139,7 @@ def main():
         log.out(f'!!! {e}', 31)
         raise e  ######################## TEMP
         sys.exit(1)
-    log.out('All done', 35)
+    log.out('All done!', 35)
 
 if __name__ == '__main__':
     main()

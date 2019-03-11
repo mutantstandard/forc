@@ -27,7 +27,7 @@ def export( manifestPath
     have passed.
     """
 
-    log.out(f'Export started!', 35)
+    log.out(f'Fetching resources...', 35)
 
     # check if the input and output folders are valid.
     inputPathPath = pathlib.Path(inputPath).absolute()
@@ -64,7 +64,7 @@ def export( manifestPath
         raise ValueError(f"Your manifest - {manifestPathPath} - is a directory, not a file.")
 
 
-    log.out(f'Input/output directories verified.', 32)
+    log.out(f'Input/output directories OK!', 32)
 
 
 
@@ -88,7 +88,7 @@ def export( manifestPath
         elif formats[f]["imageFormat"] == 'png':
             glyphImageFormats.add('png')
 
-    log.out(f'Output format(s) verified.', 32)
+    log.out(f'Output format(s) OK!', 32)
 
 
 
@@ -106,7 +106,7 @@ def export( manifestPath
 
     validateManifest(outputFormats, manifest)
 
-    log.out(f'Manifest verified.', 32)
+    log.out(f'Manifest OK!.', 32)
 
 
 
@@ -119,17 +119,17 @@ def export( manifestPath
     log.out(f'Getting + checking glyph images...')
     glyphs = getGlyphs(inputPathPath, delim_codepoint, glyphImageFormats, no_lig, no_vs16, nsc)
 
-    log.out(f'Glyphs acquired.', 32)
+    log.out(f'Glyphs OK!', 32)
 
 
 
-
+    log.out(f'All resources OK!', 32)
 
 
     # assemble each font format.
     # ------------------------------------------------
 
-    log.out(f'Begin font compilation!', 35)
+    log.out(f'Starting font compilation...', 35)
 
     for f in outputFormats:
         createFont(f, outputPath, manifest, glyphs, ttx_output, dev_ttx_output)

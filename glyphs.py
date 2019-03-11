@@ -1,7 +1,7 @@
 import pathlib
 
 import log
-
+from validate.svg import isSVGValid
 
 
 def glyphName(int):
@@ -12,7 +12,7 @@ def glyphName(int):
 
 class glyph:
 
-    def __init__(self, codepoints, name, imagePath=None, vs16=False):
+    def __init__(self, codepoints, imagePath=None, vs16=False):
 
         if codepoints:
             self.codepoints = codepoints
@@ -21,11 +21,7 @@ class glyph:
         else:
             raise ValueError(f"Tried to make glyph object '{name}' but doesn't have a codepoint AND it doesn't have an image path.")
 
-        if name:
-            self.name = name
-        else:
-            self.name = 'u' + '_'.join(map(glyphName, codepoints))
-
+        self.name = 'u' + '_'.join(map(glyphName, codepoints))
         self.imagePath = imagePath
         self.vs16 = vs16
 
@@ -38,6 +34,10 @@ class glyph:
 
     def __repr__(self):
         return self.__str__()
+
+
+    def __eq__(self, other):
+        return self.codepoints == other.codepoints
 
 
     def __lt__(self, other):
@@ -57,18 +57,21 @@ def getImagesFromDir(dir, formats):
     glyphSet = dict()
 
     if 'svg' in formats:
+
+        # try to get a SVG Folder
         svgFolders = list(dir.glob("svg"))
 
         if not svgFolders:
             raise Exception(f"You don't have an SVG folder in your input!")
 
-
+        # get a list of all SVG files in the SVG folder.
         svgImagePaths = list(svgFolders[0].glob("*.svg"))
 
         if not svgImagePaths:
             raise Exception(f"There are no SVG images in your SVG folder!.")
         else:
             glyphSet['svg'] = svgImagePaths
+
 
 
     if 'png' in formats:
@@ -173,8 +176,8 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
     vs16Allowed = not no_vs16
 
     # add both types of spaces (breaking (20) and non-breaking (A0))
-    glyphs.append(glyph([0x20], 'u20', None))
-    glyphs.append(glyph([0xa0], 'ua0', None))
+    glyphs.append(glyph([0x20], None))
+    glyphs.append(glyph([0xa0], None))
 
 
 
@@ -230,13 +233,13 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
             codepoints.remove(int('fe0f', 16))
 
             if len(codepoints) == 1:
-                glyphs.append(glyph(codepoints, None, structPaths, vs16Allowed))
+                glyphs.append(glyph(codepoints, structPaths, vs16Allowed))
 
             else:
-                glyphs.append(glyph(codepoints, None, structPaths, False))
+                glyphs.append(glyph(codepoints, structPaths, False))
 
         else:
-            glyphs.append(glyph(codepoints, None, structPaths, False))
+            glyphs.append(glyph(codepoints, structPaths, False))
 
         if int('200d', 16) in codepoints:
             zwjPresence = True
@@ -246,7 +249,7 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
     # processed codepoint chains contains U+fe0f.
 
     if vs16Presence:
-        glyphs.append(glyph([0xfe0f], 'ufe0f', None))
+        glyphs.append(glyph([0xfe0f], None))
 
     # Add ZWJ to the glyphs if one of the
     # processed codepoint chains contains U+200d.
@@ -257,7 +260,7 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
         # parts of the app will interpret 200d as a GlyphID.
         # DO NOT CHANGE IT.
 
-        glyphs.append(glyph([0x200d], 'u200d', None))
+        glyphs.append(glyph([0x200d], None))
 
 
 
@@ -280,16 +283,25 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
 
 
 
-def postVS16DupeTest(glyphs):
+def glyphDuplicateTest(glyphs):
+    """
+    Checks whether there are any duplicates in codepoints in a list of glyphs.
+    """
     for id1, g1 in enumerate(glyphs):
         for id2, g2 in enumerate(glyphs):
-            if g1.name == g2.name:
+            if g1 == g2:
                 if id1 != id2:
                     raise Exception(f"One of your glyphs ({g1.imagePath}), when stripped of VS16 (fe0f), matches another ({g2.imagePath}). There can't be duplicates in this scenario.")
 
 
 
+def validateImageData(glyphs):
 
+    for g in glyphs:
+        if g.imagePath:
+            if g.imagePath['svg']:
+                #print(g)
+                isSVGValid(g)
 
 
 def areGlyphLigaturesSafe(glyphs):
@@ -328,22 +340,27 @@ def getGlyphs(inputPath, delim_codepoint, formats, no_lig, no_vs16, nfcc):
     - Returns a list of glyph objects, including important special control glyphs.
     """
 
+    # check the input directory structure and get the images that are in there
     log.out(f'Checking + getting file paths...', 90)
     glyphImageSet = getImagesFromDir(inputPath, formats)
 
-
+    # check the consistency of the codepoints declared in the glyph images
+    # (or not)
     if not nfcc:
         log.out(f'Checking file consistency...', 90)
         areGlyphImagesConsistent(glyphImageSet)
 
-
+    # compile glyph data
     log.out(f'Compiling glyph data...', 90)
     glyphs = compileGlyphData(inputPath, delim_codepoint, no_vs16, glyphImageSet)
 
+    # check for duplicate codepoints without VS16
+    log.out(f'Checking if there are any duplicate codepoints when ignoring VS16...', 90)
+    glyphDuplicateTest(glyphs)
 
-    log.out(f'Validating glyph data...', 90)
-    postVS16DupeTest(glyphs)
-
+    # check image data
+    log.out(f'Validating image data...', 90)
+    validateImageData(glyphs)
 
     if no_lig:
         log.out(f'Stripping any ligatures...', 90)
