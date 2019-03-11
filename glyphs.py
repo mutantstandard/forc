@@ -300,7 +300,6 @@ def validateImageData(glyphs, nusc):
     for g in glyphs:
         if g.imagePath:
             if g.imagePath['svg']:
-                #print(g)
                 isSVGValid(g, ignoreUnenforcedContents=nusc)
 
 

@@ -165,7 +165,6 @@ def isSVGValid(g, ignoreUnenforcedContents=False):
     # --------------------------------------------------------------------
 
     # There must be an xmlns and it must be set to 'http://www.w3.org/2000/svg'.
-    print(svgImage.getroot().nsmap)
     if None in svgImage.getroot().nsmap:
         if svgImage.getroot().nsmap[None] != 'http://www.w3.org/2000/svg':
             raise Exception(f"The SVG image '{svgImageName}' has a root namespace that is '{svgImage.getroot().nsmap[None]}'. It needs to be set to 'http://www.w3.org/2000/svg'.")
