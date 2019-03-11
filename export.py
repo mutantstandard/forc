@@ -15,11 +15,15 @@ def export( manifestPath
           , outputPath
           , outputFormats
           , delim_codepoint
+
           , ttx_output
           , dev_ttx_output
-          , no_lig
+
           , no_vs16
-          , nsc
+          , nusc
+          , nfcc
+
+          , no_lig
           ):
     """
     Performs a variety of processing and validation tasks
@@ -117,7 +121,7 @@ def export( manifestPath
     # ------------------------------------------------
 
     log.out(f'Getting + checking glyph images...')
-    glyphs = getGlyphs(inputPathPath, delim_codepoint, glyphImageFormats, no_lig, no_vs16, nsc)
+    glyphs = getGlyphs(inputPathPath, delim_codepoint, glyphImageFormats, no_lig, no_vs16, nusc, nfcc)
 
     log.out(f'Glyphs OK!', 32)
 

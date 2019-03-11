@@ -295,13 +295,13 @@ def glyphDuplicateTest(glyphs):
 
 
 
-def validateImageData(glyphs):
+def validateImageData(glyphs, nusc):
 
     for g in glyphs:
         if g.imagePath:
             if g.imagePath['svg']:
                 #print(g)
-                isSVGValid(g)
+                isSVGValid(g, ignoreUnenforcedContents=nusc)
 
 
 def areGlyphLigaturesSafe(glyphs):
@@ -334,15 +334,17 @@ def areGlyphLigaturesSafe(glyphs):
 
 
 
-def getGlyphs(inputPath, delim_codepoint, formats, no_lig, no_vs16, nfcc):
+def getGlyphs(inputPath, delim_codepoint, formats, no_lig, no_vs16, nusc, nfcc):
     """
     - Validates glyph image paths from the input path.
     - Returns a list of glyph objects, including important special control glyphs.
     """
 
+
     # check the input directory structure and get the images that are in there
     log.out(f'Checking + getting file paths...', 90)
     glyphImageSet = getImagesFromDir(inputPath, formats)
+
 
     # check the consistency of the codepoints declared in the glyph images
     # (or not)
@@ -350,17 +352,21 @@ def getGlyphs(inputPath, delim_codepoint, formats, no_lig, no_vs16, nfcc):
         log.out(f'Checking file consistency...', 90)
         areGlyphImagesConsistent(glyphImageSet)
 
+
     # compile glyph data
     log.out(f'Compiling glyph data...', 90)
     glyphs = compileGlyphData(inputPath, delim_codepoint, no_vs16, glyphImageSet)
+
 
     # check for duplicate codepoints without VS16
     log.out(f'Checking if there are any duplicate codepoints when ignoring VS16...', 90)
     glyphDuplicateTest(glyphs)
 
+
     # check image data
     log.out(f'Validating image data...', 90)
-    validateImageData(glyphs)
+    validateImageData(glyphs, nusc)
+
 
     if no_lig:
         log.out(f'Stripping any ligatures...', 90)

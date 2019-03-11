@@ -29,7 +29,6 @@ unenforcedElems = [ "animateTransform"
                   , "mask"
                   , "pattern"
                   , "style"
-                  , "svg"
 
 
                   # SVG Filter elements
@@ -141,26 +140,29 @@ unenforcedAttrs =   [ "cursor"
                     ]
 
 
+xmlns = '{http://www.w3.org/2000/svg}'
+xlinkNS = '{http://www.w3.org/1999/xlink}'
 
 
 
 
 
-def isSVGValid(g):
+
+def isSVGValid(g, ignoreUnenforcedContents=False):
     svgImagePath = g.imagePath['svg']
     svgImageName = svgImagePath.name
 
     svgImage = etree.parse(svgImagePath.as_uri())
 
-    NAMESPACE = '{http://www.w3.org/2000/svg}'
 
+    svgEmbeddedImages = svgImage.findall("//" + xmlns + "image")
 
 
     # REALLY BASIC STUFF
     # --------------------------------------------------------------------
 
     # The xmlns is 'http://www.w3.org/2000/svg'.
-    # xlink attribute is in the xmlns namespace.
+    # xlink attribute is in the xmlns xmlns.
     # xlink attribute is 'http://www.w3.org/1999/xlink'
     # SVG version is 1.1 or unmarked.
 
@@ -173,23 +175,29 @@ def isSVGValid(g):
     # --------------------------------------------------------------------
     # These are explicitly not in the spec and should be disallowed under all circumstances.
 
-    #print('----restricted----')
+    # elements
     for elem in restrictedElems:
-        if svgImage.find('//*' + NAMESPACE + elem) is not None:
+        if svgImage.find('//' + xmlns + elem) is not None:
             raise Exception(f"The SVG image '{svgImageName}' has a '{elem}' element. These are not compatible in SVGinOT fonts.")
 
-
+    # attributes
     for attr in restrictedAttrs:
         if svgImage.find(f"//*[@{attr}]") is not None:
             raise Exception(f"The SVG image '{svgImageName}' has a '{attr}' attribute. These are not compatible in SVGinOT fonts.")
 
+    # image elements that contain SVGs
+    if svgEmbeddedImages:
+        for i in svgEmbeddedImages:
+            href = i.attrib[xlinkNS + 'href']
+
+            if href:
+                if href.endswith('.svg'):
+                    raise Exception(f"The SVG image '{svgImageName}' has an 'image' attribute that links to an SVG file. These are not compatible in SVGinOT fonts.")
 
     # TODO: measurements:
     #   - relative units (em, ex, etc.)
     #   - rgba() colors
-    #   - CSS2 color values
-
-    # TODO: image elements that contain SVG data.
+    #   - CSS2 color values in styles
 
     # TODO: XSL processing (???)
 
@@ -205,19 +213,39 @@ def isSVGValid(g):
     # These are not enforced in the spec and are
     # not guaranteed to work.
 
+    if not ignoreUnenforcedContents:
 
-    #print('----unenforced----')
-    for elem in unenforcedElems:
-        if svgImage.find('//*' + NAMESPACE + elem) is not None:
-            raise Exception(f"The SVG image '{svgImageName}' has a '{elem}' element. Compatibility with this is not mandatory in SVGinOT fonts so it is not recommended.")
+        # elements
+        for elem in unenforcedElems:
+            if svgImage.find('//' + xmlns + elem) is not None:
+                raise Exception(f"The SVG image '{svgImageName}' has a '{elem}' element. Compatibility with this is not mandatory in SVGinOT fonts so it is not recommended.")
+
+        # attributes
+        for attr in unenforcedAttrs:
+            if svgImage.find(f"//*[@{attr}]") is not None:
+                raise Exception(f"The SVG image '{svgImageName}' has a '{attr}' attribute. Compatibility with this is not mandatory in SVGinOT fonts so it is not recommended.")
 
 
-    for attr in unenforcedAttrs:
-        if svgImage.find(f"//*[@{attr}]") is not None:
-            raise Exception(f"The SVG image '{svgImageName}' has a '{attr}' attribute. Compatibility with this is not mandatory in SVGinOT fonts so it is not recommended.")
+        # image elements that don't contain JPEGs or PNGs
+        acceptedImageExtensions = ['.png', '.jpg', '.jpeg', '.jpe', '.jif', '.jfif', '.jfi']
 
-    # TODO: image elements that don"t contain JPEGs or PNGs
+        if svgEmbeddedImages:
+            for i in svgEmbeddedImages:
+                href = i.attrib[xlinkNS + 'href']
 
-    # TODO: XML entities (???)
+                if href:
+                    count = 0
 
-    # any svg child elements (Xpath: "/svg/svg" TEST IF THIS WORKS)
+                    for ext in acceptedImageExtensions:
+                        if not href.endswith(ext):
+                            count += 1
+
+                    if count == len(acceptedImageExtensions):
+                        raise Exception(f"The SVG image '{svgImageName}' has an image attribute that links to a file that is not a JPEG or PNG image. Compatibility with any image type other than PNG or JPEG is not mandatory in SVGinOT fonts so it is not recommended.")
+
+
+        #any svg child elements (SEE IF THIS WORKS)
+        if svgImage.find("//{*}svg") is not None:
+            raise Exception(f"The SVG image '{svgImageName}' has a child svg attribute. Compatibility with this is not mandatory in SVGinOT fonts so it is not recommended.")
+
+        # TODO: XML entities (???)

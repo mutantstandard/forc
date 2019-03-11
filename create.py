@@ -100,4 +100,4 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
         log.out(f'Deleting the original Font...')
         outputFontPath.unlink() #delete
 
-    log.out(f'Done!!!', 32)
+    log.out(f'This format has been successfully compiled.', 32)

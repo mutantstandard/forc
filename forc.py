@@ -15,13 +15,19 @@ DEF_MANIFEST = 'manifest.json'
 DEF_INPUT_PATH = 'in'
 DEF_OUTPUT_PATH = 'out'
 DEF_OUTPUT_FORMATS = ['SVGinOT']
-DEF_TTX_OUTPUT = False
-DEF_DEV_TTX = False
 DEF_DELIM_CODEPOINT = "-"
 
-DEF_NO_LIG = False
+DEF_TTX_OUTPUT = False
+DEF_DEV_TTX = False
+
 DEF_NO_VS16 = False
+DEF_NUSC = False
 DEF_NFCC = False
+
+DEF_NO_LIG = False
+
+
+
 
 HELP = f'''forc {VERSION}
 by Mutant Standard
@@ -54,20 +60,35 @@ OPTIONS:
 -d      Delimiter between ligatured codepoints
         (default: '{DEF_DELIM_CODEPOINT}')
 
---ttx       Export a matching ttx (.ttx) file for each format.
 
---dev-ttx   Keep the initial ttx that forc compiles before
+
+
+--ttx       Exports a matching ttx (.ttx) file for each format.
+
+--dev-ttx   Keeps the initial ttx that forc compiles before
             passing it to fonttools. This is different to the above,
-            which is a full representation of the font file..
+            which is a full representation of the font file.
 
---no-lig    (DEVELOPMENT OPTION) Strip ligatures from the output.
 
---no-vs16   (DEVELOPMENT OPTION) Strip any presence of VS16 (U+fe0f)
-            from the output.
 
---nfcc      (DEVELOPMENT OPTION) No File Consistency Checking.
+
+--no-vs16   Strips any presence of VS16 (U+fe0f) from the output.
+
+--nusc      No Unenforced SVG Contents Checking.
+            Makes SVG checking less strict, by only checking SVG
+            parts that are explicitly not allowed in SVGinOT.
+
+--nfcc      No File Consistency Checking.
             Stops forc from checking if the images in the format
-            subfolders are all the same.
+            subfolders are all the same. Useful if you have made
+            guarantees beforehand and want to save time.
+
+
+
+--no-lig    (DEVELOPMENT OPTION) Strips ligatures from the output.
+
+
+
 
 
 
@@ -82,18 +103,22 @@ def main():
     input_path = DEF_INPUT_PATH
     output_path = DEF_OUTPUT_PATH
     output_formats = DEF_OUTPUT_FORMATS
-    ttx_output = DEF_TTX_OUTPUT
-    dev_ttx_output = DEF_DEV_TTX
     delim_codepoint = DEF_DELIM_CODEPOINT
 
-    no_lig = DEF_NO_LIG
+    ttx_output = DEF_TTX_OUTPUT
+    dev_ttx_output = DEF_DEV_TTX
+
     no_vs16 = DEF_NO_VS16
+    nusc = DEF_NUSC
     nfcc = DEF_NFCC
+
+    no_lig = DEF_NO_LIG
+
 
     try:
         opts, _ = getopt.getopt(sys.argv[1:],
                                 'hm:i:o:F:d:',
-                                ['help', 'ttx', 'dev-ttx', 'no-lig', 'no-vs16', 'nfcc'])
+                                ['help', 'ttx', 'dev-ttx', 'no-vs16', 'nusc', 'nfcc', 'no-lig'])
         for opt, arg in opts:
             if opt in ['-h', '--help']:
                 print(HELP)
@@ -108,16 +133,22 @@ def main():
                 output_formats = arg.split(',')
             elif opt =='-d':
                 delim_codepoint = arg
+
             elif opt =='--ttx':
                 ttx_output = True
             elif opt =='--dev-ttx':
                 dev_ttx_output = True
-            elif opt =='--no-lig':
-                no_lig = True
+
+
             elif opt =='--no-vs16':
                 no_vs16 = True
+            elif opt =='--nusc':
+                nusc = True
             elif opt =='--nfcc':
                 nfcc = True
+
+            elif opt =='--no-lig':
+                no_lig = True
 
     except Exception:
         print(HELP)
@@ -128,11 +159,15 @@ def main():
               , output_path
               , output_formats
               , delim_codepoint
+
               , ttx_output
               , dev_ttx_output
-              , no_lig
+
               , no_vs16
+              , nusc
               , nfcc
+
+              , no_lig
               )
 
     except Exception as e:
