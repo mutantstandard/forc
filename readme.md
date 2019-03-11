@@ -29,7 +29,7 @@ Feature requests and collaboration are welcome. Any collaborators must follow [M
 - Support for VS16.
 - Support for ZWJ.
 - Can be used from [orxporter](https://github.com/mutantstandard/orxporter) for seamlessly building an entire set of emoji.
-- Strict validation of codepoints and metadata, making sure you make valid and highly compatible fonts.
+- Strict validation of codepoints, images and metadata, making sure you make valid and highly compatible fonts.
 
 
 ## Limitations

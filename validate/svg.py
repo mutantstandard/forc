@@ -264,7 +264,7 @@ def isSVGValid(g, ignoreUnenforcedContents=False):
                         raise Exception(f"The SVG image '{svgImageName}' has an image attribute that links to a file that is not a JPEG or PNG image. Compatibility with any image type other than PNG or JPEG is not mandatory in SVGinOT fonts so it is not recommended.")
 
 
-        #any svg child elements (SEE IF THIS WORKS)
+        # there should be no SVG child elements.
         if svgImage.find("//{*}svg") is not None:
             raise Exception(f"The SVG image '{svgImageName}' has a child svg attribute. Compatibility with this is not mandatory in SVGinOT fonts so it is not recommended.")
 
