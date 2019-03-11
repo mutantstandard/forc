@@ -149,6 +149,9 @@ xlinkNS = '{http://www.w3.org/1999/xlink}'
 
 
 def isSVGValid(g, ignoreUnenforcedContents=False):
+    """
+    Evaluates if a glyphs' SVG file is compliant with the SVGinOT standard.
+    """
     svgImagePath = g.imagePath['svg']
     svgImageName = svgImagePath.name
 
@@ -161,10 +164,28 @@ def isSVGValid(g, ignoreUnenforcedContents=False):
     # REALLY BASIC STUFF
     # --------------------------------------------------------------------
 
-    # The xmlns is 'http://www.w3.org/2000/svg'.
-    # xlink attribute is in the xmlns xmlns.
-    # xlink attribute is 'http://www.w3.org/1999/xlink'
-    # SVG version is 1.1 or unmarked.
+    # There must be an xmlns and it must be set to 'http://www.w3.org/2000/svg'.
+    print(svgImage.getroot().nsmap)
+    if None in svgImage.getroot().nsmap:
+        if svgImage.getroot().nsmap[None] != 'http://www.w3.org/2000/svg':
+            raise Exception(f"The SVG image '{svgImageName}' has a root namespace that is '{svgImage.getroot().nsmap[None]}'. It needs to be set to 'http://www.w3.org/2000/svg'.")
+    else:
+        raise Exception(f"The SVG image '{svgImageName}' doesn't have a root namespace. It needs one, and it should be set to 'http://www.w3.org/2000/svg'.")
+
+
+    # If there is an xlink namespace, it must be set to "http://www.w3.org/1999/xlink".
+    if "xlink" in svgImage.getroot().nsmap:
+        if svgImage.getroot().nsmap["xlink"] != "http://www.w3.org/1999/xlink":
+            raise Exception(f"The SVG image '{svgImageName}' has an xlink namespace that is '{svgImage.getroot().nsmap['xlink']}'. It needs to be set to 'http://www.w3.org/1999/xlink'.")
+
+
+    # SVG version must either be "1.1" or unmarked.
+    if "version" in svgImage.getroot().attrib:
+        svgImageVersion = svgImage.getroot().attrib["version"]
+        if not svgImageVersion == "1.1":
+            raise Exception(f"The version of the SVG image '{svgImageName}' is set to '{svgImageVersion}'. It should either be 1.1 or not set at all.")
+
+
 
 
 
