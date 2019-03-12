@@ -34,7 +34,7 @@ def validateMetadata(outputFormats, metadata):
         try:
             float(metadata['headVersion'])
         except ValueError:
-            raise ValueError(f"YOur headVersion metadata is not a number.")
+            raise ValueError(f"YOur headVersion metadata is not a float number.")
 
         headVersionComponents = metadata['headVersion'].split('.')
 
@@ -75,7 +75,7 @@ def validateMetadata(outputFormats, metadata):
             try:
                 versionNum = float(versionNumString)
             except ValueError:
-                raise ValueError(f"The version data record (type 5) for the '{format}' format is missing a number after 'Version', all I see is: '{version.split(' ')[1]}'.")
+                raise ValueError(f"The version data record (type 5) for the '{format}' format is missing a float number after 'Version', all I see is: '{version.split(' ')[1]}'.")
 
             # check if version is the same as headVersion.
             if not versionNumString == metadata['headVersion']:
@@ -86,8 +86,8 @@ def validateMetadata(outputFormats, metadata):
             if not len(versionNumComponents[1]) == 3:
                 raise ValueError(f"The version number in your name records needs to have 3 decimal places. The version number in the compiled name records for the '{format}' format has {len(versionNumComponents[1])}.")
 
-
-
+            if versionNumComponents[0] == "0":
+                raise ValueError(f"Your font's major version (the number before the decimal place) is 0. It should be 1 or higher (certain environments act weird if you don't,)")
 
 
 

@@ -165,22 +165,23 @@ def areGlyphImagesConsistent(glyphSet):
 
 
 
-def validateCodepoint(c, i):
+def validateIndividualCodepoints(codepoints, i):
     """
-    Make sure a particular user-inputted codepoint string is within the right ranges.
+    Make sure that each codepoint in a codepoint string is within the right ranges.
     Throws an exception when it is not.
     """
-    if c < int('20', 16):
-        raise Exception(f"One of your glyphs ('{i.stem}') contains a codepoint that is below U+20. You cannot encode glyphs below this number because various typing environments get confused when you do.")
+    for c in codepoints:
+        if c < int('20', 16):
+            raise Exception(f"One of your glyphs ('{i.stem}') contains a codepoint that is below U+20. You cannot encode glyphs below this number because various typing environments get confused when you do.")
 
-    if c == int('20', 16):
-        raise Exception(f"One of your glyphs ('{i.stem}') contains U+20. This is space - you shouldn't be using a glyph for this.")
+        if c == int('20', 16):
+            raise Exception(f"One of your glyphs ('{i.stem}') contains U+20. This is space - you shouldn't be using a glyph for this.")
 
-    if c == int('a0', 16):
-        raise Exception(f"One of your glyphs ('{i.stem}') contains U+a0. This is a space character - you shouldn't be using a glyph for this.")
+        if c == int('a0', 16):
+            raise Exception(f"One of your glyphs ('{i.stem}') contains U+a0. This is a space character - you shouldn't be using a glyph for this.")
 
-    if c > int('10FFFF', 16):
-        raise Exception(f"One of your glyphs ('{i.stem}') contains a codepoint that is above U+10FFFF. The Unicode Standard currently does not support codepoints above this number.")
+        if c > int('10FFFF', 16):
+            raise Exception(f"One of your glyphs ('{i.stem}') contains a codepoint that is above U+10FFFF. The Unicode Standard currently does not support codepoints above this number.")
 
 
 
@@ -215,33 +216,44 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
         try:
             codepoints = [int(hex, 16) for hex in i.stem.split(delim_codepoint)]
         except ValueError as e:
-            log.out(f"!!! One of your glyphs ('{i.name}') is not named as a hexidecimal number or a series of hexadecimal numbers.", 31)
+            log.out(f"One of your glyphs ('{i.name}') is not named as a hexidecimal number or a series of hexadecimal numbers.", 31)
 
 
         # make sure each inputted codepoint is in an appropriate range.
-        for c in codepoints:
-            validateCodepoint(c, i)
+        validateIndividualCodepoints(codepoints, i)
 
 
         # compile a dictionary containing all of the different image formats for this glyph.
-        structPaths = dict()
+        imagePath = dict()
 
         for subfolderName, subfolders in glyphImageSet.items():
             filename = i.stem + "." + subfolderName.split('-')[0]
-            structPaths[subfolderName] = pathlib.Path(dir / subfolderName / filename ).absolute()
+            imagePath[subfolderName] = pathlib.Path(dir / subfolderName / filename ).absolute()
 
 
-        # test for presence of ZWJs
-        if int('200d', 16) in codepoints:
-            zwjPresence = True
 
-        # TODO: validate ZWJ placement.
 
-        # tidy instances of fe0f before adding them to the glyph list:
+        # strip instances of fe0f
+        # set vs16Enabled to True if it fits the right parameters.
         fe0f = int('fe0f', 16)
         strippedCodepoints = [c for c in codepoints if c != fe0f]
         vs16Enabled = vs16Allowed and fe0f in codepoints and len(strippedCodepoints) == 1
-        glyphs.append(glyph(strippedCodepoints, structPaths, vs16Enabled))
+
+
+        # test and validate presence of ZWJs
+        zwj = int('200d', 16)
+        if zwj in strippedCodepoints:
+            zwjPresence = True
+
+            if strippedCodepoints[0] == zwj or strippedCodepoints[-1] == zwj:
+                raise ValueError(f"One of your glyphs ('{i.name}') has a ZWJ at the beginning and/or the end of it's codepoint seqence (when ignoring VS16 (U+fe0f). This is not correct.")
+
+            if any(strippedCodepoints[i]== zwj and strippedCodepoints[i+1] == zwj for i in range(len(strippedCodepoints)-1)):
+                raise ValueError(f"One of your glyphs ('{i.name}') has two or more ZWJs (U+200d) next to each other (when ignoring VS16 (U+fe0f)). This is not correct.")
+
+
+        # finally add the codepoint to the glyph list.
+        glyphs.append(glyph(strippedCodepoints, imagePath, vs16Enabled))
 
 
 
@@ -269,11 +281,6 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
 
 
     return glyphs
-
-
-
-
-
 
 
 
@@ -348,13 +355,14 @@ def getGlyphs(inputPath, delim_codepoint, formats, no_lig, no_vs16, nusc, nfcc):
 
 
     # compile glyph data
-    log.out(f'Compiling glyph data...', 90)
+    log.out(f'Compiling glyph data + validating glyph codepoints...', 90)
     glyphs = compileGlyphData(inputPath, delim_codepoint, no_vs16, glyphImageSet)
 
 
     # check for duplicate codepoints without VS16
-    log.out(f'Checking if there are any duplicate codepoints when ignoring VS16...', 90)
-    glyphDuplicateTest(glyphs)
+    if not no_vs16:
+        log.out(f'Checking if there are any duplicate codepoint strings when ignoring VS16...', 90)
+        glyphDuplicateTest(glyphs)
 
 
     # check image data

@@ -54,7 +54,10 @@ def export( manifestPath
     elif inputPathPath.is_file():
         raise ValueError(f"Your input folder - {inputPathPath} - is a file, not a directory.")
 
+
+
     # try to make the output directory.
+
     if not outputPathPath.exists():
         try:
             outputPathPath.mkdir(parents=True, exist_ok=True)
