@@ -3,7 +3,7 @@ import json
 
 import log
 from create import createFont
-from manifest import validateManifest
+from validate.manifest import validateManifest
 from glyphs import getGlyphs
 from format import formats
 

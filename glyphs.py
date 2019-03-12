@@ -52,6 +52,11 @@ class glyph:
 
 
 
+
+
+
+
+
 def getImagesFromDir(dir, formats):
 
     glyphSet = dict()
@@ -160,13 +165,31 @@ def areGlyphImagesConsistent(glyphSet):
 
 
 
+def validateCodepoint(c, i):
+    """
+    Make sure a particular user-inputted codepoint string is within the right ranges.
+    Throws an exception when it is not.
+    """
+    if c < int('20', 16):
+        raise Exception(f"One of your glyphs ('{i.stem}') contains a codepoint that is below U+20. You cannot encode glyphs below this number because various typing environments get confused when you do.")
+
+    if c == int('20', 16):
+        raise Exception(f"One of your glyphs ('{i.stem}') contains U+20. This is space - you shouldn't be using a glyph for this.")
+
+    if c == int('a0', 16):
+        raise Exception(f"One of your glyphs ('{i.stem}') contains U+a0. This is a space character - you shouldn't be using a glyph for this.")
+
+    if c > int('10FFFF', 16):
+        raise Exception(f"One of your glyphs ('{i.stem}') contains a codepoint that is above U+10FFFF. The Unicode Standard currently does not support codepoints above this number.")
+
+
+
 
 
 def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
-
-
-    # start glyphs
-    # --------------------------------------------------------------------
+    """
+    Compiles a glyph data structure from a set of glyph images.
+    """
 
     firstSubfolderName = list(glyphImageSet.keys())[0]
     firstSubfolder = glyphImageSet[firstSubfolderName]
@@ -175,92 +198,62 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
 
     vs16Allowed = not no_vs16
 
-    # add both types of spaces (breaking (20) and non-breaking (A0))
-    glyphs.append(glyph([0x20], None))
-    glyphs.append(glyph([0xa0], None))
-
-
-
-    # process and check all of the input glyph codepoints
-    # --------------------------------------------------------------------
-
     vs16Presence = False
     zwjPresence = False
+
+
+
+    # (iterating over one subfolder because the other subfolders
+    # have already been verified as identical.)
 
     for i in firstSubfolder:
         codepoints = []
 
-        # try to check if every part of the
-        # filename stem is a valid hexadecimal number.
 
+
+        # try to convert the filename into a string of hexadecimal numbers
         try:
             codepoints = [int(hex, 16) for hex in i.stem.split(delim_codepoint)]
-
         except ValueError as e:
-            log.out(f'!!! One of your glyphs is not named as hexadecimal numbers. It is \'{i.name}\'.', 31)
+            log.out(f"!!! One of your glyphs ('{i.name}') is not named as a hexidecimal number or a series of hexadecimal numbers.", 31)
 
 
+        # make sure each inputted codepoint is in an appropriate range.
         for c in codepoints:
-            if c < int('20', 16):
-                raise Exception(f"A codepoint in one of your glyphs ('{i}') is below U+20. You cannot encode glyphs below this number because various typing environments get confused when you do.")
-
-            if c == int('20', 16):
-                raise Exception(f"A codepoint in one of your glyphs ('{i}') is U+20. This is space - you shouldn't be using a glyph for this.")
-
-            if c == int('a0', 16):
-                raise Exception(f"A codepoint in one of your glyphs ('{i}') is U+A0. This is a space character - you shouldn't be using a glyph for this.")
-
-            if c > int('10FFFF', 16):
-                raise Exception(f"A codepoint in one of your glyphs ('{i}') is above U+10FFFF. The Unicode Standard currently does not support codepoints above this number.")
+            validateCodepoint(c, i)
 
 
-        # compile a glyph file structure.
-
+        # compile a dictionary containing all of the different image formats for this glyph.
         structPaths = dict()
 
         for subfolderName, subfolders in glyphImageSet.items():
-
             filename = i.stem + "." + subfolderName.split('-')[0]
             structPaths[subfolderName] = pathlib.Path(dir / subfolderName / filename ).absolute()
 
 
-
-        # tidy instances of fe0f before adding them to the glyph list
-
-        if int('fe0f', 16) in codepoints:
-
-            vs16Presence = vs16Allowed
-            codepoints.remove(int('fe0f', 16))
-
-            if len(codepoints) == 1:
-                glyphs.append(glyph(codepoints, structPaths, vs16Allowed))
-
-            else:
-                glyphs.append(glyph(codepoints, structPaths, False))
-
-        else:
-            glyphs.append(glyph(codepoints, structPaths, False))
-
+        # test for presence of ZWJs
         if int('200d', 16) in codepoints:
             zwjPresence = True
 
+        # TODO: validate ZWJ placement.
 
-    # Add vs16 to the glyphs if one of the
-    # processed codepoint chains contains U+fe0f.
+        # tidy instances of fe0f before adding them to the glyph list:
+        fe0f = int('fe0f', 16)
+        strippedCodepoints = [c for c in codepoints if c != fe0f]
+        vs16Enabled = vs16Allowed and fe0f in codepoints and len(strippedCodepoints) == 1
+        glyphs.append(glyph(strippedCodepoints, structPaths, vs16Enabled))
 
-    if vs16Presence:
-        glyphs.append(glyph([0xfe0f], None))
 
-    # Add ZWJ to the glyphs if one of the
-    # processed codepoint chains contains U+200d.
 
-    if zwjPresence:
 
-        # The glyph.name is 'u200d' because that's how other
-        # parts of the app will interpret 200d as a GlyphID.
-        # DO NOT CHANGE IT.
 
-        glyphs.append(glyph([0x200d], None))
+    # add particular service glyphs based on user input.
+
+    glyphs.append(glyph([0x20], None)) # breaking space
+    glyphs.append(glyph([0xa0], None)) # non-breaking space
+
+    if vs16Presence: glyphs.append(glyph([0xfe0f], None))
+    if zwjPresence: glyphs.append(glyph([0x200d], None))
 
 
 
@@ -283,6 +276,10 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
 
 
 
+
+
+
+
 def glyphDuplicateTest(glyphs):
     """
     Checks whether there are any duplicates in codepoints in a list of glyphs.
@@ -295,12 +292,14 @@ def glyphDuplicateTest(glyphs):
 
 
 
-def validateImageData(glyphs, nusc):
 
+def validateImageData(glyphs, nusc):
     for g in glyphs:
         if g.imagePath:
             if g.imagePath['svg']:
                 isSVGValid(g, ignoreUnenforcedContents=nusc)
+
+
 
 
 def areGlyphLigaturesSafe(glyphs):
@@ -322,10 +321,6 @@ def areGlyphLigaturesSafe(glyphs):
         for codepoint in g.codepoints:
             if codepoint not in singleGlyphCodepoints:
                 raise Exception(f"One of your ligatures ({g.imagePath}) does not have all non-service codepoints represented as glyphs ({glyphName(codepoint)}). All components of all ligatures must be represented as glyphs (apart from fe0f and 200d).")
-
-
-
-
 
 
 
