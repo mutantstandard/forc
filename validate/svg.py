@@ -169,7 +169,7 @@ def isSVGValid(g, ignoreUnenforcedContents=False):
         if svgImage.getroot().nsmap[None] != 'http://www.w3.org/2000/svg':
             raise Exception(f"The SVG image '{svgImageName}' has a root namespace that is '{svgImage.getroot().nsmap[None]}'. It needs to be set to 'http://www.w3.org/2000/svg'.")
     else:
-        raise Exception(f"The SVG image '{svgImageName}' doesn't have a root namespace. It needs one, and it should be set to 'http://www.w3.org/2000/svg'.")
+        raise Exception(f"The SVG image '{svgImageName}' doesn't have a root namespace. It needs one, and it needs to be set to 'http://www.w3.org/2000/svg'.")
 
 
     # If there is an xlink namespace, it must be set to "http://www.w3.org/1999/xlink".
@@ -182,7 +182,7 @@ def isSVGValid(g, ignoreUnenforcedContents=False):
     if "version" in svgImage.getroot().attrib:
         svgImageVersion = svgImage.getroot().attrib["version"]
         if not svgImageVersion == "1.1":
-            raise Exception(f"The version of the SVG image '{svgImageName}' is set to '{svgImageVersion}'. It should either be 1.1 or not set at all.")
+            raise Exception(f"The version of the SVG image '{svgImageName}' is set to '{svgImageVersion}'. It needs to either be set to 1.1 or removed entirely.")
 
 
 
@@ -219,8 +219,9 @@ def isSVGValid(g, ignoreUnenforcedContents=False):
     #   - rgba() colors
     #   - CSS2 color values in styles
 
-    # TODO: XSL processing (???)
-
+    # XSL processing instructions exist in the file
+    if "xsl" in svgImage.getroot().nsmap:
+        raise Exception(f"The SVG image '{svgImageName}' contains XSL. This is not compatible in SVGinOT fonts.")
 
 
 
