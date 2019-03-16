@@ -173,7 +173,7 @@ def assembler(chosenFormat, m, glyphs):
     # human-readable metadata
     # ---------------------------------------------
     log.out('Assembling name table...', 90)
-    root.append(name(chosenFormat, macLangID, msftLangID, nameRecords))
+    root.append(name(chosenFormat, macLangID, msftLangID, m))
 
 
 

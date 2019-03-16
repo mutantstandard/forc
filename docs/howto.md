@@ -71,13 +71,6 @@ All forc exports will be exported in a flat manner, each file named after their 
 ---
 
 
-## Manifest
-The manifest is a JSON file with a particular structure, and it contains metrics, encoding information and human-readable metadata for the `name` table.
-
-I'll write more about this soon!
-
-
----
 
 ## Formats
 
@@ -126,3 +119,9 @@ This is just a development/research thing and will probably be removed in the fi
 This is specifically designed to mimic how Google encodes their emoji fonts.
 
 'CBDT/CBLC' is more commonly used to refer to this format, but in forc it's simplified to 'CBx' to make it easier to remember.
+
+---
+
+## Manifest
+
+[Check out this document](manifest.md) for detailed information on the manifest.

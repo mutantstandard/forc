@@ -57,7 +57,9 @@ unenforcedElems = [ "animateTransform"
 
 
 unenforcedAttrs =   [ "cursor"
-                    #, "style" -- style is omitted here because it /can/ be compensated for.
+                    #, "style"
+                    # -- style is omitted here because it /can/ be compensated
+                    # -- for and is compensated for in forc.
                     , "zoomAndPan"
 
                     # SVG event attributes
@@ -145,9 +147,6 @@ xlinkNS = '{http://www.w3.org/1999/xlink}'
 
 
 
-
-
-
 def isSVGValid(g, ignoreUnenforcedContents=False):
     """
     Evaluates if a glyphs' SVG file is compliant with the SVGinOT standard.
@@ -161,7 +160,10 @@ def isSVGValid(g, ignoreUnenforcedContents=False):
     svgEmbeddedImages = svgImage.findall("//" + xmlns + "image")
 
 
-    # REALLY BASIC STUFF
+
+
+
+    # Stuff relating to the root tag
     # --------------------------------------------------------------------
 
     # There must be an xmlns and it must be set to 'http://www.w3.org/2000/svg'.
@@ -191,7 +193,7 @@ def isSVGValid(g, ignoreUnenforcedContents=False):
 
 
 
-    # RESTRICTED CONTENTS
+    # Restricted contents
     # --------------------------------------------------------------------
     # These are explicitly not in the spec and should be disallowed under all circumstances.
 
@@ -214,22 +216,22 @@ def isSVGValid(g, ignoreUnenforcedContents=False):
                 if href.endswith('.svg'):
                     raise Exception(f"The SVG image '{svgImageName}' has an 'image' attribute that links to an SVG file. These are not compatible in SVGinOT fonts.")
 
-    # TODO: measurements:
-    #   - relative units (em, ex, etc.)
-    #   - rgba() colors
-    #   - CSS2 color values in styles
 
     # XSL processing instructions exist in the file
     if "xsl" in svgImage.getroot().nsmap:
         raise Exception(f"The SVG image '{svgImageName}' contains XSL. This is not compatible in SVGinOT fonts.")
 
 
+    # TODO: measurements:
+    #   - relative units (em, ex, etc.)
+    #   - rgba() colors
+    #   - CSS2 color values in styles
 
 
 
 
 
-    # UNENFORCED CONTENTS
+    # Unenforced Contents
     # --------------------------------------------------------------------
     # These are not enforced in the spec and are
     # not guaranteed to work.

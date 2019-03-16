@@ -1,27 +1,56 @@
 from lxml.etree import Element
 
-def name(format, macLangID, msftLangID, nameRecords):
+
+
+
+def makeVersionRecord(m, record=None):
+    if record:
+        return "Version " + m['metadata']['version'] + " " + record
+    else:
+        return "Version " + m['metadata']['version']
+
+
+def name(format, macLangID, msftLangID, m):
     """
     Creates a name table. Iterates over nameRecords data multiple times
     so that it's prepared in each of the name record encoding
     platforms/methods (Unicode, Macintosh, Microsoft).
     """
 
-    # compile the name records used for this particular font.
-    # take from the 'all' dict first
-    # then add and overwrite withe format specific records dict.
 
+    # data compilation
+    # -------------------------------------------------------------------
 
+    nameRecords = m['metadata']['nameRecords']
     compiledNameRecords = {}
 
-    for index, record in nameRecords['all'].items():
-        compiledNameRecords[index] = record
 
-    if format in nameRecords:
-        for index, record in nameRecords[format].items():
+    # create a version record anyway if the user hasn't made version notes.
+    if not "5" in nameRecords.items():
+        compiledNameRecords["5"] = makeVersionRecord(m)
+
+
+    # compile records based on what's in the 'all' category.
+    for index, record in nameRecords['default'].items():
+        if index == "5":
+            compiledNameRecords[index] = makeVersionRecord(m, record)
+        else:
             compiledNameRecords[index] = record
 
 
+    # compile records based on what records have been set for this format.
+    # This overrides anything that has already been set in 'all'.
+    if format in nameRecords:
+        for index, record in nameRecords[format].items():
+            if index == "5":
+                compiledNameRecords[index] = makeVersionRecord(m, record)
+            else:
+                compiledNameRecords[index] = record
+
+
+
+    # table compilation
+    # -------------------------------------------------------------------
 
 
     name = Element("name")
