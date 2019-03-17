@@ -125,3 +125,10 @@ This is specifically designed to mimic how Google encodes their emoji fonts.
 ## Manifest
 
 [Check out this document](manifest.md) for detailed information on the manifest.
+
+---
+
+
+## Aliases
+
+[Check out this document](aliases) for detailed information on how to create aliases.

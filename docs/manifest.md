@@ -10,7 +10,6 @@ There are three main sections to the file:
 - Metadata
 
 ```
-EXAMPLE
 
 { "metrics" : {...}
 , "encoding" : {...}
@@ -23,7 +22,6 @@ EXAMPLE
 ## Metrics
 
 ````
-EXAMPLE
 
 {"metrics":
     {"xMin": 0
@@ -38,7 +36,9 @@ EXAMPLE
 ````
 
 
-All of these entries shown below are required, but if you don't have a clear idea what you should set yours to, you should set them to the recommended values below. These metrics are based on metrics found in other emoji fonts, so they will have the best compatibility.
+All of these entries shown below are required.
+
+If you don't have a clear idea what you should set yours to, you should set them to the recommended values below. These recommended values are based on metrics found in other emoji fonts, so they will have the best compatibility.
 
 FUnits stands for Font Design Units.
 
@@ -52,8 +52,8 @@ FUnits stands for Font Design Units.
 | xMin | int (FUnits) |  | The maximum x-position of your glyphs (includes vertical ascender). |
 | yMin | int (FUnits) | | The minimum y-position of your glyphs (includes horizontal descenders). |
 | yMax | int (FUnits) | | The maximum y-position of your glyphs (includes vertical ascenders). |
-| spaceHLength | int (FUnits) | | ??? |
-| spaceVLength | int (FUnits) | | ??? |
+| spaceHLength | int (FUnits) | | The length of space characters in horizontal writing orientation. |
+| spaceVLength | int (FUnits) | | The length of space characters in vertical writing orientation. |
 | normalWidth | int (FUnits) | | ??? |
 | normalLSB | int (FUnits) | | ??? |
 | normalHeight | int (FUnits) | | ??? |
@@ -80,15 +80,15 @@ forc assumes you want to create a font that can work in both vertical AND horizo
 
 ````
 ,"metadata":
-	{ "macLangID": "0x0"
+	{ "macLangID": "0"
 	, "msftLangID": "0x809"
 	}
 ````
 
 | name | type | req? | description |
 |:--|:--|:--|:--|
-| macLangID | string representing a number | ✔️ | [Macintosh Language ID](https://docs.microsoft.com/en-us/typography/opentype/spec/name#windows-language-ids)
-| msftLangID | string representing a hexadecimal number | ✔️ | [Windows Language ID](https://docs.microsoft.com/en-us/typography/opentype/spec/name#windows-language-ids)
+| macLangID | string representing a number | ✔️ | [Macintosh Language ID](https://docs.microsoft.com/en-us/typography/opentype/spec/name#platform-specific-encoding-and-language-ids-macintosh-platform-platform-id--1). If in doubt, set it to 0 (Roman).
+| msftLangID | string representing a hexadecimal number | ✔️ | [Windows Language ID](https://docs.microsoft.com/en-us/typography/opentype/spec/name#windows-language-ids). If in doubt, set it to 0x0409 (American English).
 
 
 
@@ -144,9 +144,9 @@ Name records consists of a series of objects named after the font formats that f
          }
 ````
 
-The records in `default` are the values forc will use if there are no values for the specific format. This way you can repeat name records across formats while also making exceptions.
+The records in `default` are the values forc will use if there are no values set for the specific format. This way you can repeat name records across formats while also making exceptions.
 
-In order to make valid fonts, forc doesn't dictate that you must have any one particular sub-object in name records, just so long as the result for every format you're exporting is a complete minimum set of name records.
+In order to make a valid manifest, forc doesn't dictate that you must have any one particular sub-object in name records (ie. for SVGinOT format, you can use 'default', 'SVGinOT' or both), just so long as the result is a complete minimum set of name records for every format you're exporting to.
 
 Inside each set are more objects. Name-value pairs of numbers (formatted as strings) paired with the name record corresponding to that number.
 
@@ -156,15 +156,17 @@ All name records need to be formatted as strings.
 
 Descriptions that are in bold are the most significant/important things.
 
+What kinds of characters you can put in these will be determined by the encoding IDs you've set in the encoding section (as described earlier in this document).
+
 | num. | req? | description | example | notes |
 |:--:|:---:|:--|:---|:---|
-| 0 |   | **Copyright** | Copyright © 2017-2019 Dzuk | Identifies the copyright holder of the font. This isn't where the license goes - use name records 13 and 14 for license information. This isn't necessarily the same as the designer (name record 9) or the vendor (name record 8). |
+| 0 |   | **Copyright** | Copyright © 2017-2019 Dzuk (https://noct.zone) | Identifies the copyright holder of the font. This isn't where the license goes - use name records 13 and 14 for license information. This isn't necessarily the same as the designer (name record 9) or the vendor (name record 8). |
 | 1 | ✔️ | **Family** | Mutant Standard emoji (SVGinOT) | [3]
 | 2 | ✔️ | **Subfamily** | Regular | [3]
 | 3 | ✔️  | **Unique font identifier** | Mutant Standard emoji SVGinOT | It's a string that distinguishes your font from others. Include version information here. macOS will consider the structure of this table invalid if this is not present. | 
 | 4 | ✔️ | **Full font name** | Mutant Standard emoji (SVGinOT) | A combination of 1 + 2, or 16 + 17.
 | 5 | | **Version supplementary information** | (0.4.0 - 2019-03-15) | **This is a special case that doesn't fully represent what this field normally is.** [4] |
-| 6 | ✔️ | **PostScript name** | MutantStandard-SVGinOT-Regular | Has to be restricted to 'printable' ASCII characters. (U+0021 through U+007E, and not '[', ']', '(', ')', '{', '}', '<', '>', '/', and '%'.)|
+| 6 | ✔️ | **PostScript name** | MutantStandard-SVGinOT | Has to be restricted to 'printable' ASCII characters. (U+0021 through U+007E, and not '[', ']', '(', ')', '{', '}', '<', '>', '/', and '%'.)|
 | 7 |   | Trademark |  |
 | 8 |   | **Manufacturer name** | Mutant Standard | Who publised the font. |
 | 9 |   | **Designer name** | Dzuk | Who designed the font.
@@ -174,16 +176,16 @@ Descriptions that are in bold are the most significant/important things.
 | 13 |   | **License** | Mutant Standard emoji is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. | [2]
 | 14 |   | **License URL** | https://creativecommons.org/licenses/by-nc-sa/4.0/ |  [1][2]
 | 15 |   | | |
-| 16 | ✔️ | **Typographic/Preferred Family** | Mutant Standard emoji (SVGinOT) | [3]
-| 17 | ✔️ | **Typographic/Preferred Subfamily** | Regular | [3]
-| 18 |   | Compatible Full |  | Something to do with Macintosh???
-| 19 |   | Sample Text |  | You can't actually put emoji as sample text. Encoding standards like Apple require a restricted set of characters you put in here.
-| 20 |   | PostScript CID findfont name | | ???
-| 21 |   | WWS Family Name | | ???
-| 22 |   | WWS Subfamily name | | ???
-| 23 |   | Light Background Palette | | Something related to Windows and CPAL?
-| 24 |   | Dark Background Palette | | Something related to Windows and CPAL?
-| 25 |   | Variations PostScript Name Prefix | | ???
+| 16 | ✔️ | **Typographic/Preferred Family** | Mutant Standard emoji | [3]
+| 17 | ✔️ | **Typographic/Preferred Subfamily** | SVGinOT | [3]
+| 18 |   | Compatible Full |  | 
+| 19 |   | Sample Text |  | Sample text for your font. The encoding you choose above limits what characters you can put in here, so you may have limited or no ability to create emoji sample text.
+| 20 |   | PostScript CID findfont name | | 
+| 21 |   | WWS Family Name | | 
+| 22 |   | WWS Subfamily name | | 
+| 23 |   | Light Background Palette | | 
+| 24 |   | Dark Background Palette | | 
+| 25 |   | Variations PostScript Name Prefix | | 
 
 1. URLs have to contain the protocol (ie. http://, ftp://, mailto:).
 2. 'License' should just have a brief summary of the license, not legalese. Use 'License URL' to direct people to the legalese.

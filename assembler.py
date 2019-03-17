@@ -149,7 +149,7 @@ def assembler(chosenFormat, m, glyphs):
     # glyph picture data
     # ---------------------------------------------
     log.out('Assembling passable glyf table...', 90)
-    root.append(glyf(glyphs))
+    root.append(glyf(m, glyphs))
 
 
     if formats[chosenFormat]["imageTables"] == "SVG":
