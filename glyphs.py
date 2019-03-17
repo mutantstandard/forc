@@ -2,7 +2,7 @@ import pathlib
 
 import log
 from validate.svg import isSVGValid
-
+from utils.codepoints import codepointSeq
 
 def glyphName(int):
     return (hex(int)[2:])
@@ -208,15 +208,11 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
     # have already been verified as identical.)
 
     for i in firstSubfolder:
-        codepoints = []
-
-
-
         # try to convert the filename into a string of hexadecimal numbers
         try:
-            codepoints = [int(hex, 16) for hex in i.stem.split(delim_codepoint)]
+            codepoints = codepointSeq(i.stem, delim_codepoint)
         except ValueError as e:
-            log.out(f"One of your glyphs ('{i.name}') is not named as a hexidecimal number or a series of hexadecimal numbers.", 31)
+            raise Exception(f"One of your glyphs ('{i.name}') is not named correctly. ({e})", 31)
 
 
         # make sure each inputted codepoint is in an appropriate range.
@@ -287,6 +283,73 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
 
 
 
+
+def compileAliasData(glyphs, aliases, delim_codepoint):
+
+
+    # basic check!
+
+    for destination, aliasTargets in aliases.items():
+
+        # DESTINATION
+        # -----------------
+
+        # is the destination is a real sequence
+
+        try:
+            destCodepoints = codepointSeq(destination, delim_codepoint)
+        except ValueError as e:
+            raise Exception(f"One of your alias destinations ('{destination}') is not named correctly. ({e})", 31)
+
+
+        # is the destination is a real destination
+
+        destinationMatches = False
+
+        for g in glyphs:
+            if destCodepoints == g.codepoints:
+                destinationMatches = True
+
+        if not destinationMatches:
+            raise Exception(f"One of your alias destinations ('{destination}') is not represented in your input glyphs.", 31)
+
+
+        # INPUTS
+        # -----------------
+
+
+        for target in aliasTargets:
+
+            # is the target a real sequence
+            try:
+                targCodepoints = codepointSeq(target, delim_codepoint)
+            except ValueError as e:
+                raise Exception(f"One of the targets ('{target}') in your alias for '{destination}' is not named correctly. ({e})", 31)
+
+
+            # is the target NOT a real destination
+            targetMatches = False
+
+            for g in glyphs:
+                if targCodepoints == g.codepoints:
+                    targetMatches = True
+
+            if targetMatches:
+                raise Exception(f"One of the targets ('{target}') in your alias for '{destination}' is represented in your input images. It has to be something that is not already in your input images.", 31)
+
+
+
+
+
+    return glyphs
+
+
+
+
+
+
+
+
 def glyphDuplicateTest(glyphs):
     """
     Checks whether there are any duplicates in codepoints in a list of glyphs.
@@ -335,7 +398,7 @@ def areGlyphLigaturesSafe(glyphs):
 
 
 
-def getGlyphs(inputPath, delim_codepoint, formats, no_lig, no_vs16, nusc, nfcc):
+def getGlyphs(inputPath, aliases, delim_codepoint, formats, no_lig, no_vs16, nusc, nfcc):
     """
     - Validates glyph image paths from the input path.
     - Returns a list of glyph objects, including important special control glyphs.
@@ -343,30 +406,37 @@ def getGlyphs(inputPath, delim_codepoint, formats, no_lig, no_vs16, nusc, nfcc):
 
 
     # check the input directory structure and get the images that are in there
-    log.out(f'Checking + getting file paths...', 90)
+    log.out(f'Checking + getting image glyph file paths...', 90)
     glyphImageSet = getImagesFromDir(inputPath, formats)
 
 
     # check the consistency of the codepoints declared in the glyph images
     # (or not)
     if not nfcc:
-        log.out(f'Checking file consistency...', 90)
+        log.out(f'Checking image glyph file consistency...', 90)
         areGlyphImagesConsistent(glyphImageSet)
 
 
     # compile glyph data
-    log.out(f'Compiling glyph data + validating glyph codepoints...', 90)
+    log.out(f'Compiling + validating image glyphs...', 90)
     glyphs = compileGlyphData(inputPath, delim_codepoint, no_vs16, glyphImageSet)
 
 
     # check for duplicate codepoints without VS16
     if not no_vs16:
-        log.out(f'Checking if there are any duplicate codepoint strings when ignoring VS16...', 90)
+        log.out(f'Checking if there are any duplicate image glyphs when ignoring VS16...', 90)
         glyphDuplicateTest(glyphs)
 
 
+
+    # compile alias data into glyphs
+    if aliases:
+        log.out(f'Compiling + validating alias glyphs...', 90)
+        glyphs = compileAliasData(glyphs, aliases, delim_codepoint)
+
+
     # check image data
-    log.out(f'Validating image data...', 90)
+    log.out(f'Validating image glyph image data...', 90)
     validateImageData(glyphs, nusc)
 
 

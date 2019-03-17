@@ -1,6 +1,6 @@
 from lxml.etree import Element, ElementTree
 
-def glyf(glyphs):
+def glyf(m, glyphs):
     """
     Generates and returns a glyf table with dummy data.
     """
@@ -29,7 +29,14 @@ def glyf(glyphs):
                                                         ,"yMax": "0"
                                                         })
                 dummyContours = Element("contour")
-                dummyContours.append(Element("pt", {"x": "100", "y": "100", "on": "1"}))
+
+
+                # these dummy contours are designed to trick the TTX compiler to making sure the
+                # xMin/yMin/etc. parameters of the font are set to what we want them to actually be set to.
+                # (TTX will ignore the user's parameters if what's in the glyf table doesn't agree.)
+
+                dummyContours.append(Element("pt", {"x": str(m["metrics"]["xMax"]), "y": str(m["metrics"]["yMax"]), "on": "1"}))
+                dummyContours.append(Element("pt", {"x": str(m["metrics"]["xMin"]), "y": str(m["metrics"]["yMin"]), "on": "1"}))
 
                 dummyDataNotDef.append(dummyContours)
                 dummyDataNotDef.append(Element("instructions"))
