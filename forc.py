@@ -11,12 +11,9 @@ from export import export
 
 
 VERSION = '0.0.1'
-
+DEF_MANIFEST = 'manifest.json'
 DEF_INPUT_PATH = 'in'
 DEF_OUTPUT_PATH = 'out'
-DEF_MANIFEST = 'manifest.json'
-DEF_ALIASES = None
-
 DEF_OUTPUT_FORMATS = ['SVGinOT']
 DEF_DELIM_CODEPOINT = "-"
 
@@ -42,10 +39,9 @@ OPTIONS:
 
 -h      Prints this help message.
 
--i      Image glyphs directory (default: {DEF_INPUT_PATH})
--a      Alias glyphs file (optional)
--m      Manifest file (default: {DEF_MANIFEST})
+-i      Input directory (default: {DEF_INPUT_PATH})
 -o      Output directory (default: {DEF_OUTPUT_PATH})
+-m      Manifest file (default: {DEF_MANIFEST})
 
 
 -F      Format (default: {DEF_OUTPUT_FORMATS})
@@ -103,11 +99,9 @@ look at docs/howto.md for more information on how to use many of these.
 
 
 def main():
+    manifest_path = DEF_MANIFEST
     input_path = DEF_INPUT_PATH
     output_path = DEF_OUTPUT_PATH
-    manifest_path = DEF_MANIFEST
-    aliases_path = DEF_ALIASES
-
     output_formats = DEF_OUTPUT_FORMATS
     delim_codepoint = DEF_DELIM_CODEPOINT
 
@@ -123,20 +117,18 @@ def main():
 
     try:
         opts, _ = getopt.getopt(sys.argv[1:],
-                                'hi:o:m:a:F:d:',
+                                'hm:i:o:F:d:',
                                 ['help', 'ttx', 'dev-ttx', 'no-vs16', 'nusc', 'nfcc', 'no-lig'])
         for opt, arg in opts:
             if opt in ['-h', '--help']:
                 print(HELP)
                 sys.exit()
+            elif opt == '-m':
+                manifest_path = arg
             elif opt == '-i':
                 input_path = arg
             elif opt == '-o':
                 output_path = arg
-            elif opt == '-m':
-                manifest_path = arg
-            elif opt == '-a':
-                aliases_path = arg
             elif opt == '-F':
                 output_formats = arg.split(',')
             elif opt =='-d':
@@ -162,10 +154,9 @@ def main():
         print(HELP)
         sys.exit(2)
     try:
-        export( input_path
+        export( manifest_path
+              , input_path
               , output_path
-              , manifest_path
-              , aliases_path
               , output_formats
               , delim_codepoint
 

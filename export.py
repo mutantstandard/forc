@@ -10,11 +10,9 @@ from format import formats
 
 
 
-def export( inputPath
+def export( manifestPath
+          , inputPath
           , outputPath
-          , manifestPath
-          , aliasesPath
-
           , outputFormats
           , delim_codepoint
 
@@ -68,18 +66,9 @@ def export( inputPath
 
 
     if not manifestPathPath.exists():
-        raise ValueError(f"Your the place where you said the manifest would be ({manifestPathPath}) doesn't exist.")
+        raise ValueError(f"Your manifest - {manifestPathPath} - is not a real directory.")
     elif manifestPathPath.is_dir():
-        raise ValueError(f"Your the place where you said the manifest would be ({manifestPathPath}) is a directory, not a file.")
-
-
-    if aliasesPath:
-        aliasesPathPath = pathlib.Path(aliasesPath).absolute()
-
-        if not aliasesPathPath.exists():
-            raise ValueError(f"Your the place where you said the aliases would be ({aliasesPathPath}) doesn't exist.")
-        if aliasesPathPath.is_dir():
-            raise ValueError(f"Your the place where you said the aliases would be ({aliasesPathPath}) is a directory, not a file.")
+        raise ValueError(f"Your manifest - {manifestPathPath} - is a directory, not a file.")
 
 
     log.out(f'Input/output directories OK!', 32)
@@ -115,7 +104,6 @@ def export( inputPath
     # try to load and check the manifest.
     # ------------------------------------------------
 
-
     log.out(f'Getting + Checking manifest JSON...')
     try:
         with open(manifestPath, "r") as read_file:
@@ -129,32 +117,14 @@ def export( inputPath
 
 
 
-    # try to load and check the aliases if the user provided any.
-    # ------------------------------------------------
-
-    if aliasesPath:
-        log.out(f'Getting + Checking aliases JSON...')
-        try:
-            with open(aliasesPath, "r") as read_file:
-                aliases = json.load(read_file)
-        except Exception as e:
-            raise Exception('Loading the aliases file failed!' + str(e))
-
-        log.out(f'Aliases OK!.', 32)
-    else:
-        aliases = None
-
-
-
 
 
 
     # check the image sets for each format.
     # ------------------------------------------------
 
-
-    log.out(f'Getting + checking glyphs...')
-    glyphs = getGlyphs(inputPathPath, aliases, delim_codepoint, glyphImageFormats, no_lig, no_vs16, nusc, nfcc)
+    log.out(f'Getting + checking glyph images...')
+    glyphs = getGlyphs(inputPathPath, delim_codepoint, glyphImageFormats, no_lig, no_vs16, nusc, nfcc)
 
     log.out(f'Glyphs OK!', 32)
 
