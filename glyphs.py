@@ -187,9 +187,9 @@ def validateIndividualCodepoints(codepoints, i):
 
 
 
-def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
+def compileImageGlyphs(dir, delim_codepoint, no_vs16, glyphImageSet):
     """
-    Compiles a glyph data structure from a set of glyph images.
+    Compiles a list of image glyphs from a set of glyph images.
     """
 
     firstSubfolderName = list(glyphImageSet.keys())[0]
@@ -212,7 +212,7 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
         try:
             codepoints = codepointSeq(i.stem, delim_codepoint)
         except ValueError as e:
-            raise Exception(f"One of your glyphs ('{i.name}') is not named correctly. ({e})", 31)
+            raise Exception(f"One of your image glyphs ('{i.name}') is not named correctly. ({e})", 31)
 
 
         # make sure each inputted codepoint is in an appropriate range.
@@ -284,12 +284,35 @@ def compileGlyphData(dir, delim_codepoint, no_vs16, glyphImageSet):
 
 
 
-def compileAliasData(glyphs, aliases, delim_codepoint):
+def compileAliasGlyphs(glyphs, aliases, delim_codepoint):
 
 
     # basic check!
 
-    for destination, aliasTargets in aliases.items():
+    for target, destination in aliases.items():
+
+        # TARGET
+        # -----------------
+
+        # is the target a real sequence
+        try:
+            targSeq = codepointSeq(target, delim_codepoint)
+        except ValueError as e:
+            raise Exception(f"The alias glyph '{target}' is not named correctly. ({e})", 31)
+
+
+        # is the target NOT a real destination
+        targetMatches = False
+
+        for g in glyphs:
+            if targSeq == g.codepoints:
+                targetMatches = True
+
+        if targetMatches:
+            raise Exception(f"The codepoint sequence for the alias glyph ('{target}') is represented in your image glyphs. It has to be something different.", 31)
+
+
+
 
         # DESTINATION
         # -----------------
@@ -297,9 +320,9 @@ def compileAliasData(glyphs, aliases, delim_codepoint):
         # is the destination is a real sequence
 
         try:
-            destCodepoints = codepointSeq(destination, delim_codepoint)
+            destSeq = codepointSeq(destination, delim_codepoint)
         except ValueError as e:
-            raise Exception(f"One of your alias destinations ('{destination}') is not named correctly. ({e})", 31)
+            raise Exception(f"The destination ('{destination}') of the alias glyph '{target}' is not named correctly. ({e})", 31)
 
 
         # is the destination is a real destination
@@ -307,43 +330,20 @@ def compileAliasData(glyphs, aliases, delim_codepoint):
         destinationMatches = False
 
         for g in glyphs:
-            if destCodepoints == g.codepoints:
+            if destSeq == g.codepoints:
                 destinationMatches = True
 
         if not destinationMatches:
-            raise Exception(f"One of your alias destinations ('{destination}') is not represented in your input glyphs.", 31)
-
-
-        # INPUTS
-        # -----------------
-
-
-        for target in aliasTargets:
-
-            # is the target a real sequence
-            try:
-                targCodepoints = codepointSeq(target, delim_codepoint)
-            except ValueError as e:
-                raise Exception(f"One of the targets ('{target}') in your alias for '{destination}' is not named correctly. ({e})", 31)
-
-
-            # is the target NOT a real destination
-            targetMatches = False
-
-            for g in glyphs:
-                if targCodepoints == g.codepoints:
-                    targetMatches = True
-
-            if targetMatches:
-                raise Exception(f"One of the targets ('{target}') in your alias for '{destination}' is represented in your input images. It has to be something that is not already in your input images.", 31)
+            raise Exception(f"The destination ('{destination}') of the alias glyph '{target}' is not represented in your image glyphs.", 31)
 
 
 
+    # TODO: create glyph objects representing the alias glyphs.
+    # TODO: combine image glyphs and alias glyphs in the same list.
+    # (these are basically one and the same task since they both depend on each other)
 
 
     return glyphs
-
-
 
 
 
@@ -417,9 +417,18 @@ def getGlyphs(inputPath, aliases, delim_codepoint, formats, no_lig, no_vs16, nus
         areGlyphImagesConsistent(glyphImageSet)
 
 
-    # compile glyph data
+    # compile image glyphs
     log.out(f'Compiling + validating image glyphs...', 90)
-    glyphs = compileGlyphData(inputPath, delim_codepoint, no_vs16, glyphImageSet)
+    glyphs = compileImageGlyphs(inputPath, delim_codepoint, no_vs16, glyphImageSet)
+
+
+    # compile alias glyphs
+    if aliases:
+        log.out(f'Compiling + validating alias glyphs...', 90)
+        glyphs = compileAliasGlyphs(glyphs, aliases, delim_codepoint)
+
+
+    # TODO: check and deal with service glyphs (VS16, ZWJ) for all glyphs
 
 
     # check for duplicate codepoints without VS16
@@ -429,10 +438,7 @@ def getGlyphs(inputPath, aliases, delim_codepoint, formats, no_lig, no_vs16, nus
 
 
 
-    # compile alias data into glyphs
-    if aliases:
-        log.out(f'Compiling + validating alias glyphs...', 90)
-        glyphs = compileAliasData(glyphs, aliases, delim_codepoint)
+
 
 
     # check image data
