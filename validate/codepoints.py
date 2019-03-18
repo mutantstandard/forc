@@ -1,13 +1,12 @@
 
-
-def testZWJSanity(codepointSeq):
+def testZWJSanity(codepointSeq, glyphName):
     zwj = int('200d', 16)
 
     if codepointSeq[0] == zwj or codepointSeq[-1] == zwj:
-        raise ValueError(f"One of your glyphs ('{i.name}') has a ZWJ at the beginning and/or the end of it's codepoint seqence (when ignoring VS16 (U+fe0f). This is not correct.")
+        raise ValueError(f"One of your glyphs ('{glyphName}') has a ZWJ at the beginning and/or the end of it's codepoint seqence (when ignoring VS16 (U+fe0f). This is not correct.")
 
     if any(codepointSeq[i]== zwj and codepointSeq[i+1] == zwj for i in range(len(codepointSeq)-1)):
-        raise ValueError(f"One of your glyphs ('{i.name}') has two or more ZWJs (U+200d) next to each other (when ignoring VS16 (U+fe0f)). This is not correct.")
+        raise ValueError(f"One of your glyphs ('{glyphName}') has two or more ZWJs (U+200d) next to each other (when ignoring VS16 (U+fe0f)). This is not correct.")
 
 
 def testRestrictedCodepoints(codepointSeq, glyphName):

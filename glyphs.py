@@ -304,7 +304,7 @@ def serviceGlyphProc(glyphs, no_vs16):
 
         if zwj in g.codepoints:
             zwjPresence = True
-            testZWJSanity(g.codepoints)
+            testZWJSanity(g.codepoints, g.name)
 
         g.resetName()
 
