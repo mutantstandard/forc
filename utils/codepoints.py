@@ -1,5 +1,23 @@
 
 
+def simpleHexName(int):
+    """
+    returns a hexadecimal number as a string without the '0x' prefix.
+    """
+
+    return (hex(int)[2:])
+
+
+
+def glyphName(codepointSeq):
+    """
+    takes in a codepointSeq (list of hexadecimal numbers)
+    and returns a string
+    """
+
+    return 'u' + '_'.join(map(simpleHexName, codepointSeq))
+
+
 
 
 def codepointSeq(string, delim_codepoint):

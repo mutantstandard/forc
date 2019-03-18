@@ -2,17 +2,16 @@ import pathlib
 
 import log
 from validate.svg import isSVGValid
-from utils.codepoints import codepointSeq
+from validate.codepoints import testZWJSanity, testRestrictedCodepoints
+from utils.codepoints import codepointSeq, glyphName
 
-def glyphName(int):
-    return (hex(int)[2:])
 
 
 
 
 class glyph:
 
-    def __init__(self, codepoints, imagePath=None, vs16=False):
+    def __init__(self, codepoints, imagePath=None, vs16=False, aliasDest=None):
 
         if codepoints:
             self.codepoints = codepoints
@@ -21,12 +20,14 @@ class glyph:
         else:
             raise ValueError(f"Tried to make glyph object '{name}' but doesn't have a codepoint AND it doesn't have an image path.")
 
-        self.name = 'u' + '_'.join(map(glyphName, codepoints))
+
+        if aliasDest:
+            if imagePath:
+                raise ValueError(f"Tried to make glyph object '{name}' but it is set as an alias AND has an image path. It can't have both.")
+
+        self.name = glyphName(self.codepoints)
         self.imagePath = imagePath
         self.vs16 = vs16
-
-
-
 
     def __str__(self):
         return f"{self.name}"
@@ -50,7 +51,8 @@ class glyph:
     def __len__(self):
         return len(self.codepoints)
 
-
+    def resetName(self):
+        self.name = glyphName(self.codepoints)
 
 
 
@@ -165,25 +167,6 @@ def areGlyphImagesConsistent(glyphSet):
 
 
 
-def validateIndividualCodepoints(codepoints, i):
-    """
-    Make sure that each codepoint in a codepoint string is within the right ranges.
-    Throws an exception when it is not.
-    """
-    for c in codepoints:
-        if c < int('20', 16):
-            raise Exception(f"One of your glyphs ('{i.stem}') contains a codepoint that is below U+20. You cannot encode glyphs below this number because various typing environments get confused when you do.")
-
-        if c == int('20', 16):
-            raise Exception(f"One of your glyphs ('{i.stem}') contains U+20. This is space - you shouldn't be using a glyph for this.")
-
-        if c == int('a0', 16):
-            raise Exception(f"One of your glyphs ('{i.stem}') contains U+a0. This is a space character - you shouldn't be using a glyph for this.")
-
-        if c > int('10FFFF', 16):
-            raise Exception(f"One of your glyphs ('{i.stem}') contains a codepoint that is above U+10FFFF. The Unicode Standard currently does not support codepoints above this number.")
-
-
 
 
 
@@ -197,12 +180,6 @@ def compileImageGlyphs(dir, delim_codepoint, no_vs16, glyphImageSet):
 
     glyphs = []
 
-    vs16Allowed = not no_vs16
-
-    vs16Presence = False
-    zwjPresence = False
-
-
 
     # (iterating over one subfolder because the other subfolders
     # have already been verified as identical.)
@@ -215,10 +192,6 @@ def compileImageGlyphs(dir, delim_codepoint, no_vs16, glyphImageSet):
             raise Exception(f"One of your image glyphs ('{i.name}') is not named correctly. ({e})", 31)
 
 
-        # make sure each inputted codepoint is in an appropriate range.
-        validateIndividualCodepoints(codepoints, i)
-
-
         # compile a dictionary containing all of the different image formats for this glyph.
         imagePath = dict()
 
@@ -227,53 +200,8 @@ def compileImageGlyphs(dir, delim_codepoint, no_vs16, glyphImageSet):
             imagePath[subfolderName] = pathlib.Path(dir / subfolderName / filename ).absolute()
 
 
-
-
-        # strip instances of fe0f
-        # set vs16Enabled to True if it fits the right parameters.
-        fe0f = int('fe0f', 16)
-        strippedCodepoints = [c for c in codepoints if c != fe0f]
-        vs16Enabled = vs16Allowed and fe0f in codepoints and len(strippedCodepoints) == 1
-
-
-        # test and validate presence of ZWJs
-        zwj = int('200d', 16)
-        if zwj in strippedCodepoints:
-            zwjPresence = True
-
-            if strippedCodepoints[0] == zwj or strippedCodepoints[-1] == zwj:
-                raise ValueError(f"One of your glyphs ('{i.name}') has a ZWJ at the beginning and/or the end of it's codepoint seqence (when ignoring VS16 (U+fe0f). This is not correct.")
-
-            if any(strippedCodepoints[i]== zwj and strippedCodepoints[i+1] == zwj for i in range(len(strippedCodepoints)-1)):
-                raise ValueError(f"One of your glyphs ('{i.name}') has two or more ZWJs (U+200d) next to each other (when ignoring VS16 (U+fe0f)). This is not correct.")
-
-
         # finally add the codepoint to the glyph list.
-        glyphs.append(glyph(strippedCodepoints, imagePath, vs16Enabled))
-
-
-
-
-
-    # add particular service glyphs based on user input.
-
-    glyphs.append(glyph([0x20], None)) # breaking space
-    glyphs.append(glyph([0xa0], None)) # non-breaking space
-
-    if vs16Presence: glyphs.append(glyph([0xfe0f], None))
-    if zwjPresence: glyphs.append(glyph([0x200d], None))
-
-
-
-
-    # sort glyphs from lowest codepoints to highest.
-    #
-    # THIS IS REALLY IMPORTANT BECAUSE IT DETERMINES THE GLYPHID
-    #
-    # IF CERTAIN LOW-NUMBER CHARACTERS HAVE GLYPHIDS OUR OF THEIR
-    # PARTICULAR HEXADECIMAL RANGES, IT WONT COMPILE.
-
-    glyphs.sort()
+        glyphs.append(glyph(codepoints, imagePath))
 
 
     return glyphs
@@ -294,6 +222,7 @@ def compileAliasGlyphs(glyphs, aliases, delim_codepoint):
         # TARGET
         # -----------------
 
+
         # is the target a real sequence
         try:
             targSeq = codepointSeq(target, delim_codepoint)
@@ -313,12 +242,11 @@ def compileAliasGlyphs(glyphs, aliases, delim_codepoint):
 
 
 
-
         # DESTINATION
         # -----------------
 
-        # is the destination is a real sequence
 
+        # is the destination is a real sequence
         try:
             destSeq = codepointSeq(destination, delim_codepoint)
         except ValueError as e:
@@ -326,7 +254,6 @@ def compileAliasGlyphs(glyphs, aliases, delim_codepoint):
 
 
         # is the destination is a real destination
-
         destinationMatches = False
 
         for g in glyphs:
@@ -336,11 +263,7 @@ def compileAliasGlyphs(glyphs, aliases, delim_codepoint):
         if not destinationMatches:
             raise Exception(f"The destination ('{destination}') of the alias glyph '{target}' is not represented in your image glyphs.", 31)
 
-
-
-    # TODO: create glyph objects representing the alias glyphs.
-    # TODO: combine image glyphs and alias glyphs in the same list.
-    # (these are basically one and the same task since they both depend on each other)
+        #glyphs.append(glyph(targSeq, aliasDest=destSeq))
 
 
     return glyphs
@@ -348,6 +271,55 @@ def compileAliasGlyphs(glyphs, aliases, delim_codepoint):
 
 
 
+def serviceGlyphProc(glyphs, no_vs16):
+
+    newGlyphs = []
+    vs16Allowed = not no_vs16
+
+    vs16Presence = False
+    zwjPresence = False
+
+    for g in glyphs:
+
+        # TEST FOR INAPPROPRIATE CODEPOINTS
+        # -------------------------------------
+        # make sure each inputted codepoint is in an appropriate range.
+        testRestrictedCodepoints(g.codepoints, g.name)
+
+        # VS16
+        # -------------
+        fe0f = int('fe0f', 16)
+
+        # strip instances of fe0f
+        g.codepoints = [c for c in g.codepoints if c != fe0f]
+
+        # set vs16Enabled to True if it fits the right parameters.
+        g.vs16Enabled = vs16Allowed and fe0f in g.codepoints and len(g.codepoints) == 1
+
+
+        # ZWJ
+        # -------------
+        # test and validate presence of ZWJs
+        zwj = int('200d', 16)
+
+        if zwj in g.codepoints:
+            zwjPresence = True
+            testZWJSanity(g.codepoints)
+
+        g.resetName()
+
+
+
+    # add particular service glyphs based on user input.
+
+    glyphs.append(glyph([0x20])) # breaking space
+    glyphs.append(glyph([0xa0])) # non-breaking space
+
+    if vs16Presence: glyphs.append(glyph([0xfe0f]))
+    if zwjPresence: glyphs.append(glyph([0x200d]))
+
+
+    return glyphs
 
 
 def glyphDuplicateTest(glyphs):
@@ -426,6 +398,25 @@ def getGlyphs(inputPath, aliases, delim_codepoint, formats, no_lig, no_vs16, nus
     if aliases:
         log.out(f'Compiling + validating alias glyphs...', 90)
         glyphs = compileAliasGlyphs(glyphs, aliases, delim_codepoint)
+
+
+    # process service glyphs
+    log.out(f'Processing service glyphs...', 90)
+    glyphs = serviceGlyphProc(glyphs, no_vs16)
+
+
+    # sort glyphs from lowest codepoints to highest.
+    #
+    # THIS IS REALLY IMPORTANT BECAUSE IT DETERMINES THE GLYPHID
+    #
+    # IF CERTAIN LOW-NUMBER CHARACTERS HAVE GLYPHIDS OUR OF THEIR
+    # PARTICULAR HEXADECIMAL RANGES, IT WONT COMPILE.
+
+    glyphs.sort()
+
+
+
+
 
 
     # TODO: check and deal with service glyphs (VS16, ZWJ) for all glyphs
