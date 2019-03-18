@@ -11,7 +11,7 @@ from utils.codepoints import codepointSeq, glyphName
 
 class glyph:
 
-    def __init__(self, codepoints, imagePath=None, vs16=False, aliasDest=None):
+    def __init__(self, codepoints, imagePath=None, vs16=False, alias=None):
 
         if codepoints:
             self.codepoints = codepoints
@@ -21,14 +21,17 @@ class glyph:
             raise ValueError(f"Tried to make glyph object '{name}' but doesn't have a codepoint AND it doesn't have an image path.")
 
 
-        if aliasDest:
-            if imagePath:
+        if alias:
+            if not imagePath:
+                self.aliasName = glyphName(alias)
+            else:
                 raise ValueError(f"Tried to make glyph object '{name}' but it is set as an alias AND has an image path. It can't have both.")
 
         self.name = glyphName(self.codepoints)
         self.imagePath = imagePath
         self.vs16 = vs16
-        self.aliasDest = aliasDest
+        self.alias = alias
+
 
     def __str__(self):
         return f"{self.name}"
@@ -52,7 +55,8 @@ class glyph:
     def resetName(self):
         self.name = glyphName(self.codepoints)
 
-
+    def resetAliasName(self):
+        self.aliasName = glyphName(self.alias)
 
 
 
@@ -261,7 +265,7 @@ def compileAliasGlyphs(glyphs, aliases, delim_codepoint):
         if not destinationMatches:
             raise Exception(f"The destination ('{destination}') of the alias glyph '{target}' is not represented in your image glyphs.", 31)
 
-        glyphs.append(glyph(targSeq, aliasDest=destSeq))
+        glyphs.append(glyph(targSeq, alias=destSeq))
 
 
     return glyphs
@@ -307,10 +311,14 @@ def serviceGlyphProc(glyphs, no_vs16):
         g.resetName()
 
 
-        if g.aliasDest:
-            g.aliasDest = [c for c in g.aliasDest if c != fe0f]
-            if zwj in g.aliasDest:
-                testZWJSanity(g.aliasDest, g.name)
+        if g.alias:
+
+            g.alias = [c for c in g.alias if c != fe0f]
+
+            if zwj in g.alias:
+                testZWJSanity(g.alias, g.name)
+
+            g.resetAliasName()
 
 
 
@@ -381,7 +389,7 @@ def mixAndSortGlyphs(glyphs):
     glyphStruct["img"] = []
 
     for g in glyphs:
-        if not g.aliasDest:
+        if not g.alias:
             glyphStruct["all"].append(g)
             glyphStruct["img"].append(g)
         else:
@@ -396,8 +404,6 @@ def mixAndSortGlyphs(glyphs):
 
     glyphStruct["all"].sort()
     glyphStruct["img"].sort()
-
-    print(glyphStruct)
 
     return glyphStruct
 
@@ -466,7 +472,7 @@ def getGlyphs(inputPath, aliases, delim_codepoint, formats, no_lig, no_vs16, nus
         log.out(f'Validating ligatures...', 90)
         areGlyphLigaturesSafe(glyphs)
 
-    glyphs.sort()
-    return glyphs
-    #log.out(f'Mixing and sorting glyphs...', 90)
-    #return mixAndSortGlyphs(glyphs)
+    #glyphs.sort()
+    #return glyphs
+    log.out(f'Mixing and sorting glyphs...', 90)
+    return mixAndSortGlyphs(glyphs)

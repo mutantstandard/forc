@@ -35,7 +35,7 @@ def vmtx(metrics, glyphs):
 
     vmtx = Element("vmtx")
 
-    for g in glyphs:
+    for g in glyphs['img']:
         vmtx.append(Element("mtx", {"name": g.name
                                     ,"height": str(metrics['normalHeight'])
                                     ,"tsb": str(metrics['normalTSB'])

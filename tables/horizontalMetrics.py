@@ -32,7 +32,7 @@ def hhea(metrics):
 def hmtx(metrics, glyphs):
     hmtx = Element("hmtx")
 
-    for g in glyphs:
+    for g in glyphs['img']:
         hmtx.append(Element("mtx", {"name": g.name
                                     ,"width": str(metrics['normalWidth'])
                                     ,"lsb": str(metrics['normalLSB'])

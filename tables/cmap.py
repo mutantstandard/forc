@@ -2,12 +2,14 @@ from lxml.etree import Element
 
 
 
-def makeGlyphSubtable(tag, attrs, glyphs):
+def makeGlyphSubtable(tag, attrs, cmapGlyphSet):
     subtable = Element(tag, attrs)
 
-    for g in glyphs:
-        subtable.append(Element("map", {"code": hex(g.codepoints[0]), "name": g.name}))
-
+    for g in cmapGlyphSet:
+        if not g.alias:
+            subtable.append(Element("map", {"code": hex(g.codepoints[0]), "name": g.name}))
+        else:
+            subtable.append(Element("map", {"code": hex(g.codepoints[0]), "name": g.aliasName}))
     return subtable
 
 
@@ -27,7 +29,7 @@ def cmap(glyphs):
     twoByte = []
     fourByte = []
 
-    for g in glyphs:
+    for g in glyphs['all']:
         if g.vs16:
             vs16Presence = True
 

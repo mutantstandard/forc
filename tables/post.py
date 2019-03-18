@@ -21,7 +21,7 @@ def post(glyphs):
 
     # extraNames to please macOS.
     extraNames = Element("extraNames")
-    for g in glyphs:
+    for g in glyphs['img']:
         extraNames.append(Element("psName", {"name": g.name}))
 
     post.append(extraNames)

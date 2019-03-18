@@ -79,7 +79,7 @@ def gsub(glyphs):
     # creating a data structure that will work for LigatureSets.
     ligatureList = {}
 
-    for g in glyphs:
+    for g in glyphs['all']:
         if len(g.codepoints) > 1: # if a ligature
             if singleGlyphName(g) in ligatureList.keys():
                 ligatureList[singleGlyphName(g)].append(g)
@@ -99,9 +99,14 @@ def gsub(glyphs):
         ligatureSetXML = Element("LigatureSet", {"glyph": id})
 
         for g in ligatureSet:
+            if g.alias:
+                glyphTarget = g.aliasName
+            else:
+                glyphTarget = g.name
+
             components = ','.join(map(glyphName, g.codepoints[1:]))
 
-            ligatureSetXML.append(Element("Ligature", {"components": components, "glyph": g.name}))
+            ligatureSetXML.append(Element("Ligature", {"components": components, "glyph": glyphTarget}))
 
         ligaturesubst.append(ligatureSetXML)
 

@@ -12,7 +12,7 @@ def glyphOrder(glyphs):
     glyphOrder = Element("GlyphOrder")
 
     # add all of the juicy glyphs
-    for id, g in enumerate(glyphs):
+    for id, g in enumerate(glyphs['img']):
         glyphOrder.append(Element("GlyphID", {"id": str(id), "name": g.name}))
 
 

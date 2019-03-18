@@ -9,7 +9,7 @@ def glyf(m, glyphs):
 
     fakeGlyfs = 0
 
-    for ID, g in enumerate(glyphs):
+    for ID, g in enumerate(glyphs['img']):
 
 
         # create one dummy glyf in the right place

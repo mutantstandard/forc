@@ -97,7 +97,7 @@ def svg(metrics, glyphs):
 
     svgTable = etree.Element("SVG")
 
-    for ID, g in enumerate(glyphs):
+    for ID, g in enumerate(glyphs['img']):
         if g.imagePath:
             if g.imagePath['svg']:
                 svgDoc = etree.Element("svgDoc", {"startGlyphID": str(ID), "endGlyphID" : str(ID) })

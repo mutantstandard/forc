@@ -13,7 +13,7 @@ def os2(OS2VendorID, metrics, glyphs):
     # the only bit in ulUnicodeRange that's *really* necessary to set.
     supplementaryPlane = False
 
-    for g in glyphs:
+    for g in glyphs['all']:
         if g.codepoints[0] >= int('0x10000', 16) and g.codepoints[0] <= int('0x10ffff', 16):
             supplementaryPlane = True
 
