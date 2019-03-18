@@ -4,6 +4,7 @@ import json
 import log
 from create import createFont
 from validate.manifest import validateManifest
+from validate.aliases import validateAliases
 from glyphs import getGlyphs
 from format import formats
 
@@ -138,7 +139,9 @@ def export( inputPath
             with open(aliasesPath, "r") as read_file:
                 aliases = json.load(read_file)
         except Exception as e:
-            raise Exception('Loading the aliases file failed!' + str(e))
+            raise Exception('Loading the aliases file failed! ' + str(e))
+
+        validateAliases(aliases)
 
         log.out(f'Aliases OK!.', 32)
     else:
