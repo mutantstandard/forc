@@ -28,18 +28,16 @@ class glyph:
         self.name = glyphName(self.codepoints)
         self.imagePath = imagePath
         self.vs16 = vs16
+        self.aliasDest = aliasDest
 
     def __str__(self):
         return f"{self.name}"
 
-
     def __repr__(self):
         return self.__str__()
 
-
     def __eq__(self, other):
         return self.codepoints == other.codepoints
-
 
     def __lt__(self, other):
         if len(self.codepoints) < len(other.codepoints):
@@ -263,7 +261,7 @@ def compileAliasGlyphs(glyphs, aliases, delim_codepoint):
         if not destinationMatches:
             raise Exception(f"The destination ('{destination}') of the alias glyph '{target}' is not represented in your image glyphs.", 31)
 
-        #glyphs.append(glyph(targSeq, aliasDest=destSeq))
+        glyphs.append(glyph(targSeq, aliasDest=destSeq))
 
 
     return glyphs
@@ -309,6 +307,12 @@ def serviceGlyphProc(glyphs, no_vs16):
         g.resetName()
 
 
+        if g.aliasDest:
+            g.aliasDest = [c for c in g.aliasDest if c != fe0f]
+            if zwj in g.aliasDest:
+                testZWJSanity(g.aliasDest, g.name)
+
+
 
     # add particular service glyphs based on user input.
 
@@ -320,6 +324,8 @@ def serviceGlyphProc(glyphs, no_vs16):
 
 
     return glyphs
+
+
 
 
 def glyphDuplicateTest(glyphs):
@@ -367,6 +373,35 @@ def areGlyphLigaturesSafe(glyphs):
 
 
 
+def mixAndSortGlyphs(glyphs):
+
+    glyphStruct = dict()
+
+    glyphStruct["all"] = []
+    glyphStruct["img"] = []
+
+    for g in glyphs:
+        if not g.aliasDest:
+            glyphStruct["all"].append(g)
+            glyphStruct["img"].append(g)
+        else:
+            glyphStruct["all"].append(g)
+
+    # sort glyphs from lowest codepoints to highest.
+    #
+    # THIS IS REALLY IMPORTANT BECAUSE IT DETERMINES THE GLYPHID
+    #
+    # IF CERTAIN LOW-NUMBER CHARACTERS HAVE GLYPHIDS OUR OF THEIR
+    # PARTICULAR HEXADECIMAL RANGES, IT WONT COMPILE.
+
+    glyphStruct["all"].sort()
+    glyphStruct["img"].sort()
+
+    print(glyphStruct)
+
+    return glyphStruct
+
+
 
 
 
@@ -405,31 +440,10 @@ def getGlyphs(inputPath, aliases, delim_codepoint, formats, no_lig, no_vs16, nus
     glyphs = serviceGlyphProc(glyphs, no_vs16)
 
 
-    # sort glyphs from lowest codepoints to highest.
-    #
-    # THIS IS REALLY IMPORTANT BECAUSE IT DETERMINES THE GLYPHID
-    #
-    # IF CERTAIN LOW-NUMBER CHARACTERS HAVE GLYPHIDS OUR OF THEIR
-    # PARTICULAR HEXADECIMAL RANGES, IT WONT COMPILE.
-
-    glyphs.sort()
-
-
-
-
-
-
-    # TODO: check and deal with service glyphs (VS16, ZWJ) for all glyphs
-
-
     # check for duplicate codepoints without VS16
     if not no_vs16:
         log.out(f'Checking if there are any duplicate image glyphs when ignoring VS16...', 90)
         glyphDuplicateTest(glyphs)
-
-
-
-
 
 
     # check image data
@@ -437,6 +451,7 @@ def getGlyphs(inputPath, aliases, delim_codepoint, formats, no_lig, no_vs16, nus
     validateImageData(glyphs, nusc)
 
 
+    # validating (or stripping) ligatures
     if no_lig:
         log.out(f'Stripping any ligatures...', 90)
         singleGlyphs = []
@@ -445,9 +460,13 @@ def getGlyphs(inputPath, aliases, delim_codepoint, formats, no_lig, no_vs16, nus
             if len(g.codepoints) == 1:
                 singleGlyphs.append(g)
 
-        return singleGlyphs
+        glyphs = singleGlyphs
 
     else:
         log.out(f'Validating ligatures...', 90)
         areGlyphLigaturesSafe(glyphs)
-        return glyphs
+
+    glyphs.sort()
+    return glyphs
+    #log.out(f'Mixing and sorting glyphs...', 90)
+    #return mixAndSortGlyphs(glyphs)
