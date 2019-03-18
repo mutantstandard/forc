@@ -1,4 +1,6 @@
 # Alias Glyphs
+Often when making an emoji font, you only tie one codepoint sequence to one glyph, but sometimes you might want more than one.
+
 Alias glyphs let you attach additional codepoint sequences to existing glyphs, so one glyph can have multiple codepoint sequences associated with it.
 
 
@@ -10,12 +12,14 @@ Alias glyphs are created by a JSON file, which is is structured as follows:
 { target : destination
 , target : destination
 , target : destination
-...
+, ...
 }
 
 ````
 
-'Targets' are the codepoint glyph  sequences, and 'destinations' are existing image glyph sequences.
+The target is the codepoint of the alias glyph, and the destination is the image glyph the alias is pointing to.
+
+Both the target and destination are strings representing sequences of hexadecimal numbers (without '0x' at the beginning).
 
 ````
 example

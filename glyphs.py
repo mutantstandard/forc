@@ -472,7 +472,5 @@ def getGlyphs(inputPath, aliases, delim_codepoint, formats, no_lig, no_vs16, nus
         log.out(f'Validating ligatures...', 90)
         areGlyphLigaturesSafe(glyphs)
 
-    #glyphs.sort()
-    #return glyphs
     log.out(f'Mixing and sorting glyphs...', 90)
     return mixAndSortGlyphs(glyphs)
