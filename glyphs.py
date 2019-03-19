@@ -3,7 +3,6 @@ import pathlib
 import log
 from validate.svg import isSVGValid
 from validate.codepoints import testZWJSanity, testRestrictedCodepoints
-#from utils.codepoints import glyphName, simpleHexName
 
 
 
