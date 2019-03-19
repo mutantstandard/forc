@@ -1,11 +1,12 @@
 from lxml.etree import Element
 
-def os2(OS2VendorID, metrics, glyphs):
+def os2(m, glyphs):
     """
     Creates an OS/2 table and fills it with both hard-coded,
     automatically generated and user-defined metadata.
     """
 
+    metrics = m['metrics']
 
     singleCodepoints = []
     twoByte = []
@@ -94,7 +95,7 @@ def os2(OS2VendorID, metrics, glyphs):
     os2.append(Element("ulUnicodeRange3", {'value': '00000000 00000000 00000000 00000000'}))
     os2.append(Element("ulUnicodeRange4", {'value': '00000000 00000000 00000000 00000000'}))
 
-    os2.append(Element("achVendID", {'value': OS2VendorID}))
+    os2.append(Element("achVendID", {'value': m['metadata']['OS2VendorID']}))
 
     os2.append(Element("fsSelection", {'value': '00000000 00000000'}))                          # hard-coded
 

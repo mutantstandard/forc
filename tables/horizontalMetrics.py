@@ -1,6 +1,8 @@
 from lxml.etree import Element
 
-def hhea(metrics):
+def hhea(m):
+    metrics = m['metrics']
+
     hhea = Element("hhea")
 
     hhea.append(Element("tableVersion", {'value': '0x00010000'})) # hard-coded
@@ -29,7 +31,9 @@ def hhea(metrics):
     return hhea
 
 
-def hmtx(metrics, glyphs):
+def hmtx(m, glyphs):
+    metrics = m['metrics']
+
     hmtx = Element("hmtx")
 
     for g in glyphs['img']:

@@ -87,13 +87,15 @@ def addGlyphID(svgTree, ID):
 
 
 
-def svg(metrics, glyphs):
+def svg(m, glyphs):
     """
     Generates and returns a SVG table.
 
     It will non-destructively alter glyphs or throw exceptions if there's visual data
     that's incompatible with SVGinOT standards and/or renderers.
     """
+
+    metrics = m['metrics']
 
     svgTable = etree.Element("SVG")
 

@@ -1,7 +1,7 @@
 from lxml.etree import Element
 from math import modf
 
-def head(m, created):
+def head(m,):
 
 
 
@@ -34,7 +34,7 @@ def head(m, created):
     head.append(Element("flags", {'value': '00000000 00001011'})) # hard-coded
 
     head.append(Element("unitsPerEm", {'value': str(m['metrics']['unitsPerEm'])}))
-    head.append(Element("created", {'value': created}))
+    head.append(Element("created", {'value': m['metadata']['created']}))
     head.append(Element("modified", {'value': 'Mon Dec 11 13:45:00 2018'})) # TTX changes this at compilation
 
     head.append(Element("xMin", {'value': str(m['metrics']['xMin']) }))

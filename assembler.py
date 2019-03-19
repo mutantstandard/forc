@@ -38,25 +38,10 @@ def assembler(chosenFormat, m, glyphs):
     """
 
 
-    # defining various variables that will get used in each table.
-    # just making this a bit more readable, basically.
-
-    metrics = m['metrics']
-
-    created = m['metadata']['created']
-    OS2VendorID = m['metadata']['OS2VendorID']
-    nameRecords = m['metadata']['nameRecords']
-
-    macLangID = m['encoding']['macLangID']
-    msftLangID = m['encoding']['msftLangID']
-
-
-
     # start the TTX file
     # ---------------------------------------------
     log.out(f'Assembling root XML...', 90)
     root = Element('ttFont', {'sfntVersion': '\\x00\\x01\\x00\\x00', 'ttLibVersion': '3.28'}) # hard-coded attrs.
-
 
 
 
@@ -67,10 +52,10 @@ def assembler(chosenFormat, m, glyphs):
     root.append(glyphOrder(glyphs))
 
     log.out('Assembling head table...', 90)
-    root.append(head(m, created))
+    root.append(head(m))
 
     log.out('Assembling OS/2 table...', 90)
-    root.append(os2(OS2VendorID, metrics, glyphs))
+    root.append(os2(m, glyphs))
 
     log.out('Assembling post table...', 90)
     root.append(post(glyphs))
@@ -95,16 +80,16 @@ def assembler(chosenFormat, m, glyphs):
     # horizontal and vertical metrics tables
     # ---------------------------------------------
     log.out('Assembling hhea table...', 90)
-    root.append(hhea(metrics))
+    root.append(hhea(m))
 
     log.out('Assembling hmtx table...', 90)
-    root.append(hmtx(metrics, glyphs))
+    root.append(hmtx(m, glyphs))
 
     log.out('Assembling vhea table...', 90)
-    root.append(vhea(metrics))
+    root.append(vhea(m))
 
     log.out('Assembling vmtx table...', 90)
-    root.append(vmtx(metrics, glyphs))
+    root.append(vmtx(m, glyphs))
 
 
 
@@ -154,7 +139,7 @@ def assembler(chosenFormat, m, glyphs):
 
     if formats[chosenFormat]["imageTables"] == "SVG":
         log.out('Assembling SVG table...', 90)
-        root.append(svg(metrics, glyphs))
+        root.append(svg(m, glyphs))
 
     elif formats[chosenFormat]["imageTables"] == "sbix":
         log.out('Assembling sbix table...', 90)
@@ -162,10 +147,10 @@ def assembler(chosenFormat, m, glyphs):
 
     elif formats[chosenFormat]["imageTables"] == "CBx":
         log.out('Assembling CBLC table...', 90)
-        root.append(cblc(metrics, glyphs))
+        root.append(cblc(m, glyphs))
 
         log.out('Assembling CBDT table...', 90)
-        root.append(cbdt(metrics, glyphs))
+        root.append(cbdt(m, glyphs))
 
 
 
@@ -173,7 +158,7 @@ def assembler(chosenFormat, m, glyphs):
     # human-readable metadata
     # ---------------------------------------------
     log.out('Assembling name table...', 90)
-    root.append(name(chosenFormat, macLangID, msftLangID, m))
+    root.append(name(chosenFormat, m))
 
 
 

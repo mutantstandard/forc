@@ -130,10 +130,12 @@ def strike(metrics, strikeIndex, ppem, glyphs):
 
 
 
-def cblc(metrics, glyphs):
+def cblc(m, glyphs):
     """
     Generates and returns a glyf table with dummy data.
     """
+
+    metrics = m['metrics']
 
     cblc = Element("CBLC")
 
