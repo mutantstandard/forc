@@ -25,7 +25,6 @@ DEF_DEV_TTX = False
 
 DEF_NO_VS16 = False
 DEF_NUSC = False
-DEF_NFCC = False
 
 DEF_NO_LIG = False
 
@@ -82,13 +81,6 @@ OPTIONS:
             Makes SVG checking less strict, by only checking SVG
             parts that are explicitly not allowed in SVGinOT.
 
---nfcc      No File Consistency Checking.
-            Stops forc from checking if the images in the format
-            subfolders are all the same. Useful if you have made
-            guarantees beforehand and want to save time.
-
-
-
 --no-lig    (DEVELOPMENT OPTION) Strips ligatures from the output.
 
 
@@ -116,7 +108,6 @@ def main():
 
     no_vs16 = DEF_NO_VS16
     nusc = DEF_NUSC
-    nfcc = DEF_NFCC
 
     no_lig = DEF_NO_LIG
 
@@ -124,7 +115,7 @@ def main():
     try:
         opts, _ = getopt.getopt(sys.argv[1:],
                                 'hi:o:m:a:F:d:',
-                                ['help', 'ttx', 'dev-ttx', 'no-vs16', 'nusc', 'nfcc', 'no-lig'])
+                                ['help', 'ttx', 'dev-ttx', 'no-vs16', 'nusc', 'no-lig'])
         for opt, arg in opts:
             if opt in ['-h', '--help']:
                 print(HELP)
@@ -152,8 +143,6 @@ def main():
                 no_vs16 = True
             elif opt =='--nusc':
                 nusc = True
-            elif opt =='--nfcc':
-                nfcc = True
 
             elif opt =='--no-lig':
                 no_lig = True
@@ -174,7 +163,6 @@ def main():
 
               , no_vs16
               , nusc
-              , nfcc
 
               , no_lig
               )

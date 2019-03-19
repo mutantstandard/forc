@@ -24,7 +24,6 @@ def export( inputPath
 
           , no_vs16
           , nusc
-          , nfcc
 
           , no_lig
           ):
@@ -157,7 +156,7 @@ def export( inputPath
 
 
     log.out(f'Getting + checking glyphs...')
-    glyphs = getGlyphs(inputPathPath, aliases, delim_codepoint, glyphImageFormats, no_lig, no_vs16, nusc, nfcc)
+    glyphs = getGlyphs(inputPathPath, aliases, delim_codepoint, glyphImageFormats, no_lig, no_vs16, nusc)
 
     log.out(f'Glyphs OK!', 32)
 

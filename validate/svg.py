@@ -147,12 +147,12 @@ xlinkNS = '{http://www.w3.org/1999/xlink}'
 
 
 
-def isSVGValid(g, ignoreUnenforcedContents=False):
+def isSVGValid(path, ignoreUnenforcedContents=False):
     """
     Evaluates if a glyphs' SVG file is compliant with the SVGinOT standard.
     """
-    svgImagePath = g.imagePath['svg']
-    svgImageName = svgImagePath.name
+    svgImagePath = path
+    svgImageName = path.name
 
     svgImage = etree.parse(svgImagePath.as_uri())
 

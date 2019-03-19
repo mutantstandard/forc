@@ -6,7 +6,7 @@ from validate.codepoints import testZWJSanity, testRestrictedCodepoints
 
 
 
-def simpleHexName(int):
+def simpleHex(int):
     """
     returns a hexadecimal number as a string without the '0x' prefix.
     """
@@ -34,7 +34,7 @@ class codepointSeq:
 
 
     def name(self):
-        return 'u' + '_'.join(map(simpleHexName, self.seq))
+        return 'u' + '_'.join(map(simpleHex, self.seq))
 
     def __str__(self):
         return self.name()
@@ -105,148 +105,82 @@ class glyph:
 
 
 
-def getImagesFromDir(dir, formats):
 
-    glyphSet = dict()
+
+def compileImageGlyphs(dir, delim, nusc, formats):
+
+    ## get a rough list of everything
+
+    imgSet = dict()
 
     if 'svg' in formats:
 
-        # try to get a SVG Folder
-        svgFolders = list(dir.glob("svg"))
+        if not (dir / 'svg').exists():
+            raise Exception(f"You don't have an 'svg' folder in your input!")
 
-        if not svgFolders:
-            raise Exception(f"You don't have an SVG folder in your input!")
+        imgSet['svg'] = list((dir / 'svg').glob("*.svg"))
 
-        # get a list of all SVG files in the SVG folder.
-        svgImagePaths = list(svgFolders[0].glob("*.svg"))
+        if not imgSet["svg"]:
+            raise Exception(f"There are no svg images in your SVG folder!.")
 
-        if not svgImagePaths:
-            raise Exception(f"There are no SVG images in your SVG folder!.")
-        else:
-            glyphSet['svg'] = svgImagePaths
-
+        for svg in imgSet['svg']:
+            isSVGValid(svg, nusc)
 
 
     if 'png' in formats:
 
-        # checking if there are PNG folders and if they're named correctly.
-        pngFolders = dict()
+        if not list(dir.glob("png*")):
+            raise Exception(f"There are no PNG folders in your input folder.")
 
-        for item in list(dir.glob("png*")):
-            if not item.name[0] == '.': # if it's not a hidden file.
-                if not item.suffix: # if it's not a file.
+        for pngFolder in list(dir.glob("png*")):
+            if not pngFolder.name[0] == '.': # if it's not a hidden file. TODO: replace with something simpler
+                if not pngFolder.suffix: # if it's not a file. #TODO: replace with something simpler
 
-                    if len(item.name.split('-')) < 2:
-                        raise Exception(f"One of your PNG strikes ('{item.name}') is not formatted properly.")
-                    else:
-                        strikeNum = item.name.split('-')[1]
+                    try:
+                        formatName, strike = pngFolder.name.split('-', 2)
+                        strikeSize = int(strike)
+                    except ValueError as e:
+                        raise Exception(f"One of your PNG strikes ('{item.name}') isn't named properly.")
 
-                    if not strikeNum.isdigit():
-                        raise Exception(f"One of your PNG strikes ('{item.name}') doesn't have a number at the end.")
-                    else:
-                        pngFolders[item.name] = item
+                    imgSet[pngFolder.name] = list(pngFolder.glob("*.png"))
 
-        if not pngFolders:
-            raise Exception(f"You're exporting to PNG-based font formats but you don't have any PNG subfolders in your input folder.")
+                    if not imgSet[pngFolder.name]:
+                        raise Exception(f"There are no PNG images in '{pngFolder}'.")
 
 
 
-        # check if there are images in each strike and get them if they are.
+    ## check the length of every subfolder to see if they match.
 
-        for name, strike in pngFolders.items():
-            pngImagePaths = list(strike.glob("*.png"))
+    firstSubfolderName = list(imgSet.keys())[0]
+    firstSubfolder = imgSet[firstSubfolderName]
 
-            if not pngImagePaths:
-                raise Exception(f"There are no PNG images in '{strike.name}'.")
-            else:
-                glyphSet[strike.name] = pngImagePaths
-
-
-    return glyphSet
+    if len(imgSet) > 1:
+        for key, subfolder in list(imgSet.items())[1:]:
+            if not len(subfolder) == len(firstSubfolder):
+                raise Exception(f"The amount of glyphs in your input subfolders don't match. Subfolder '{key}' has {str(len(subfolder))}. The first subfolder I looked at ({firstSubfolderName}) has {firstSubfolderLength}.")
 
 
 
+    ## convert them into glyphs
 
-
-
-def areGlyphImagesConsistent(glyphSet):
-
-    if len(glyphSet) > 1:
-
-        # get one of the subfolders and use it as a basis for comparison.
-
-        firstSubfolderName = list(glyphSet.keys())[0]
-        firstSubfolder = glyphSet[firstSubfolderName]
-        firstSubfolderLength = len(firstSubfolder)
-
-
-
-        # check that every subfolder has the same amount of glyhs.
-        # ------------------------------------------------------
-        for key, subfolder in glyphSet.items():
-            if not key == firstSubfolderName:
-                if not len(subfolder) == firstSubfolderLength:
-                    raise Exception(f"The amount of glyphs in your input subfolders don't match. Subfolder '{key}' has {str(len(subfolder))}. The first subfolder I looked at ({firstSubfolderName}) has {firstSubfolderLength}.")
-
-
-
-        # check that every subfolder has the same contents.
-        # ------------------------------------------------------
-
-        # iterate over every image in the folder being used as the basis.
-        for image in firstSubfolder:
-
-            # iterate over every subfolder (apart from the basis one)
-            for key, subfolder in glyphSet.items():
-                if not key == firstSubfolderName:
-
-                    subfolderMatches = []
-
-                    # see if there's an image in each subfolder that matches.
-                    for comparedImageFile in subfolder:
-                        if image.stem == comparedImageFile.stem:
-                            subfolderMatches.append(comparedImageFile)
-
-                    if not subfolderMatches:
-                        raise Exception(f"The contents of your input subfolders don't match. Subfolder '{firstSubfolderName}' has {image.stem}, but I couldn't find the same file in subfolder '{key}'.")
-
-
-
-
-
-
-
-def compileImageGlyphs(dir, delim, no_vs16, glyphImageSet):
-    """
-    Compiles a list of image glyphs from a set of glyph images.
-    """
-
-    firstSubfolderName = list(glyphImageSet.keys())[0]
-    firstSubfolder = glyphImageSet[firstSubfolderName]
-
-    glyphs = []
-
-
-    # (iterating over one subfolder because the other subfolders
-    # have already been verified as identical.)
+    imgGlyphs = []
 
     for i in firstSubfolder:
         imagePath = dict()
 
-        for subfolderName, subfolders in glyphImageSet.items():
+        for subfolderName, subfolders in imgSet.items():
             filename = i.stem + "." + subfolderName.split('-')[0]
             imagePath[subfolderName] = pathlib.Path(dir / subfolderName / filename ).absolute()
 
-
         # finally add the codepoint to the glyph list.
         try:
-            glyphs.append(glyph(i.stem, imagePath, delim))
+            imgGlyphs.append(glyph(i.stem, imagePath, delim))
         except ValueError as e:
             raise Exception(f"One of your image glyphs ('{i.name}') is not named correctly. ({e})", 31)
 
 
-    return glyphs
 
+    return imgGlyphs
 
 
 
@@ -365,46 +299,28 @@ def glyphDuplicateTest(glyphs):
 
 
 
-def validateImageData(glyphs, nusc):
-
-    for g in glyphs:
-        if g.imagePath:
-            if g.imagePath['svg']:
-                isSVGValid(g, ignoreUnenforcedContents=nusc)
-
-
-
-
 def areGlyphLigaturesSafe(glyphs):
 
     singleGlyphCodepoints = []
     ligatures = []
-
-    #TEMP
-    singleGlyphs = []
 
     for g in glyphs:
         if len(g.codepoints) > 1:
             ligatures.append(g)
         else:
             singleGlyphCodepoints.append(g.codepoints.seq[0])
-            singleGlyphs.append(g)
-
 
     for g in ligatures:
         for codepoint in g.codepoints.seq:
             if codepoint not in singleGlyphCodepoints:
-                raise Exception(f"One of your ligatures ({g.imagePath}) does not have all non-service codepoints represented as glyphs ({glyphName(codepoint)}). All components of all ligatures must be represented as glyphs (apart from fe0f and 200d).")
+                raise Exception(f"One of your ligatures ({g.codepoint.name()}) does not have all non-service codepoints represented as glyphs ({simpleHex(codepoint)}). All components of all ligatures must be represented as glyphs (apart from fe0f and 200d).")
 
 
 
 
 def mixAndSortGlyphs(glyphs):
 
-    glyphStruct = dict()
-
-    glyphStruct["all"] = []
-    glyphStruct["img"] = []
+    glyphStruct = {"all": [], "img": []}
 
     for g in glyphs:
         if not g.alias:
@@ -429,34 +345,23 @@ def mixAndSortGlyphs(glyphs):
 
 
 
-def getGlyphs(inputPath, aliases, delim_codepoint, formats, no_lig, no_vs16, nusc, nfcc):
+def getGlyphs(inputPath, aliases, delim, formats, no_lig, no_vs16, nusc):
     """
     - Validates glyph image paths from the input path.
     - Returns a list of glyph objects, including important special control glyphs.
     """
 
-
-    # check the input directory structure and get the images that are in there
-    log.out(f'Checking + getting image glyph file paths...', 90)
-    glyphImageSet = getImagesFromDir(inputPath, formats)
-
-
-    # check the consistency of the codepoints declared in the glyph images
-    # (or not)
-    if not nfcc:
-        log.out(f'Checking image glyph file consistency...', 90)
-        areGlyphImagesConsistent(glyphImageSet)
-
-
     # compile image glyphs
     log.out(f'Compiling + validating image glyphs...', 90)
-    glyphs = compileImageGlyphs(inputPath, delim_codepoint, no_vs16, glyphImageSet)
+    imgGlyphs = compileImageGlyphs(inputPath, delim, nusc, formats)
 
 
     # compile alias glyphs
     if aliases:
         log.out(f'Compiling + validating alias glyphs...', 90)
-        glyphs = compileAliasGlyphs(glyphs, aliases, delim_codepoint)
+        glyphs = compileAliasGlyphs(imgGlyphs, aliases, delim)
+    else:
+        glyphs = imgGlyphs
 
 
     # process service glyphs
@@ -468,11 +373,6 @@ def getGlyphs(inputPath, aliases, delim_codepoint, formats, no_lig, no_vs16, nus
     if not no_vs16:
         log.out(f'Checking if there are any duplicate image glyphs when ignoring VS16...', 90)
         glyphDuplicateTest(glyphs)
-
-
-    # check image data
-    log.out(f'Validating image glyph image data...', 90)
-    validateImageData(glyphs, nusc)
 
 
     # validating (or stripping) ligatures
@@ -489,6 +389,7 @@ def getGlyphs(inputPath, aliases, delim_codepoint, formats, no_lig, no_vs16, nus
     else:
         log.out(f'Validating ligatures...', 90)
         areGlyphLigaturesSafe(glyphs)
+
 
     log.out(f'Mixing and sorting glyphs...', 90)
     return mixAndSortGlyphs(glyphs)
