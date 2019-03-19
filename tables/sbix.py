@@ -17,11 +17,11 @@ def strike(ppem, resolution, subfolder, glyphs):
     #   - if not, put this in:
     # stuff the edited SVG into CDATA.
 
-    for ID, g in enumerate(glyphs):
+    for ID, g in enumerate(glyphs['img']):
         if not g.imagePath:
-            strike.append(Element("glyph", {"name": g.name }))
+            strike.append(Element("glyph", {"name": g.codepoints.name() }))
         else:
-            pngElement = Element("glyph",   {"name": g.name
+            pngElement = Element("glyph",   {"name": g.codepoints.name()
                                             ,"graphicType": "png "
                                             ,"originOffsetX": "0"
                                             ,"originOffsetY": "0"
@@ -63,7 +63,7 @@ def sbix(glyphs):
 
     # get basic strike information.
 
-    for g in glyphs:
+    for g in glyphs['img']:
         if g.imagePath:
             firstGlyphWithStrikes = g
             break

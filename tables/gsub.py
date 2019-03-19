@@ -8,7 +8,7 @@ def singleGlyphName(g):
     """
     Takes the first codepoint of a ligature and returns a string of it's glyph name.
     """
-    return glyphName(g.codepoints[0])
+    return glyphName(g.codepoints.seq[0])
 
 
 def gsub(glyphs):
@@ -100,11 +100,11 @@ def gsub(glyphs):
 
         for g in ligatureSet:
             if g.alias:
-                glyphTarget = g.aliasName
+                glyphTarget = g.alias.name()
             else:
-                glyphTarget = g.name
+                glyphTarget = g.codepoints.name()
 
-            components = ','.join(map(glyphName, g.codepoints[1:]))
+            components = ','.join(map(glyphName, g.codepoints.seq[1:]))
 
             ligatureSetXML.append(Element("Ligature", {"components": components, "glyph": glyphTarget}))
 

@@ -14,14 +14,14 @@ def os2(OS2VendorID, metrics, glyphs):
     supplementaryPlane = False
 
     for g in glyphs['all']:
-        if g.codepoints[0] >= int('0x10000', 16) and g.codepoints[0] <= int('0x10ffff', 16):
+        if g.codepoints.seq[0] >= int('0x10000', 16) and g.codepoints.seq[0] <= int('0x10ffff', 16):
             supplementaryPlane = True
 
-        if len(g.codepoints) == 1:
-            singleCodepoints.append(g.codepoints[0])
+        if len(g.codepoints.seq) == 1:
+            singleCodepoints.append(g.codepoints.seq[0])
 
-            if g.codepoints[0] < int('ffff', 16):
-                twoByte.append(g.codepoints[0])
+            if g.codepoints.seq[0] < int('ffff', 16):
+                twoByte.append(g.codepoints.seq[0])
 
 
     # ttx actually cannibalises this, but screw it, I'll do it anyway.

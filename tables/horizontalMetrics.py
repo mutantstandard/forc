@@ -33,7 +33,7 @@ def hmtx(metrics, glyphs):
     hmtx = Element("hmtx")
 
     for g in glyphs['img']:
-        hmtx.append(Element("mtx", {"name": g.name
+        hmtx.append(Element("mtx", {"name": g.codepoints.name()
                                     ,"width": str(metrics['normalWidth'])
                                     ,"lsb": str(metrics['normalLSB'])
                                     }))

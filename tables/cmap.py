@@ -7,9 +7,9 @@ def makeGlyphSubtable(tag, attrs, cmapGlyphSet):
 
     for g in cmapGlyphSet:
         if not g.alias:
-            subtable.append(Element("map", {"code": hex(g.codepoints[0]), "name": g.name}))
+            subtable.append(Element("map", {"code": hex(g.codepoints.seq[0]), "name": g.codepoints.name() }))
         else:
-            subtable.append(Element("map", {"code": hex(g.codepoints[0]), "name": g.aliasName}))
+            subtable.append(Element("map", {"code": hex(g.codepoints.seq[0]), "name": g.alias.name() }))
     return subtable
 
 
@@ -34,11 +34,11 @@ def cmap(glyphs):
             vs16Presence = True
 
         if len(g) == 1:
-            if g.codepoints[0] < int('ff', 16):
+            if g.codepoints.seq[0] < int('ff', 16):
                 oneByte.append(g)
-            if g.codepoints[0] < int('ffff', 16):
+            if g.codepoints.seq[0] < int('ffff', 16):
                 twoByte.append(g)
-            if g.codepoints[0] < int('ffffff', 16):
+            if g.codepoints.seq[0] < int('ffffff', 16):
                 fourByte.append(g)
 
 
@@ -139,9 +139,9 @@ def cmap(glyphs):
                                                 , "numVarSelectorRecords": "1"
                                                 })
 
-        for g in glyphs:
+        for g in glyphs['all']:
             if g.vs16:
-                cmap14_1.append(Element("map", {"uvs": "0xfe0f", "uv": hex(g.codepoints[0]), "name": "None"}))
+                cmap14_1.append(Element("map", {"uvs": "0xfe0f", "uv": hex(g.codepoints.seq[0]), "name": "None"}))
 
         cmap.append(cmap14_1)
 

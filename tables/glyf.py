@@ -13,7 +13,7 @@ def glyf(m, glyphs):
 
 
         # create one dummy glyf in the right place
-        if g.codepoints[0] not in [int('0x0020', 16), int('0x200d', 16), int('0xfe0f', 16)]:
+        if g.codepoints.seq[0] not in [int('0x0020', 16), int('0x200d', 16), int('0xfe0f', 16)]:
 
             if fakeGlyfs < 1:
 
@@ -22,7 +22,7 @@ def glyf(m, glyphs):
                 # the others can be blank
 
                 # These attributes will be calculated by the compiler.
-                dummyDataNotDef = Element("TTGlyph",    {"name": g.name
+                dummyDataNotDef = Element("TTGlyph",    {"name": g.codepoints.name()
                                                         ,"xMin": "0"
                                                         ,"xMax": "0"
                                                         ,"yMin": "0"
@@ -46,13 +46,13 @@ def glyf(m, glyphs):
                 fakeGlyfs += 1
 
             else:
-                glyfTable.append(Element("TTGlyph", {"name": g.name}))
+                glyfTable.append(Element("TTGlyph", {"name": g.codepoints.name() }))
 
         else:
             # make the others blank because nothing is depending on
             # them actually having glyf contours and we don't want them.
 
-            glyfTable.append(Element("TTGlyph", {"name": g.name}))
+            glyfTable.append(Element("TTGlyph", {"name": g.codepoints.name() }))
 
 
     return glyfTable

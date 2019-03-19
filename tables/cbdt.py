@@ -21,13 +21,13 @@ def strike(metrics, strikeIndex, strikeRes, subfolder, glyphs):
     # ------------------------------------------------------------
     strike = Element("strikedata", {"index": strikeIndex})
 
-    for g in glyphs:
+    for g in glyphs['img']:
 
         # you only put them in if there's an actual image
         if g.imagePath:
 
             # format 18 for big metrics and PNG data.
-            bitmapTable = Element("cbdt_bitmap_format_18", {"name": g.name})
+            bitmapTable = Element("cbdt_bitmap_format_18", {"name": g.codepoints.name() })
 
             glyphMetrics = Element("BigGlyphMetrics")
             glyphMetrics.append(Element("height",          {"value": str(height) }))
@@ -71,7 +71,7 @@ def cbdt(metrics, glyphs):
 
     # get basic strike information.
 
-    for g in glyphs:
+    for g in glyphs['img']:
         if g.imagePath:
             firstGlyphWithStrikes = g
             break
