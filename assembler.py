@@ -3,29 +3,29 @@ from lxml.etree import Element, tostring
 import log
 from format import formats
 
-from tables.glyphOrder import glyphOrder
-from tables.head import head
-from tables.os2  import os2
-from tables.post import post
-from tables.name import name
-from tables.maxp import maxp
-from tables.gasp import gasp
-from tables.dsig import dsig
+import tables.glyphOrder
+import tables.head
+import tables.os2
+import tables.post
+import tables.name
+import tables.maxp
+import tables.gasp
+import tables.dsig
 
-from tables.horizontalMetrics import hhea, hmtx
-from tables.verticalMetrics import vhea, vmtx
+import tables.mtx_h
+import tables.mtx_v
 
-from tables.cmap import cmap
-from tables.gdef import gdef
-from tables.gpos import gpos
-from tables.gsub import gsub
-from tables.morx import morx
+import tables.cmap
+import tables.gdef
+import tables.gpos
+import tables.gsub
+import tables.morx
 
-from tables.glyf import glyf
-from tables.svg  import svg
-from tables.sbix import sbix
-from tables.cbdt import cbdt
-from tables.cblc import cblc
+import tables.glyf
+import tables.svg
+import tables.sbix
+import tables.cbdt
+import tables.cblc
 
 
 
@@ -49,28 +49,28 @@ def assembler(chosenFormat, m, glyphs):
     # headers and other weird crap
     # ---------------------------------------------
     log.out('Assembling glyphOrder list...', 90)
-    root.append(glyphOrder(glyphs))
+    root.append(tables.glyphOrder.create(glyphs))
 
     log.out('Assembling head table...', 90)
-    root.append(head(m))
+    root.append(tables.head.create(m))
 
     log.out('Assembling OS/2 table...', 90)
-    root.append(os2(m, glyphs))
+    root.append(tables.os2.create(m, glyphs))
 
     log.out('Assembling post table...', 90)
-    root.append(post(glyphs))
+    root.append(tables.post.create(glyphs))
 
     log.out('Making placeholder maxp table...', 90)
-    root.append(maxp())
+    root.append(tables.maxp.create())
 
     log.out('Making placeholder loca table...', 90)
     root.append(Element("loca")) # just to please macOS, it's supposed to be empty.
 
     log.out('Making gasp table...', 90)
-    root.append(gasp())
+    root.append(tables.gasp.create())
 
     log.out('Making placeholder DSIG table...', 90)
-    root.append(dsig())
+    root.append(tables.dsig.create())
 
 
 
@@ -80,16 +80,16 @@ def assembler(chosenFormat, m, glyphs):
     # horizontal and vertical metrics tables
     # ---------------------------------------------
     log.out('Assembling hhea table...', 90)
-    root.append(hhea(m))
+    root.append(tables.mtx_h.create_hhea(m))
 
     log.out('Assembling hmtx table...', 90)
-    root.append(hmtx(m, glyphs))
+    root.append(tables.mtx_h.create_hmtx(m, glyphs))
 
     log.out('Assembling vhea table...', 90)
-    root.append(vhea(m))
+    root.append(tables.mtx_v.create_vhea(m))
 
     log.out('Assembling vmtx table...', 90)
-    root.append(vmtx(m, glyphs))
+    root.append(tables.mtx_v.create_vmtx(m, glyphs))
 
 
 
@@ -99,7 +99,7 @@ def assembler(chosenFormat, m, glyphs):
 
     # single glyphs
     log.out('Assembling cmap table...', 90)
-    root.append(cmap(glyphs))
+    root.append(tables.cmap.create(glyphs))
 
 
 
@@ -115,18 +115,18 @@ def assembler(chosenFormat, m, glyphs):
 
         if formats[chosenFormat]["ligatureFormat"] == "OpenType":
             #log.out ('Assembling GDEF table...', 90)
-            #root.append(gdef(glyphs))
+            #root.append(tables.gdef.create(glyphs))
 
             #log.out ('Assembling GPOS table...', 90)
-            #root.append(gpos())
+            #root.append(tables.gpos.create())
 
             log.out('Assembling GSUB table...', 90)
-            root.append(gsub(glyphs))
+            root.append(tables.gsub.create(glyphs))
 
 
         elif formats[chosenFormat]["ligatureFormat"] == "TrueType":
             log.out('Assembling morx table...', 90)
-            root.append(morx(glyphs))
+            root.append(tables.morx.create(glyphs))
 
 
 
@@ -134,23 +134,23 @@ def assembler(chosenFormat, m, glyphs):
     # glyph picture data
     # ---------------------------------------------
     log.out('Assembling passable glyf table...', 90)
-    root.append(glyf(m, glyphs))
+    root.append(tables.glyf.create(m, glyphs))
 
 
     if formats[chosenFormat]["imageTables"] == "SVG":
         log.out('Assembling SVG table...', 90)
-        root.append(svg(m, glyphs))
+        root.append(tables.svg.create(m, glyphs))
 
     elif formats[chosenFormat]["imageTables"] == "sbix":
         log.out('Assembling sbix table...', 90)
-        root.append(sbix(glyphs))
+        root.append(tables.sbix.create(glyphs))
 
     elif formats[chosenFormat]["imageTables"] == "CBx":
         log.out('Assembling CBLC table...', 90)
-        root.append(cblc(m, glyphs))
+        root.append(tables.cblc.create(m, glyphs))
 
         log.out('Assembling CBDT table...', 90)
-        root.append(cbdt(m, glyphs))
+        root.append(tables.cbdt.create(m, glyphs))
 
 
 
@@ -158,7 +158,7 @@ def assembler(chosenFormat, m, glyphs):
     # human-readable metadata
     # ---------------------------------------------
     log.out('Assembling name table...', 90)
-    root.append(name(chosenFormat, m))
+    root.append(tables.name.create(chosenFormat, m))
 
 
 

@@ -1,6 +1,6 @@
 from lxml.etree import Element
 
-def maxp():
+def create():
     """
     Create a maxp table. All of the data inside this is dummy data, the TTX
     compiler will insert actually useful data.

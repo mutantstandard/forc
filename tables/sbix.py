@@ -45,7 +45,7 @@ def strike(ppem, resolution, subfolder, glyphs):
 
 
 
-def sbix(glyphs):
+def create(glyphs):
     """
     Generates and returns a sbix table with embedded PNG data
     """

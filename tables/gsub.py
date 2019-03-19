@@ -11,7 +11,7 @@ def singleGlyphName(g):
     return glyphName(g.codepoints.seq[0])
 
 
-def gsub(glyphs):
+def create(glyphs):
     """
     Generates and returns a GSUB table with ligature data.
     """

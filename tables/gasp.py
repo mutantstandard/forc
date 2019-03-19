@@ -1,6 +1,6 @@
 from lxml.etree import Element
 
-def gasp():
+def create():
     """
     Create a really basic gasp table.
     """

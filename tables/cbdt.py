@@ -58,13 +58,13 @@ def strike(metrics, strikeIndex, strikeRes, subfolder, glyphs):
 
 
 
-def cbdt(m, glyphs):
+def create(m, glyphs):
     """
     Generates and returns a glyf table with dummy data.
     """
 
     metrics = m['metrics']
-    
+
     cbdt = Element("CBDT")
 
     cbdt.append(Element("header", {"version": "3.0"})) # hard-coded

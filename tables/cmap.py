@@ -17,7 +17,7 @@ def makeGlyphSubtable(tag, attrs, cmapGlyphSet):
 
 
 
-def cmap(glyphs):
+def create(glyphs):
     cmap = Element("cmap")
     cmap.append(Element("tableVersion", {"version": "0"}))
 

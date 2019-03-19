@@ -2,7 +2,10 @@ from lxml.etree import Element, ElementTree, fromstring
 
 
 
-def gdef(glyphs):
+def create(glyphs):
+    """
+    Creates a basic GDEF table. Currently disused.
+    """
 
     gdef = Element("GDEF")
 
@@ -12,7 +15,7 @@ def gdef(glyphs):
     # GlyphClassDef
     gcd = Element("GlyphClassDef", {"Format": "2"})
 
-    for g in glyphs:
+    for g in glyphs['img']:
         if g.codepoints[0] != 0: # filter out .notdef
             if len(g.codepoints) > 1: # if a ligature
                 classNum = "2"

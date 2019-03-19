@@ -2,7 +2,7 @@ from lxml.etree import Element, ElementTree, fromstring
 
 
 
-def gpos():
+def create():
     """
     Generates and returns a GSUB table with ligature data.
     """

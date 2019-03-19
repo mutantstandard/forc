@@ -1,6 +1,6 @@
 from lxml.etree import Element, ElementTree
 
-def glyf(m, glyphs):
+def create(m, glyphs):
     """
     Generates and returns a glyf table with dummy data.
     """

@@ -1,6 +1,6 @@
 from lxml.etree import Element
 
-def hhea(m):
+def create_hhea(m):
     metrics = m['metrics']
 
     hhea = Element("hhea")
@@ -31,7 +31,7 @@ def hhea(m):
     return hhea
 
 
-def hmtx(m, glyphs):
+def create_hmtx(m, glyphs):
     metrics = m['metrics']
 
     hmtx = Element("hmtx")

@@ -1,6 +1,6 @@
 from lxml.etree import Element
 
-def vhea(m):
+def create_vhea(m):
     metrics = m['metrics']
 
     vhea = Element("vhea")
@@ -32,7 +32,7 @@ def vhea(m):
     return vhea
 
 
-def vmtx(m, glyphs):
+def create_vmtx(m, glyphs):
     metrics = m['metrics']
 
     vmtx = Element("vmtx")

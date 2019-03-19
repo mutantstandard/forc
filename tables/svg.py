@@ -87,7 +87,7 @@ def addGlyphID(svgTree, ID):
 
 
 
-def svg(m, glyphs):
+def create(m, glyphs):
     """
     Generates and returns a SVG table.
 

@@ -10,7 +10,7 @@ def makeVersionRecord(m, record=None):
         return "Version " + m['metadata']['version']
 
 
-def name(format, m):
+def create(format, m):
     """
     Creates a name table. Iterates over nameRecords data multiple times
     so that it's prepared in each of the name record encoding

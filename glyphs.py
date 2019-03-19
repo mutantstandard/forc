@@ -149,15 +149,15 @@ def compileImageGlyphs(dir, delim, nusc, formats):
 
 
 
-    ## check the length of every subfolder to see if they match.
+    ## check the length of every folder to see if they match.
 
-    firstSubfolderName = list(imgSet.keys())[0]
-    firstSubfolder = imgSet[firstSubfolderName]
+    firstFolderName = list(imgSet.keys())[0]
+    firstFolder = imgSet[firstFolderName]
 
     if len(imgSet) > 1:
-        for key, subfolder in list(imgSet.items())[1:]:
-            if not len(subfolder) == len(firstSubfolder):
-                raise Exception(f"The amount of glyphs in your input subfolders don't match. Subfolder '{key}' has {str(len(subfolder))}. The first subfolder I looked at ({firstSubfolderName}) has {firstSubfolderLength}.")
+        for key, folder in list(imgSet.items())[1:]:
+            if not len(folder) == len(firstFolder):
+                raise Exception(f"The amount of glyphs in your input folders don't match. '{key}' has {str(len(folder))}. '{firstFolderName}' has {len(firstFolder)}.")
 
 
 
@@ -165,14 +165,16 @@ def compileImageGlyphs(dir, delim, nusc, formats):
 
     imgGlyphs = []
 
-    for i in firstSubfolder:
+    for i in firstFolder:
         imagePath = dict()
 
-        for subfolderName, subfolders in imgSet.items():
-            filename = i.stem + "." + subfolderName.split('-')[0]
-            imagePath[subfolderName] = pathlib.Path(dir / subfolderName / filename ).absolute()
+        for folderName, folders in imgSet.items():
+            filename = i.stem + "." + folderName.split('-')[0]
+            imagePath[folderName] = pathlib.Path(dir / folderName / filename ).absolute()
 
-        # finally add the codepoint to the glyph list.
+            if not imagePath[folderName].exists():
+                raise Exception(f"I found an image called '{i.stem}' in the input folder '{firstFolderName}', but I couldn't find the same for the folder '{folderName}'. You have to have the same sets of filenames in each folder.'")
+
         try:
             imgGlyphs.append(glyph(i.stem, imagePath, delim))
         except ValueError as e:
