@@ -19,7 +19,7 @@ def strike(metrics, strikeIndex, strikeRes, subfolder, glyphs):
     # start of strikes
     # (which we're fudging right now)
     # ------------------------------------------------------------
-    strike = Element("strikedata", {"index": strikeIndex})
+    strike = Element("strikedata", {"index": str(strikeIndex)})
 
     for g in glyphs['img']:
 
@@ -44,7 +44,7 @@ def strike(metrics, strikeIndex, strikeRes, subfolder, glyphs):
 
             rawImageData = Element("rawimagedata")
 
-            with open(g.imagePath[subfolder], "rb") as read_file:
+            with open(g.imagePath[subfolder].path, "rb") as read_file:
                 pngHexdump = read_file.read().hex()
 
             rawImageData.text = pngHexdump
@@ -83,10 +83,9 @@ def create(m, glyphs):
 
     strikeIndex = 0
 
-    for formatName, format in firstGlyphWithStrikes.imagePath.items():
-        if formatName.split('-')[0] == "png":
-            strikeRes = formatName.split('-')[1]
-            cbdt.append(strike(metrics, str(strikeIndex), strikeRes, formatName, glyphs))
+    for imageFormat, image in firstGlyphWithStrikes.imagePath.items():
+        if imageFormat.split('-')[0] == "png":
+            cbdt.append(strike(metrics, strikeIndex, image.strike, imageFormat, glyphs))
             strikeIndex += 1
 
 

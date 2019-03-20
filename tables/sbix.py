@@ -4,7 +4,7 @@ from lxml.etree import Element
 
 def strike(ppem, resolution, subfolder, glyphs):
     strike = Element("strike")
-    strike.append(Element("ppem", {"value": ppem}))
+    strike.append(Element("ppem", {"value": str(ppem)}))
     strike.append(Element("resolution", {"value": resolution}))
 
 
@@ -28,7 +28,7 @@ def strike(ppem, resolution, subfolder, glyphs):
                                             })
             hexdata = Element("hexdata")
 
-            with open(g.imagePath[subfolder], "rb") as read_file:
+            with open(g.imagePath[subfolder].path, "rb") as read_file:
                 pngHexdump = read_file.read().hex()
 
             hexdata.text = pngHexdump
@@ -72,10 +72,9 @@ def create(glyphs):
 
     # iterate over each strike.
 
-    for formatName, format in firstGlyphWithStrikes.imagePath.items():
-        if formatName.split('-')[0] == "png":
-            strikeRes = formatName.split('-')[1]
-            sbix.append(strike(strikeRes, "72", formatName, glyphs))
+    for imageFormat, image in firstGlyphWithStrikes.imagePath.items():
+        if imageFormat.split('-')[0] == "png":
+            sbix.append(strike(image.strike, "72", imageFormat, glyphs))
 
 
 

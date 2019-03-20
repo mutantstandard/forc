@@ -100,48 +100,47 @@ def create(m, glyphs):
     svgTable = etree.Element("SVG")
 
     for ID, g in enumerate(glyphs['img']):
-        if g.imagePath:
-            if g.imagePath['svg']:
-                svgDoc = etree.Element("svgDoc", {"startGlyphID": str(ID), "endGlyphID" : str(ID) })
+        if g.imagePath and g.imagePath['svg']:
+            svgDoc = etree.Element("svgDoc", {"startGlyphID": str(ID), "endGlyphID" : str(ID) })
 
-                # lxml can't parse from Path objects, so it has to give a string representation.
-                svgImage = etree.parse(g.imagePath['svg'].as_uri())
-
-
-                # we have to see if there's a viewBox and if there is, remove it and use
-                # transforms to rectify the image's metrics.
-                #
-                # (viewBox is technically supported but behaves erratically in
-                # most SVGinOT renderers)
-
-                cdata = etree.CDATA("")
+            # lxml can't parse from Path objects, so it has to give a string representation.
+            svgImage = etree.parse(g.imagePath['svg'].path.as_uri())
 
 
-                if svgImage.find(f"//*[@style]") is not None:
-                    stripStyles(svgImage)
-                    #raise Exception(f"SVG image {g.imagePath} has a 'style' attribute. These are not compatible in SVGinOT fonts.")
+            # we have to see if there's a viewBox and if there is, remove it and use
+            # transforms to rectify the image's metrics.
+            #
+            # (viewBox is technically supported but behaves erratically in
+            # most SVGinOT renderers)
+
+            cdata = etree.CDATA("")
 
 
-                finishedSVG = etree.ElementTree(etree.Element("svg"))
+            if svgImage.find(f"//*[@style]") is not None:
+                stripStyles(svgImage)
+                #raise Exception(f"SVG image {g.imagePath} has a 'style' attribute. These are not compatible in SVGinOT fonts.")
 
+
+            finishedSVG = etree.ElementTree(etree.Element("svg"))
 
 
 
-                # check if there's a viewBox and compensate for it if that's the case.
-                # if not, just pass it on.
-                # -------------------------------------------------------------------------------------
-                if svgImage.find(".[@viewBox]") is not None:
-                    compensated = viewboxCompensate(metrics, svgImage, ID)
-                    finishedSVG = addGlyphID(compensated, ID)
 
-                else:
-                    finishedSVG = addGlyphID(svgImage, ID)
+            # check if there's a viewBox and compensate for it if that's the case.
+            # if not, just pass it on.
+            # -------------------------------------------------------------------------------------
+            if svgImage.find(".[@viewBox]") is not None:
+                compensated = viewboxCompensate(metrics, svgImage, ID)
+                finishedSVG = addGlyphID(compensated, ID)
+
+            else:
+                finishedSVG = addGlyphID(svgImage, ID)
 
 
-                cdata = etree.CDATA(etree.tostring(finishedSVG, method="xml", pretty_print=False, xml_declaration=True, encoding="UTF-8"))
+            cdata = etree.CDATA(etree.tostring(finishedSVG, method="xml", pretty_print=False, xml_declaration=True, encoding="UTF-8"))
 
-                svgDoc.text = cdata
-                svgTable.append(svgDoc)
+            svgDoc.text = cdata
+            svgTable.append(svgDoc)
 
 
 

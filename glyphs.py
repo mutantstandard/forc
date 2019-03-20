@@ -14,8 +14,32 @@ def simpleHex(int):
     return (hex(int)[2:])
 
 
-class codepointSeq:
+class img:
+    """
+    Class representing a glyph image.
+    """
+    def __init__(self, type, strike, path, nusc=False):
 
+        if not path.exists():
+            raise ValueError(f"Image path '{path}' doesn't exist'")
+
+        if type == "svg":
+            isSVGValid(path, nusc)
+
+        self.type = type
+        self.strike = strike
+        self.path = path
+
+    def __str__(self):
+        print(f"{self.type}-{str(self.strike)}: {self.path.name}")
+
+
+
+
+class codepointSeq:
+    """
+    Class representing a sequence of Unicode codepoints.
+    """
     def __init__(self, sequence, delim):
 
         if type(sequence) is str:
@@ -62,7 +86,9 @@ class codepointSeq:
 
 
 class glyph:
-
+    """
+    Class representing a font glyph.
+    """
     def __init__(self, codepoints, imagePath=None, vs16=False, alias=None, delim="-"):
 
         try:
@@ -111,20 +137,21 @@ def compileImageGlyphs(dir, delim, nusc, formats):
 
     ## get a rough list of everything
 
-    imgSet = dict()
+    imgCollection = dict()
 
     if 'svg' in formats:
 
         if not (dir / 'svg').exists():
             raise Exception(f"You don't have an 'svg' folder in your input!")
 
-        imgSet['svg'] = list((dir / 'svg').glob("*.svg"))
-
-        if not imgSet["svg"]:
+        if not list((dir / 'svg').glob("*.svg")):
             raise Exception(f"There are no svg images in your SVG folder!.")
 
-        for svg in imgSet['svg']:
-            isSVGValid(svg, nusc)
+        imgCollection['svg'] = dict()
+
+        for path in list((dir / 'svg').glob("*.svg")):
+            imgCollection['svg'][path.stem] = img("svg", 0, path.absolute())
+
 
 
     if 'png' in formats:
@@ -133,53 +160,53 @@ def compileImageGlyphs(dir, delim, nusc, formats):
             raise Exception(f"There are no PNG folders in your input folder.")
 
         for pngFolder in list(dir.glob("png*")):
-            if not pngFolder.name[0] == '.': # if it's not a hidden file. TODO: replace with something simpler
-                if not pngFolder.suffix: # if it's not a file. #TODO: replace with something simpler
+            if not pngFolder.name[0] == '.' and not pngFolder.suffix: # if it's not a hidden file and if it's not a file.
 
-                    try:
-                        formatName, strike = pngFolder.name.split('-', 2)
-                        strikeSize = int(strike)
-                    except ValueError as e:
-                        raise Exception(f"One of your PNG strikes ('{item.name}') isn't named properly.")
+                try:
+                    formatName, strike = pngFolder.name.split('-', 2)
+                    strikeSize = int(strike)
+                except ValueError as e:
+                    raise Exception(f"One of your PNG folders ('{pngFolder.name}') isn't named properly. Make sure it's 'png-<strike size>'.")
 
-                    imgSet[pngFolder.name] = list(pngFolder.glob("*.png"))
+                if not list(pngFolder.glob("*.png")):
+                    raise Exception(f"There are no PNG images in '{pngFolder}'.")
 
-                    if not imgSet[pngFolder.name]:
-                        raise Exception(f"There are no PNG images in '{pngFolder}'.")
+                imgCollection[pngFolder.name] = dict()
+
+                for path in list(pngFolder.glob("*.png")):
+                    imgCollection[pngFolder.name][path.stem] = img("png", strikeSize, path.absolute())
 
 
+    ## check size
 
-    ## check the length of every folder to see if they match.
+    firstFolderName = list(imgCollection.keys())[0]
+    firstFolder = imgCollection[firstFolderName]
 
-    firstFolderName = list(imgSet.keys())[0]
-    firstFolder = imgSet[firstFolderName]
-
-    if len(imgSet) > 1:
-        for key, folder in list(imgSet.items())[1:]:
+    if len(imgCollection) > 1:
+        for key, folder in list(imgCollection.items())[1:]:
             if not len(folder) == len(firstFolder):
-                raise Exception(f"The amount of glyphs in your input folders don't match. '{key}' has {str(len(folder))}. '{firstFolderName}' has {len(firstFolder)}.")
+                raise Exception(f"The amount of glyphs in your input folders aren't the same. '{key}' has {str(len(folder))}. '{firstFolderName}' has {len(firstFolder)}. The amount of images in every folder should be the same.")
 
 
 
     ## convert them into glyphs
+    ## (also checking if all the codepoint names are the same)
 
     imgGlyphs = []
 
-    for i in firstFolder:
-        imagePath = dict()
+    for c, file in firstFolder.items():
+        imgSet = dict()
 
-        for folderName, folders in imgSet.items():
-            filename = i.stem + "." + folderName.split('-')[0]
-            imagePath[folderName] = pathlib.Path(dir / folderName / filename ).absolute()
-
-            if not imagePath[folderName].exists():
-                raise Exception(f"I found an image called '{i.stem}' in the input folder '{firstFolderName}', but I couldn't find the same for the folder '{folderName}'. You have to have the same sets of filenames in each folder.'")
+        for folderName, folder in imgCollection.items():
+            if not c in folder:
+                raise Exception(f"There's a mismatch in your files. I tried to find an image for the codepoint '{c}' in '{folderName}', but I couldn't find one. You have to make sure you have the exact same sets of filenames in each of your input folders.", 31)
+            else:
+                imgSet[folderName] = folder[c]
 
         try:
-            imgGlyphs.append(glyph(i.stem, imagePath, delim))
+            imgGlyphs.append(glyph(c, imgSet, delim))
         except ValueError as e:
-            raise Exception(f"One of your image glyphs ('{i.name}') is not named correctly. ({e})", 31)
-
+            raise Exception(f"One of your image glyphs ('{c.name}') is not named correctly. ({e})", 31)
 
 
     return imgGlyphs
@@ -349,8 +376,7 @@ def mixAndSortGlyphs(glyphs):
 
 def getGlyphs(inputPath, aliases, delim, formats, no_lig, no_vs16, nusc):
     """
-    - Validates glyph image paths from the input path.
-    - Returns a list of glyph objects, including important special control glyphs.
+    Runs inputs through all of the necessary processes and checks to create a glyphs structure.
     """
 
     # compile image glyphs

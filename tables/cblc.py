@@ -22,7 +22,7 @@ def strike(metrics, strikeIndex, ppem, glyphs):
 
 
 
-        strike = Element("strike", {"index": strikeIndex})
+        strike = Element("strike", {"index": str(strikeIndex)})
 
 
 
@@ -155,10 +155,9 @@ def create(m, glyphs):
 
     strikeIndex = 0
 
-    for formatName, format in firstGlyphWithStrikes.imagePath.items():
-        if formatName.split('-')[0] == "png":
-            strikeRes = formatName.split('-')[1]
-            cblc.append(strike(metrics, str(strikeIndex), strikeRes, glyphs))
+    for imageFormat, image in firstGlyphWithStrikes.imagePath.items():
+        if imageFormat.split('-')[0] == "png":
+            cblc.append(strike(metrics, strikeIndex, image.strike, glyphs))
             strikeIndex += 1
 
 
