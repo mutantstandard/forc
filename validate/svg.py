@@ -151,6 +151,8 @@ def isSVGValid(path, ignoreUnenforcedContents=False):
     """
     Evaluates if a glyphs' SVG file is compliant with the SVGinOT standard.
     """
+
+    # these are both the same for historical reasons. They might change in the future.
     svgImagePath = path
     svgImageName = path
 

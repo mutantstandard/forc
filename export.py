@@ -171,4 +171,4 @@ def export( inputPath
     log.out(f'Starting font compilation...', 35)
 
     for f in outputFormats:
-        createFont(f, outputPath, manifest, glyphs, ttx_output, dev_ttx_output)
+        createFont(f, outputPath, manifest, glyphs, ttx_output, dev_ttx_output, no_vs16)

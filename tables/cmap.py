@@ -17,7 +17,7 @@ def makeGlyphSubtable(tag, attrs, cmapGlyphSet):
 
 
 
-def create(glyphs):
+def create(glyphs, no_vs16):
     cmap = Element("cmap")
     cmap.append(Element("tableVersion", {"version": "0"}))
 
@@ -30,7 +30,7 @@ def create(glyphs):
     fourByte = []
 
     for g in glyphs['all']:
-        if g.vs16:
+        if no_vs16 is False and g.codepoints.vs16:
             vs16Presence = True
 
         if len(g) == 1:
@@ -140,8 +140,11 @@ def create(glyphs):
                                                 })
 
         for g in glyphs['all']:
-            if g.vs16:
-                cmap14_1.append(Element("map", {"uvs": "0xfe0f", "uv": hex(g.codepoints.seq[0]), "name": "None"}))
+            if g.codepoints.vs16:
+                if not g.alias:
+                    cmap14_1.append(Element("map", {"uvs": "0xfe0f", "uv": hex(g.codepoints.seq[0]), "name": g.codepoints.name()}))
+                else:
+                    cmap14_1.append(Element("map", {"uvs": "0xfe0f", "uv": hex(g.codepoints.seq[0]), "name": g.alias.name()}))
 
         cmap.append(cmap14_1)
 

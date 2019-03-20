@@ -38,7 +38,7 @@ def writeFile(path, contents, exceptionString):
 
 
 
-def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_output):
+def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_output, no_vs16):
     """
     Calls the functions that assemble and create a font.
     """
@@ -58,7 +58,7 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
 
     # assemble TTX
     log.out(f'Assembling initial TTX...')
-    originalTTX = assembler(fontFormat, manifest, glyphs)
+    originalTTX = assembler(fontFormat, manifest, glyphs, no_vs16)
     log.out(f'Initial TTX successfully assembled.', 32)
 
 
@@ -100,4 +100,4 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
         log.out(f'Deleting the original Font...')
         outputFontPath.unlink() #delete
 
-    log.out(f'This format has been successfully compiled.', 32)
+    log.out(f'This format has been successfully exported.', 32)

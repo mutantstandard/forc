@@ -31,7 +31,11 @@ class img:
         self.path = path
 
     def __str__(self):
-        print(f"{self.type}-{str(self.strike)}: {self.path.name}")
+        return f"|{self.type}-{str(self.strike)} {self.path.name}|"
+
+    def __repr__(self):
+        return str(self)
+
 
 
 
@@ -40,11 +44,15 @@ class codepointSeq:
     """
     Class representing a sequence of Unicode codepoints.
     """
-    def __init__(self, sequence, delim):
 
+
+    def __init__(self, sequence, delim, userInput=True):
+
+        # create a suitable structure based on the input type.
+        # ------------------------------------------------------
         if type(sequence) is str:
             try:
-                self.seq = [int(c, 16) for c in sequence.split(delim)]
+                seq = [int(c, 16) for c in sequence.split(delim)]
             except ValueError as e:
                 raise ValueError("Codepoint sequence isn't named correctly. Make sure your codepoint sequence consists only of hexadecimal numbers and are separated by the right delimiter.")
 
@@ -54,7 +62,25 @@ class codepointSeq:
             except ValueError as e:
                 raise ValueError("Codepoint sequence isn't named correctly. Make sure each component of your list is a hexadecimal number.")
 
+
+        # handle fe0f
+        # ------------------------------------------------------
+        if len(seq) > 1:
+            self.seq = [c for c in seq if c != 0xfe0f]
+            self.vs16 = 0xfe0f in seq and len(self.seq) == 1
+        else:
             self.seq = seq
+            self.vs16 = False
+
+
+        # test the codepoints
+        # # ------------------------------------------------------
+        try:
+            if userInput: testRestrictedCodepoints(self.seq)
+            testZWJSanity(self.seq)
+        except ValueError as e:
+            raise ValueError(f"{self.seq} is not a valid codepoint sequence. ({e})")
+
 
 
     def name(self):
@@ -79,8 +105,8 @@ class codepointSeq:
     def __len__(self):
         return len(self.seq)
 
-    def __str__(self):
-        return str(self.seq)
+
+
 
 
 
@@ -89,12 +115,12 @@ class glyph:
     """
     Class representing a font glyph.
     """
-    def __init__(self, codepoints, imagePath=None, vs16=False, alias=None, delim="-"):
+    def __init__(self, codepoints, imagePath=None, vs16=False, alias=None, delim="-", userInput=True):
 
         try:
-            self.codepoints = codepointSeq(codepoints, delim)
+            self.codepoints = codepointSeq(codepoints, delim, userInput=userInput)
         except ValueError as e:
-            raise Exception(f"The glyph ('{codepoints}') is not named correctly. ({e})", 31)
+            raise Exception(f"The glyph {codepoints} is not named correctly. ({e})", 31)
 
 
         if alias is None:
@@ -110,7 +136,6 @@ class glyph:
 
 
         self.imagePath = imagePath
-        self.vs16 = vs16
 
 
     def __str__(self):
@@ -127,6 +152,9 @@ class glyph:
 
     def __len__(self):
         return len(self.codepoints)
+
+
+
 
 
 
@@ -190,7 +218,7 @@ def compileImageGlyphs(dir, delim, nusc, formats):
 
 
     ## convert them into glyphs
-    ## (also checking if all the codepoint names are the same)
+    ## (at the same time checking if all the codepoint names are the same)
 
     imgGlyphs = []
 
@@ -256,58 +284,29 @@ def compileAliasGlyphs(glyphs, aliases, delim):
 
 
 
-
-def serviceGlyphProc(glyphs, no_vs16):
+def addServiceGlyphs(glyphs, no_vs16):
+    """
+    adds service glyphs to the list of glyphs based on various requirements.
+    """
 
     newGlyphs = []
-    vs16Allowed = not no_vs16
 
     vs16Presence = False
     zwjPresence = False
 
     for g in glyphs:
 
-        # TEST FOR INAPPROPRIATE CODEPOINTS
-        # -------------------------------------
-        # make sure each inputted codepoint is in an appropriate range.
-        testRestrictedCodepoints(g)
-
-        # VS16
-        # -------------
-        fe0f = int('fe0f', 16)
-
-        # strip instances of fe0f
-        g.codepoints.seq = [c for c in g.codepoints.seq if c != fe0f]
-
-        # set vs16Enabled to True if it fits the right parameters.
-        g.vs16Enabled = vs16Allowed and fe0f in g.codepoints.seq and len(g.codepoints.seq) == 1
+        # presence
+        if g.codepoints.vs16 and no_vs16 is False: vs16Presence = True
+        if 0x200d in g.codepoints.seq: zwjPresence = True
 
 
-        # ZWJ
-        # -------------
-        # test and validate presence of ZWJs
-        zwj = int('200d', 16)
+    # add particular service glyphs.
 
-        if zwj in g.codepoints.seq:
-            zwjPresence = True
-            testZWJSanity(g)
-
-
-        if g.alias:
-            g.alias.seq = [c for c in g.alias.seq if c != fe0f]
-
-            if zwj in g.alias.seq:
-                testZWJSanity(g)
-
-
-
-    # add particular service glyphs based on user input.
-
-    glyphs.append(glyph(["20"])) # breaking space
-    glyphs.append(glyph(["a0"])) # non-breaking space
-
-    if vs16Presence: glyphs.append(glyph(["fe0f"]))
-    if zwjPresence: glyphs.append(glyph(["200d"]))
+    glyphs.append(glyph(["20"], userInput=False)) # breaking space
+    glyphs.append(glyph(["a0"], userInput=False)) # non-breaking space
+    if vs16Presence: glyphs.append(glyph(["fe0f"], userInput=False))
+    if zwjPresence: glyphs.append(glyph(["200d"], userInput=False))
 
 
     return glyphs
@@ -323,7 +322,7 @@ def glyphDuplicateTest(glyphs):
         for id2, g2 in enumerate(glyphs):
             if g1 == g2:
                 if id1 != id2:
-                    raise Exception(f"One of your glyphs ({g1.imagePath}), when stripped of VS16 (fe0f), matches another ({g2.imagePath}). There can't be duplicates in this scenario.")
+                    raise Exception(f"One of your glyphs ({g1.imagePath.keys()[1].name}) when processed, becomes {g1}. This matches another glyph that you have - {g2}. There can't be duplicates in this scenario.")
 
 
 
@@ -342,7 +341,7 @@ def areGlyphLigaturesSafe(glyphs):
     for g in ligatures:
         for codepoint in g.codepoints.seq:
             if codepoint not in singleGlyphCodepoints:
-                raise Exception(f"One of your ligatures ({g.codepoint.name()}) does not have all non-service codepoints represented as glyphs ({simpleHex(codepoint)}). All components of all ligatures must be represented as glyphs (apart from fe0f and 200d).")
+                raise Exception(f"One of your ligatures ({g.codepoints.name()}) does not have all non-service codepoints represented as glyphs ({simpleHex(codepoint)}). All components of all ligatures must be represented as glyphs (apart from fe0f and 200d).")
 
 
 
@@ -393,13 +392,13 @@ def getGlyphs(inputPath, aliases, delim, formats, no_lig, no_vs16, nusc):
 
 
     # process service glyphs
-    log.out(f'Processing service codepoints...', 90)
-    glyphs = serviceGlyphProc(glyphs, no_vs16)
+    log.out(f'Adding service codepoints...', 90)
+    glyphs = addServiceGlyphs(glyphs, no_vs16)
 
 
     # check for duplicate codepoints without VS16
     if not no_vs16:
-        log.out(f'Checking if there are any duplicate image glyphs when ignoring VS16...', 90)
+        log.out(f'Checking if there are any duplicate glyphs...', 90)
         glyphDuplicateTest(glyphs)
 
 

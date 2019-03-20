@@ -32,7 +32,7 @@ import tables.cblc
 
 
 
-def assembler(chosenFormat, m, glyphs):
+def assembler(chosenFormat, m, glyphs, no_vs16):
     """
     Assembles a TTX file using the manifest file and input data.
     """
@@ -99,7 +99,7 @@ def assembler(chosenFormat, m, glyphs):
 
     # single glyphs
     log.out('Assembling cmap table...', 90)
-    root.append(tables.cmap.create(glyphs))
+    root.append(tables.cmap.create(glyphs, no_vs16))
 
 
 
