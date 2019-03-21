@@ -58,8 +58,7 @@ unenforcedElems = [ "animateTransform"
 
 unenforcedAttrs =   [ "cursor"
                     #, "style"
-                    # -- style is omitted here because it /can/ be compensated
-                    # -- for and is compensated for in forc.
+                    # -- style is compensated for in forc, so it's currently left out.
                     , "zoomAndPan"
 
                     # SVG event attributes
@@ -224,7 +223,7 @@ def isSVGValid(path, ignoreUnenforcedContents=False):
         raise Exception(f"The SVG image '{svgImageName}' contains XSL. This is not compatible in SVGinOT fonts.")
 
 
-    # TODO: measurements:
+    # not included:
     #   - relative units (em, ex, etc.)
     #   - rgba() colors
     #   - CSS2 color values in styles
@@ -273,4 +272,7 @@ def isSVGValid(path, ignoreUnenforcedContents=False):
         if svgImage.find("//{*}svg") is not None:
             raise Exception(f"The SVG image '{svgImageName}' has a child svg attribute. Compatibility with this is not mandatory in SVGinOT fonts so it is not recommended.")
 
-        # TODO: XML entities (???)
+
+
+        # not included:
+        #   - XML entities

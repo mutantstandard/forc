@@ -32,7 +32,7 @@ import tables.cblc
 
 
 
-def assembler(chosenFormat, m, glyphs, no_vs16):
+def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
     """
     Assembles a TTX file using the manifest file and input data.
     """
@@ -139,7 +139,7 @@ def assembler(chosenFormat, m, glyphs, no_vs16):
 
     if formats[chosenFormat]["imageTables"] == "SVG":
         log.out('Assembling SVG table...', 90)
-        root.append(tables.svg.create(m, glyphs))
+        root.append(tables.svg.create(m, glyphs, afsc))
 
     elif formats[chosenFormat]["imageTables"] == "sbix":
         log.out('Assembling sbix table...', 90)

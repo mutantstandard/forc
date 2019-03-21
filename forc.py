@@ -25,6 +25,7 @@ DEF_DEV_TTX = False
 
 DEF_NO_VS16 = False
 DEF_NUSC = False
+DEF_AFSC = False
 
 DEF_NO_LIG = False
 
@@ -81,6 +82,11 @@ OPTIONS:
             Makes SVG checking less strict, by only checking SVG
             parts that are explicitly not allowed in SVGinOT.
 
+--afsc      Affinity Designer SVG Correction.
+            Affinity Designer's SVG exporter has quirks which cause
+            problems in SVGinOT fonts. This build flag makes forc
+            perform some non-destructive changes to correct this.
+
 --no-lig    (DEVELOPMENT OPTION) Strips ligatures from the output.
 
 
@@ -108,6 +114,7 @@ def main():
 
     no_vs16 = DEF_NO_VS16
     nusc = DEF_NUSC
+    afsc = DEF_AFSC
 
     no_lig = DEF_NO_LIG
 
@@ -115,7 +122,7 @@ def main():
     try:
         opts, _ = getopt.getopt(sys.argv[1:],
                                 'hi:o:m:a:F:d:',
-                                ['help', 'ttx', 'dev-ttx', 'no-vs16', 'nusc', 'no-lig'])
+                                ['help', 'ttx', 'dev-ttx', 'no-vs16', 'nusc', 'afsc', 'no-lig'])
         for opt, arg in opts:
             if opt in ['-h', '--help']:
                 print(HELP)
@@ -143,7 +150,8 @@ def main():
                 no_vs16 = True
             elif opt =='--nusc':
                 nusc = True
-
+            elif opt =='--afsc':
+                afsc = True
             elif opt =='--no-lig':
                 no_lig = True
 
@@ -163,6 +171,7 @@ def main():
 
               , no_vs16
               , nusc
+              , afsc
 
               , no_lig
               )

@@ -57,6 +57,7 @@ def export( inputPath
 
           , no_vs16
           , nusc
+          , afsc
 
           , no_lig
           ):
@@ -158,4 +159,4 @@ def export( inputPath
     log.out(f'Starting font compilation...', 35)
 
     for f in outputFormats:
-        createFont(f, outputPath, manifest, glyphs, ttx_output, dev_ttx_output, no_vs16)
+        createFont(f, outputPath, manifest, glyphs, ttx_output, dev_ttx_output, afsc, no_vs16)

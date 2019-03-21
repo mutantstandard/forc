@@ -14,12 +14,49 @@ def stripStyles(svgImage):
         for style in styleListPre:
             if style: # if it's not blank because splits can generate blank ends if there's only one style.
                 splitStyle = style.split(":")
+                #print(splitStyle)
 
                 e.attrib[splitStyle[0]] = splitStyle[1]
 
         e.attrib.pop("style")
 
 
+
+
+def affinityDesignerCompensate(svgImage):
+    """
+    Looks for paths and rects that have no fill and stroke, and gives them a black fill and stroke
+    """
+    xmlns = "{http://www.w3.org/2000/svg}"
+
+    pathXP = "//" + xmlns + "path"
+    rectXP = "//" + xmlns + "rect"
+    circleXP = "//" + xmlns + "circle"
+    ellipseXP = "//" + xmlns + "ellipse"
+
+    serifRect = svgImage.find("//{http://www.w3.org/2000/svg}rect[@id]")
+    if serifRect is not None:
+        serifRect.getparent().remove(serifRect)
+
+    if svgImage.find(pathXP) is not None:
+        for e in svgImage.findall(pathXP):
+            if "fill" not in e.attrib and "stroke" not in e.attrib:
+                e.attrib["fill"] = "#000000"
+
+    if svgImage.find(rectXP) is not None:
+        for e in svgImage.findall(rectXP):
+            if "fill" not in e.attrib and "stroke" not in e.attrib:
+                e.attrib["fill"] = "#000000"
+
+    if svgImage.find(circleXP) is not None:
+        for e in svgImage.findall(circleXP):
+            if "fill" not in e.attrib and "stroke" not in e.attrib:
+                e.attrib["fill"] = "#000000"
+
+    if svgImage.find(ellipseXP) is not None:
+        for e in svgImage.findall(ellipseXP):
+            if "fill" not in e.attrib and "stroke" not in e.attrib:
+                e.attrib["fill"] = "#000000"
 
 
 def viewboxCompensate(metrics, svgTree, ID):
@@ -87,7 +124,7 @@ def addGlyphID(svgTree, ID):
 
 
 
-def create(m, glyphs):
+def create(m, glyphs, afsc):
     """
     Generates and returns a SVG table.
 
@@ -107,24 +144,16 @@ def create(m, glyphs):
             svgImage = etree.parse(g.imagePath['svg'].path.as_uri())
 
 
-            # we have to see if there's a viewBox and if there is, remove it and use
-            # transforms to rectify the image's metrics.
-            #
-            # (viewBox is technically supported but behaves erratically in
-            # most SVGinOT renderers)
-
             cdata = etree.CDATA("")
 
-
+            # strip styles if there are any.
             if svgImage.find(f"//*[@style]") is not None:
                 stripStyles(svgImage)
-                #raise Exception(f"SVG image {g.imagePath} has a 'style' attribute. These are not compatible in SVGinOT fonts.")
 
+            if afsc:
+                affinityDesignerCompensate(svgImage)
 
             finishedSVG = etree.ElementTree(etree.Element("svg"))
-
-
-
 
             # check if there's a viewBox and compensate for it if that's the case.
             # if not, just pass it on.

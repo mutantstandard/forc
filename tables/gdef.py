@@ -4,7 +4,7 @@ from lxml.etree import Element, ElementTree, fromstring
 
 def create(glyphs):
     """
-    Creates a basic GDEF table. Currently disused.
+    Creates a basic GDEF table.
     """
 
     gdef = Element("GDEF")
@@ -16,13 +16,13 @@ def create(glyphs):
     gcd = Element("GlyphClassDef", {"Format": "2"})
 
     for g in glyphs['img']:
-        if g.codepoints[0] != 0: # filter out .notdef
-            if len(g.codepoints) > 1: # if a ligature
-                classNum = "2"
+        if g.codepoints.seq[0] != 0: # filter out .notdef
+            if len(g.codepoints.seq) > 1: # if a ligature
+                classNum = 2
             else:
-                classNum = "1"
+                classNum = 1
 
-            gcd.append(Element("ClassDef", {"glyph": g.name, "class": classNum}))
+            gcd.append(Element("ClassDef", {"glyph": g.codepoints.name(), "class": str(classNum)}))
 
     gdef.append(gcd)
 
