@@ -56,11 +56,34 @@ forc will only take what it needs, so if you have an input folder with PNGs and 
 
 When using SVG images, you have to be careful about your contents.
 
-Only a subset of the SVG format is either compatible or has guaranteed compatibility across text renderers and web browsers.
+Only a subset of the SVG format is either compatible or has guaranteed compatibility across text renderers and web browsers as part of an SVGinOT font. [Microsoft lists out what's not compatible here](https://docs.microsoft.com/en-gb/typography/opentype/spec/svg#svg-capability-requirements-and-restrictions).
 
-[Microsoft lists out what's not compatible here.](https://docs.microsoft.com/en-gb/typography/opentype/spec/svg#svg-capability-requirements-and-restrictions) Forc will stop compilation with a warning if it finds most of these.
+Forc will stop compilation with a warning if it finds most of the aspects of an SVG that are either incompatible or guaranteed not to be compatible.
 
-Aside from this, the `viewBox` attribute also does not work consistently. forc automatically compensates for this by stripping the attribute and enclosing the svg image in a group with a transform.
+You can also control how strict you want the checking to be with the `-nusc` build flag. This build flag disables checks for SVG aspects that are not guaranteed to work but are not outright disallowed.
+
+#### Undetected SVG aspects
+
+There are some potentially incompatible aspects of SVGs that forc can't detect:
+
+##### Incompatible
+(These will not work.)
+
+- Relative measurements (em, ex, etc.)
+- RGBA colours
+- CSS2 colour values in styles
+
+##### Unenforced
+(These are not guaranteed to work.)
+
+- XML entities
+
+#### SVG aspects that are unreliable
+
+Aside from what's in the OpenType spec, there are some SVG aspects that are not mentioned by the standard that don't work as expected.
+
+- `viewBox` attribute (is incredibly inconsistent and uselesss)
+	- forc automatically compensates for this by stripping the attribute and enclosing the svg image in a group with a transform.
 
 ---
 

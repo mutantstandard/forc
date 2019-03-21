@@ -21,7 +21,7 @@ class img:
     def __init__(self, type, strike, path, nusc=False):
 
         if not path.exists():
-            raise ValueError(f"Image path '{path}' doesn't exist'")
+            raise ValueError(f"Image path '{path}' doesn't exist!'")
 
         if type == "svg":
             isSVGValid(path, nusc)
@@ -79,7 +79,7 @@ class codepointSeq:
             if userInput: testRestrictedCodepoints(self.seq)
             testZWJSanity(self.seq)
         except ValueError as e:
-            raise ValueError(f"{self.seq} is not a valid codepoint sequence. ({e})")
+            raise ValueError(f"{self.seq} is not a valid codepoint sequence. → {e}")
 
 
 
@@ -87,10 +87,10 @@ class codepointSeq:
         return 'u' + '_'.join(map(simpleHex, self.seq))
 
     def __str__(self):
-        return self.name()
+        return '-'.join(map(simpleHex, self.seq))
 
     def __repr__(self):
-        return self.name()
+        return self.str()
 
     def __eq__(self, other):
         return self.seq == other.seq
@@ -120,7 +120,7 @@ class glyph:
         try:
             self.codepoints = codepointSeq(codepoints, delim, userInput=userInput)
         except ValueError as e:
-            raise Exception(f"The glyph {codepoints} is not named correctly. ({e})", 31)
+            raise ValueError(f"The codepoint sequence ('{codepoints}') is not valid. → {e}")
 
 
         if alias is None:
@@ -132,17 +132,17 @@ class glyph:
                 try:
                     self.alias = codepointSeq(alias, delim)
                 except ValueError as e:
-                    raise Exception(f"The alias destination ('{alias}') for {self.codepoints} is not named correctly. ({e})", 31)
+                    raise Exception(f"The alias destination ('{alias}') for {self.codepoints} is not named correctly. → {e}")
 
 
         self.imagePath = imagePath
 
 
     def __str__(self):
-        return self.codepoints.name()
+        return str(self.codepoints)
 
     def __repr__(self):
-        return self.codepoints.name()
+        return self.str()
 
     def __eq__(self, other):
         return self.codepoints == other.codepoints
@@ -227,14 +227,14 @@ def compileImageGlyphs(dir, delim, nusc, formats):
 
         for folderName, folder in imgCollection.items():
             if not c in folder:
-                raise Exception(f"There's a mismatch in your files. I tried to find an image for the codepoint '{c}' in '{folderName}', but I couldn't find one. You have to make sure you have the exact same sets of filenames in each of your input folders.", 31)
+                raise Exception(f"There's a mismatch in your files. I tried to find an image for the codepoint '{c}' in '{folderName}', but I couldn't find one. You have to make sure you have the exact same sets of filenames in each of your input folders.")
             else:
                 imgSet[folderName] = folder[c]
 
         try:
             imgGlyphs.append(glyph(c, imgSet, delim))
         except ValueError as e:
-            raise Exception(f"One of your image glyphs ('{c.name}') is not named correctly. ({e})", 31)
+            raise Exception(f"There was a problem when trying to create the glyph for {c}. → {e}")
 
 
     return imgGlyphs
@@ -253,7 +253,7 @@ def compileAliasGlyphs(glyphs, aliases, delim):
         try:
             aliasGlyph = glyph(target, alias=destination, delim=delim)
         except ValueError as e:
-            raise Exception(f"Some part of one of your aliases aren't named correctly. {e}")
+            raise Exception(f"Some part of an alias glyph isn't named correctly. → {e}")
 
 
         # is the target NOT a real destination
@@ -264,7 +264,7 @@ def compileAliasGlyphs(glyphs, aliases, delim):
                 targetMatches = True
 
         if targetMatches:
-            raise Exception(f"The codepoint sequence for the alias glyph ('{target}') is represented in your image glyphs. It has to be something different.", 31)
+            raise Exception(f"The codepoint sequence for the alias glyph ('{target}') is represented in your image glyphs. It has to be something different.")
 
 
         # is the destination is a real destination
@@ -275,7 +275,7 @@ def compileAliasGlyphs(glyphs, aliases, delim):
                 destinationMatches = True
 
         if not destinationMatches:
-            raise Exception(f"The destination ('{destination}') of the alias glyph '{target}' is not represented in your image glyphs.", 31)
+            raise Exception(f"The destination ('{destination}') of the alias glyph '{target}' is not represented in your image glyphs.")
 
         glyphs.append(aliasGlyph)
 
@@ -322,7 +322,7 @@ def glyphDuplicateTest(glyphs):
         for id2, g2 in enumerate(glyphs):
             if g1 == g2:
                 if id1 != id2:
-                    raise Exception(f"One of your glyphs ({g1.imagePath.keys()[1].name}) when processed, becomes {g1}. This matches another glyph that you have - {g2}. There can't be duplicates in this scenario.")
+                    raise Exception(f"One of your glyphs (image paths - {g1.imagePath}) when processed, becomes {g1}. This matches another glyph that you have - {g2}. There can't be duplicates in this scenario.")
 
 
 
@@ -341,7 +341,7 @@ def areGlyphLigaturesSafe(glyphs):
     for g in ligatures:
         for codepoint in g.codepoints.seq:
             if codepoint not in singleGlyphCodepoints:
-                raise Exception(f"One of your ligatures ({g.codepoints.name()}) does not have all non-service codepoints represented as glyphs ({simpleHex(codepoint)}). All components of all ligatures must be represented as glyphs (apart from fe0f and 200d).")
+                raise Exception(f"One of your ligatures ({g.codepoints}) does not have all non-service codepoints represented as glyphs ({simpleHex(codepoint)}). All components of all ligatures must be represented as glyphs (apart from fe0f and 200d).")
 
 
 

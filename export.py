@@ -11,6 +11,39 @@ from format import formats
 
 
 
+def tryDirectory(absolutePath, dirOrFile, dirName, tryMakeFolder=False):
+    if not absolutePath.exists():
+        if not tryMakeFolder:
+            raise ValueError(f"The {dirName} you gave ({absolutePath}) doesn't exist.")
+        else:
+            try:
+                absolutePath.mkdir(parents=True, exist_ok=True)
+            except Exception as e:
+                raise Exception(f"Couldn't make the {dirName} ({absolutePath}). ({e})" )
+    else:
+        if dirOrFile == "file" and absolutePath.is_dir():
+                raise ValueError(f"The {dirName} you gave ({absolutePath}) is a folder, not a file.")
+        elif dirOrFile == "dir" and absolutePath.is_file():
+                raise ValueError(f"The {dirName} you gave ({absolutePath}) is a file, not a folder.")
+
+
+
+
+def loadJson(jsonPath, fileName):
+    try:
+        with open(jsonPath, "r") as read_file:
+            return json.load(read_file)
+    except Exception as e:
+        raise ValueError(f"Loading the {fileName} file failed! ({e})")
+
+
+
+
+
+
+
+
+
 def export( inputPath
           , outputPath
           , manifestPath
@@ -35,54 +68,27 @@ def export( inputPath
 
     log.out(f'Fetching resources...', 35)
 
-    # check if the input and output folders are valid.
-    inputPathPath = pathlib.Path(inputPath).absolute()
-    outputPathPath = pathlib.Path(outputPath).absolute()
-    manifestPathPath = pathlib.Path(manifestPath).absolute()
 
 
-
-
-
-
-    # deal with input/output/manifest directories
+    # check folder stuff
     # ------------------------------------------------
 
-    # check if the input directory exists.
+    log.out(f'Checking file + folder locations...')
 
-    log.out(f'Checking input/output directories...')
-    if not inputPathPath.exists():
-        raise ValueError(f"Your input folder - {inputPathPath} - is not a real directory.")
-    elif inputPathPath.is_file():
-        raise ValueError(f"Your input folder - {inputPathPath} - is a file, not a directory.")
+    inputPathPath = pathlib.Path(inputPath).absolute()
+    tryDirectory(inputPathPath, "dir", "input folder")
 
+    outputPathPath = pathlib.Path(outputPath).absolute()
+    tryDirectory(outputPathPath, "dir", "output folder", tryMakeFolder=True)
 
-
-    # try to make the output directory.
-
-    if not outputPathPath.exists():
-        try:
-            outputPathPath.mkdir(parents=True, exist_ok=True)
-        except Exception as e:
-            raise Exception("Couldn't make the output folder '{outputPathPath}':" + str(e))
-
-
-    if not manifestPathPath.exists():
-        raise ValueError(f"Your the place where you said the manifest would be ({manifestPathPath}) doesn't exist.")
-    elif manifestPathPath.is_dir():
-        raise ValueError(f"Your the place where you said the manifest would be ({manifestPathPath}) is a directory, not a file.")
-
+    manifestPathPath = pathlib.Path(manifestPath).absolute()
+    tryDirectory(manifestPathPath, "file", "manifest file")
 
     if aliasesPath:
         aliasesPathPath = pathlib.Path(aliasesPath).absolute()
+        tryDirectory(aliasesPathPath, "file", "aliases file")
 
-        if not aliasesPathPath.exists():
-            raise ValueError(f"Your the place where you said the aliases would be ({aliasesPathPath}) doesn't exist.")
-        if aliasesPathPath.is_dir():
-            raise ValueError(f"Your the place where you said the aliases would be ({aliasesPathPath}) is a directory, not a file.")
-
-
-    log.out(f'Input/output directories OK!', 32)
+    log.out(f'File + folder locations OK!', 32)
 
 
 
@@ -98,7 +104,7 @@ def export( inputPath
 
         # check if it's in the list of accepted formats
         if f not in formats:
-            raise ValueError(f"'{f}' isn't an output format!")
+            raise ValueError(f"'{f}' isn't a valid output format!")
 
         # check what formats are needed
         if formats[f]["imageFormat"] == 'svg':
@@ -110,54 +116,35 @@ def export( inputPath
 
 
 
-
-
-    # try to load and check the manifest.
+    # manifest
     # ------------------------------------------------
 
-
     log.out(f'Getting + Checking manifest JSON...')
-    try:
-        with open(manifestPath, "r") as read_file:
-            manifest = json.load(read_file)
-    except Exception as e:
-        raise Exception('Loading the manifest file failed!' + str(e))
-
+    manifest = loadJson(manifestPath, "manifest file")
     validateManifest(outputFormats, manifest)
 
     log.out(f'Manifest OK!.', 32)
 
 
 
-    # try to load and check the aliases if the user provided any.
+    # aliases (file)
     # ------------------------------------------------
 
     if aliasesPath:
         log.out(f'Getting + Checking aliases JSON...')
-        try:
-            with open(aliasesPath, "r") as read_file:
-                aliases = json.load(read_file)
-        except Exception as e:
-            raise Exception('Loading the aliases file failed! ' + str(e))
-
+        aliases = loadJson(aliasesPath, "aliases file")
         validateAliases(aliases)
-
         log.out(f'Aliases OK!.', 32)
     else:
         aliases = None
 
 
 
-
-
-
-    # check the image sets for each format.
+    # glyphs
     # ------------------------------------------------
-
 
     log.out(f'Getting + checking glyphs...')
     glyphs = getGlyphs(inputPathPath, aliases, delim_codepoint, glyphImageFormats, no_lig, no_vs16, nusc)
-
     log.out(f'Glyphs OK!', 32)
 
 
