@@ -10,8 +10,18 @@ from format import formats
 
 
 
+# export.py
+# -------------------------------
+#
+# All of the data gathering and validation required before initiating font export.
+# Also initiates font export when all of these things are completed and satisfactory.
+
 
 def tryDirectory(absolutePath, dirOrFile, dirName, tryMakeFolder=False):
+    """
+    Function for checking if a directory exists and/or fulfils certain requirements.
+    WIll raise an Exception or ValueError if it doesn't meet these expectations.
+    """
     if not absolutePath.exists():
         if not tryMakeFolder:
             raise ValueError(f"The {dirName} you gave ({absolutePath}) doesn't exist.")
@@ -30,6 +40,9 @@ def tryDirectory(absolutePath, dirOrFile, dirName, tryMakeFolder=False):
 
 
 def loadJson(jsonPath, fileName):
+    """
+    Repetitive function for attempting to load a JSON file.
+    """
     try:
         with open(jsonPath, "r") as read_file:
             return json.load(read_file)

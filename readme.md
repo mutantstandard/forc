@@ -14,19 +14,22 @@ Feature requests and collaboration are welcome. Any collaborators must follow [M
 **Exports to:**
 
 - **SVGinOT**: SVGinOT
-- **sbixTT**: (macOS format) sbix with TrueType ligatures 
 - **sbixOT**: sbix with OpenType ligatures
-- **sbixTT for iOS**: (iOS format) sbix with TrueType ligatures, packaged in an iOS Configuration Profile.
-- **sbixOT for iOS**: sbix with OpenType ligatures, packaged in an iOS Configuration Profile. (currently just a development/research thing)
+- **sbixOT for iOS**: sbix with OpenType ligatures, packaged in an iOS Configuration Profile.
+
+**In development/experimental export options:**
+
 - **CBDT/CBLC** (Google/Android format)
+- **sbixTT**: sbix with TrueType ligatures (macOS format)
+- **sbixTT for iOS** sbis with TrueType ligatures, packaged in an iOS Configuration profile. (iOS format)
 
 
 **Other features:**
 
 - Full range of unicode codepoints supported, including the SPUA planes.
 - Support for ligatures.
-- Support for VS16 (U+FE0F).
-- Support for ZWJ (U+200D).
+- Support for VS16 (U+FE0F) handling.
+- Support for ZWJ (U+200D) handling.
 - Many-to-one codepoint sequence to glyph relationships via Alias Glyphs.
 - Strictly validates your input and gives you helpful error messages, ensuring that you get it right every time.
 

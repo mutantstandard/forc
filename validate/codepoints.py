@@ -1,5 +1,17 @@
 
+
+# Functions that validate codepoint sequences according to specific criteria.
+# All of them will return ValueErrors when they fail.
+
+
+
 def testZWJSanity(c):
+    """
+    Function that tests the sanity of ZWJ placement in a codepoint sequence.
+
+    (ie. ZWJs placed at the beginning or end of a sequence, or two ZWJs placed
+    next to each other, is considered 'not sane')
+    """
     zwj = 0x200d
 
     if len(c) > 1 and zwj in c:
@@ -7,7 +19,7 @@ def testZWJSanity(c):
             raise ValueError(f"This codepoint sequence has a ZWJ at the beginning and/or the end of it's codepoint seqence (when ignoring VS16 (U+fe0f). This is not correct.")
 
         if any(c[i]== zwj and c[i+1] == zwj for i in range(len(c)-1)):
-            raise ValueError(f"This codepoint sequence  has two or more ZWJs (U+200d) next to each other (when ignoring VS16 (U+fe0f)). This is not correct.")
+            raise ValueError(f"This codepoint sequence has two or more ZWJs (U+200d) next to each other (when ignoring VS16 (U+fe0f)). This is not correct.")
 
 
 def testRestrictedCodepoints(c):

@@ -30,7 +30,6 @@ There are three main sections to the file:
     ,"yMax": 1578
     ,"width": 2048
     ,"height": 2048
-    ,"OS2WeirdDescent": 0
 	...etc
     }
 ````
@@ -49,7 +48,7 @@ FUnits stands for Font Design Units.
 | width | int (FUnits) | 2048 | Absolute width of your glyphs. |
 | height | int (FUnits) | 2048 | Absolute height of your glyphs.  |
 | xMin | int (FUnits) |  | The minimum x-position of your glyphs (includes vertical descenders). |
-| xMin | int (FUnits) |  | The maximum x-position of your glyphs (includes vertical ascender). |
+| xMax | int (FUnits) |  | The maximum x-position of your glyphs (includes vertical ascender). |
 | yMin | int (FUnits) | | The minimum y-position of your glyphs (includes horizontal descenders). |
 | yMax | int (FUnits) | | The maximum y-position of your glyphs (includes vertical ascenders). |
 | spaceHLength | int (FUnits) | | The length of space characters in horizontal writing orientation. |

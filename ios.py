@@ -11,7 +11,7 @@ import log
 
 def addEntry(element, tag, text):
     """
-    Function that simplifies the adding of plist-style entries.
+    Creates a plist-style XML entry
     """
     entry = Element(tag)
     entry.text = text

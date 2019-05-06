@@ -54,9 +54,9 @@ OPTIONS:
         - SVGinOT       (Many platforms)
 
         Formats that require PNG images:
-        - sbixTT        (macOS)
+        - sbixTT        (macOS) (not fully functional)
         - sbixOT
-        - sbixTTiOS     (iOS)
+        - sbixTTiOS     (iOS) (not fully functional)
         - sbixOTiOS     (DEVELOPMENT/TESTING)
         - CBx           (Google/Android)
 
@@ -79,13 +79,14 @@ OPTIONS:
 --no-vs16   Strips any presence of VS16 (U+fe0f) from the output.
 
 --nusc      No Unenforced SVG Contents Checking.
-            Makes SVG checking less strict, by only checking SVG
-            parts that are explicitly not allowed in SVGinOT.
+            Makes SVG checking less strict by allowing SVG contents
+            that are not guaranteed to work in SVG checks.
 
---afsc      Affinity Designer SVG Correction.
-            Affinity Designer's SVG exporter has quirks which cause
-            problems in SVGinOT fonts. This build flag makes forc
-            perform some non-destructive changes to correct this.
+--afsc      Affinity SVG Correction.
+            The SVG exporter in Serif's Affinity software has
+            quirks which cause problems in SVGinOT fonts. This
+            build flag makes forc correct SVG glyphs when
+            being built.
 
 --no-lig    (DEVELOPMENT OPTION) Strips ligatures from the output.
 

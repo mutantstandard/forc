@@ -6,6 +6,14 @@ from validate.codepoints import testZWJSanity, testRestrictedCodepoints
 
 
 
+# glyphs.py
+# -------------------------------
+#
+# The entire process of importing, compiling and validating glyphs.
+
+
+
+
 def simpleHex(int):
     """
     returns a hexadecimal number as a string without the '0x' prefix.

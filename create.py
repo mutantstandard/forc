@@ -8,11 +8,17 @@ from format import formats
 
 
 
+# create.py
+# -------------------------------
+#
+# The routines and outline processes responsible for one single font compilation cycle.
+
+
+
+
 def compileTTX(input, output):
     """
-    Invokes ttx
-
-    Making this it's own function now so I can selectively invoke it.
+    Invokes the TTX compiler and attempts to compile a font with it.
     """
 
     # feed the assembled TTX as input to the ttx commaand line tool.
@@ -28,6 +34,9 @@ def compileTTX(input, output):
 
 
 def writeFile(path, contents, exceptionString):
+    """
+    A basic repetitive function that tries to write something to a file.
+    """
     try:
         with open(path, 'wb') as file:
             file.write(contents)

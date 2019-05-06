@@ -149,6 +149,14 @@ xlinkNS = '{http://www.w3.org/1999/xlink}'
 def isSVGValid(path, ignoreUnenforcedContents=False):
     """
     Evaluates if a glyphs' SVG file is compliant with the SVGinOT standard.
+    This checks for most things.
+
+    Checks that currently don't exist:
+    - relative units (em, ex, etc.)
+    - rgba() colors
+    - CSS2 color values in styles
+    - XML entities
+
     """
 
     # these are both the same for historical reasons. They might change in the future.

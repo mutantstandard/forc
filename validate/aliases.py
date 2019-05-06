@@ -1,6 +1,10 @@
 
 
 def validateAliases(aliases):
+    """
+    Validates an aliases data object at a basic, structural level.
+    """
+
     if type(aliases) is not dict:
         raise Exception("Your alises file is not structured properly. It needs to be an object type.")
 

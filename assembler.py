@@ -34,7 +34,7 @@ import tables.cblc
 
 def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
     """
-    Assembles a TTX file using the manifest file and input data.
+    Covers the entire routine for assembling a TTX file.
     """
 
 

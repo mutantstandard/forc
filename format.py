@@ -1,5 +1,9 @@
 
 
+# A static data structure that contains all of the formats that
+# forc can export to, what their names and what their properties are.
+
+
 
 formats = {"SVGinOT":
              {"imageFormat": "svg"
