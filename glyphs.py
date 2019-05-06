@@ -1,9 +1,11 @@
 import pathlib
 
 import log
+import lxml.etree as etree
+
 from validate.svg import isSVGValid
 from validate.codepoints import testZWJSanity, testRestrictedCodepoints
-
+from transform.svg import compensateSVG
 
 
 # glyphs.py
@@ -22,21 +24,29 @@ def simpleHex(int):
     return (hex(int)[2:])
 
 
+
 class img:
     """
     Class representing a glyph image.
     """
-    def __init__(self, type, strike, path, nusc=False):
+    def __init__(self, type, strike, m, path, nusc=False, afsc=False):
 
         if not path.exists():
             raise ValueError(f"Image path '{path}' doesn't exist!'")
 
         if type == "svg":
             isSVGValid(path, nusc)
+            svgImage = etree.parse(path.as_uri())
+            self.data = compensateSVG(svgImage, m, afsc)
+
+        if type == "png":
+            # with open(path, "rb") as read_file:
+                # pngHexdump = read_file.read().hex()
+            self.path = path
 
         self.type = type
         self.strike = strike
-        self.path = path
+
 
     def __str__(self):
         return f"|{self.type}-{str(self.strike)} {self.path.name}|"
@@ -123,7 +133,7 @@ class glyph:
     """
     Class representing a font glyph.
     """
-    def __init__(self, codepoints, imagePath=None, vs16=False, alias=None, delim="-", userInput=True):
+    def __init__(self, codepoints, img=None, vs16=False, alias=None, delim="-", userInput=True):
 
         try:
             self.codepoints = codepointSeq(codepoints, delim, userInput=userInput)
@@ -134,7 +144,7 @@ class glyph:
         if alias is None:
             self.alias = None
         else:
-            if imagePath:
+            if img:
                 raise ValueError(f"Tried to make glyph object '{name}' but it is set as an alias AND has an image path. It can't have both.")
             else:
                 try:
@@ -143,7 +153,7 @@ class glyph:
                     raise Exception(f"The alias destination ('{alias}') for {self.codepoints} is not named correctly. → {e}")
 
 
-        self.imagePath = imagePath
+        self.img = img
 
 
     def __str__(self):
@@ -169,7 +179,7 @@ class glyph:
 
 
 
-def compileImageGlyphs(dir, delim, nusc, formats):
+def compileImageGlyphs(dir, m, delim, nusc, afsc, formats):
 
     ## get a rough list of everything
 
@@ -186,7 +196,7 @@ def compileImageGlyphs(dir, delim, nusc, formats):
         imgCollection['svg'] = dict()
 
         for path in list((dir / 'svg').glob("*.svg")):
-            imgCollection['svg'][path.stem] = img("svg", 0, path.absolute())
+            imgCollection['svg'][path.stem] = img("svg", 0, m, path.absolute(), afsc)
 
 
 
@@ -210,7 +220,7 @@ def compileImageGlyphs(dir, delim, nusc, formats):
                 imgCollection[pngFolder.name] = dict()
 
                 for path in list(pngFolder.glob("*.png")):
-                    imgCollection[pngFolder.name][path.stem] = img("png", strikeSize, path.absolute())
+                    imgCollection[pngFolder.name][path.stem] = img("png", strikeSize, m, path.absolute())
 
 
     ## check size
@@ -330,7 +340,7 @@ def glyphDuplicateTest(glyphs):
         for id2, g2 in enumerate(glyphs):
             if g1 == g2:
                 if id1 != id2:
-                    raise Exception(f"One of your glyphs (image paths - {g1.imagePath}) when processed, becomes {g1}. This matches another glyph that you have - {g2}. There can't be duplicates in this scenario.")
+                    raise Exception(f"One of your glyphs (image paths - {g1.img}) when processed, becomes {g1}. This matches another glyph that you have - {g2}. There can't be duplicates in this scenario.")
 
 
 
@@ -381,14 +391,14 @@ def mixAndSortGlyphs(glyphs):
 
 
 
-def getGlyphs(inputPath, aliases, delim, formats, no_lig, no_vs16, nusc):
+def getGlyphs(inputPath, m, aliases, delim, formats, no_lig, no_vs16, nusc, afsc):
     """
     Runs inputs through all of the necessary processes and checks to create a glyphs structure.
     """
 
     # compile image glyphs
-    log.out(f'Compiling + validating image glyphs...', 90)
-    imgGlyphs = compileImageGlyphs(inputPath, delim, nusc, formats)
+    log.out(f'Compiling + validating image glyphs... (this can take a while)', 90)
+    imgGlyphs = compileImageGlyphs(inputPath, m, delim, nusc, afsc, formats)
 
 
     # compile alias glyphs

@@ -113,7 +113,7 @@ def strike(metrics, strikeIndex, ppem, glyphs):
         for id, g in enumerate(glyphs['img']):
 
             # you only put them in if there's an actual image
-            if g.imagePath:
+            if g.img:
                 glyphIDList.append(id)
                 eblcSub.append(Element("glyphLoc", {"id": str(id), "name": g.codepoints.name() }))
 
@@ -146,7 +146,7 @@ def create(m, glyphs):
     # get basic strike information.
 
     for g in glyphs['img']:
-        if g.imagePath:
+        if g.img:
             firstGlyphWithStrikes = g
             break
 
@@ -155,7 +155,7 @@ def create(m, glyphs):
 
     strikeIndex = 0
 
-    for imageFormat, image in firstGlyphWithStrikes.imagePath.items():
+    for imageFormat, image in firstGlyphWithStrikes.img.items():
         if imageFormat.split('-')[0] == "png":
             cblc.append(strike(metrics, strikeIndex, image.strike, glyphs))
             strikeIndex += 1

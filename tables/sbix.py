@@ -18,7 +18,7 @@ def strike(ppem, resolution, subfolder, glyphs):
     # stuff the edited SVG into CDATA.
 
     for ID, g in enumerate(glyphs['img']):
-        if not g.imagePath:
+        if not g.img:
             strike.append(Element("glyph", {"name": g.codepoints.name() }))
         else:
             pngElement = Element("glyph",   {"name": g.codepoints.name()
@@ -28,10 +28,12 @@ def strike(ppem, resolution, subfolder, glyphs):
                                             })
             hexdata = Element("hexdata")
 
-            with open(g.imagePath[subfolder].path, "rb") as read_file:
+            with open(g.img[subfolder].path, "rb") as read_file:
                 pngHexdump = read_file.read().hex()
 
             hexdata.text = pngHexdump
+
+            # hexdata.text = g.img[subfolder].data
 
             # get the png, make it Base64.
             # hexdata.text
@@ -64,7 +66,7 @@ def create(glyphs):
     # get basic strike information.
 
     for g in glyphs['img']:
-        if g.imagePath:
+        if g.img:
             firstGlyphWithStrikes = g
             break
 
@@ -72,7 +74,7 @@ def create(glyphs):
 
     # iterate over each strike.
 
-    for imageFormat, image in firstGlyphWithStrikes.imagePath.items():
+    for imageFormat, image in firstGlyphWithStrikes.img.items():
         if imageFormat.split('-')[0] == "png":
             sbix.append(strike(image.strike, "72", imageFormat, glyphs))
 

@@ -68,7 +68,7 @@ def affinityDesignerCompensate(svgImage):
 
 
 
-def viewboxCompensate(metrics, svgTree, ID):
+def viewboxCompensate(metrics, svgImage):
     """
     viewboxes in SVGinOT are poorly and inconsistently implemented among many vendors,
     leading to serious font display issuies.
@@ -77,11 +77,11 @@ def viewboxCompensate(metrics, svgTree, ID):
     determined in the manifest to compensate for the loss of the viewBox.
     """
 
-    svgImage = svgTree.getroot()
+    svgRoot = svgImage.getroot()
 
     # calculate the transform
     # ---------------------------------------------------------------------------
-    viewBoxWidth = svgImage.attrib['viewBox'].split(' ')[2] # get the 3rd viewBox number (width)
+    viewBoxWidth = svgRoot.attrib['viewBox'].split(' ')[2] # get the 3rd viewBox number (width)
 
     xPos = str(metrics['xMin'])
     yPos = str(-(metrics['yMax'])) # negate
@@ -93,7 +93,7 @@ def viewboxCompensate(metrics, svgTree, ID):
     # ---------------------------------------------------------------------------
     transformGroup = etree.Element("g", {"transform": f"translate({xPos}, {yPos}) scale({scale})"})
 
-    for tag in iter(svgImage):
+    for tag in iter(svgRoot):
         transformGroup.append(tag)
 
 
@@ -103,7 +103,7 @@ def viewboxCompensate(metrics, svgTree, ID):
     nsmap = { None: "http://www.w3.org/2000/svg"
             , "xlink" : "http://www.w3.org/1999/xlink"
             }
-    svgcdata = etree.Element(svgImage.tag, svgImage.attrib, nsmap = nsmap)
+    svgcdata = etree.Element(svgRoot.tag, svgRoot.attrib, nsmap = nsmap)
     svgcdata.attrib.pop("viewBox")
     svgcdata.attrib["version"] = "1.1"
     svgcdata.append(transformGroup)
@@ -114,5 +114,21 @@ def viewboxCompensate(metrics, svgTree, ID):
     # ---------------------------------------------------------------------------
     svgcdatatree = svgcdata.getroottree()
 
-
     return svgcdatatree
+
+
+def compensateSVG(svgImage, m, afsc):
+
+    metrics = m['metrics']
+
+    # strip styles if there are any.
+    if svgImage.find(f"//*[@style]") is not None:
+        stripStyles(svgImage)
+
+    if afsc:
+        affinityDesignerCompensate(svgImage)
+
+    if svgImage.find(".[@viewBox]") is not None:
+        return viewboxCompensate(metrics, svgImage)
+    else:
+        return svgImage

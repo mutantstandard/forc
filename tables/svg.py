@@ -6,11 +6,12 @@ from transform.svg import stripStyles, affinityDesignerCompensate, viewboxCompen
 
 
 
-def addGlyphID(svgTree, ID):
+def addGlyphID(svgImage, ID):
     """
     Adds the glyph ID to the SVG.
     """
-    svg = svgTree.getroot()
+
+    svg = svgImage.getroot()
 
 
     svg.attrib["id"] = f"glyph{ID}"
@@ -34,41 +35,15 @@ def create(m, glyphs, afsc):
     svgTable = etree.Element("SVG")
 
     for ID, g in enumerate(glyphs['img']):
-        if g.imagePath and g.imagePath['svg']:
+
+        if g.img:
+            finishedSVG = addGlyphID(g.img['svg'].data, ID)
+
             svgDoc = etree.Element("svgDoc", {"startGlyphID": str(ID), "endGlyphID" : str(ID) })
-
-            # lxml can't parse from Path objects, so it has to give a string representation.
-            svgImage = etree.parse(g.imagePath['svg'].path.as_uri())
-
-
-            cdata = etree.CDATA("")
-
-            # strip styles if there are any.
-            if svgImage.find(f"//*[@style]") is not None:
-                stripStyles(svgImage)
-
-            if afsc:
-                affinityDesignerCompensate(svgImage)
-
-            finishedSVG = etree.ElementTree(etree.Element("svg"))
-
-            # check if there's a viewBox and compensate for it if that's the case.
-            # if not, just pass it on.
-            # -------------------------------------------------------------------------------------
-            if svgImage.find(".[@viewBox]") is not None:
-                compensated = viewboxCompensate(metrics, svgImage, ID)
-                finishedSVG = addGlyphID(compensated, ID)
-
-            else:
-                finishedSVG = addGlyphID(svgImage, ID)
-
-
             cdata = etree.CDATA(etree.tostring(finishedSVG, method="xml", pretty_print=False, xml_declaration=True, encoding="UTF-8"))
 
             svgDoc.text = cdata
             svgTable.append(svgDoc)
-
-
 
 
 

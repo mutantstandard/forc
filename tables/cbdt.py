@@ -24,7 +24,7 @@ def strike(metrics, strikeIndex, strikeRes, subfolder, glyphs):
     for g in glyphs['img']:
 
         # you only put them in if there's an actual image
-        if g.imagePath:
+        if g.img:
 
             # format 18 for big metrics and PNG data.
             bitmapTable = Element("cbdt_bitmap_format_18", {"name": g.codepoints.name() })
@@ -44,10 +44,11 @@ def strike(metrics, strikeIndex, strikeRes, subfolder, glyphs):
 
             rawImageData = Element("rawimagedata")
 
-            with open(g.imagePath[subfolder].path, "rb") as read_file:
+            with open(g.img[subfolder].path, "rb") as read_file:
                 pngHexdump = read_file.read().hex()
-
             rawImageData.text = pngHexdump
+
+            # rawImageData.text = g.img[subfolder].data
 
             bitmapTable.append(rawImageData)
 
@@ -74,7 +75,7 @@ def create(m, glyphs):
     # get basic strike information.
 
     for g in glyphs['img']:
-        if g.imagePath:
+        if g.img:
             firstGlyphWithStrikes = g
             break
 
@@ -83,7 +84,7 @@ def create(m, glyphs):
 
     strikeIndex = 0
 
-    for imageFormat, image in firstGlyphWithStrikes.imagePath.items():
+    for imageFormat, image in firstGlyphWithStrikes.img.items():
         if imageFormat.split('-')[0] == "png":
             cbdt.append(strike(metrics, strikeIndex, image.strike, imageFormat, glyphs))
             strikeIndex += 1

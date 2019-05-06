@@ -21,7 +21,7 @@ Feature requests and collaboration are welcome. Any collaborators must follow [M
 
 - **CBDT/CBLC** (Google/Android format)
 - **sbixTT**: sbix with TrueType ligatures (macOS format)
-- **sbixTT for iOS** sbis with TrueType ligatures, packaged in an iOS Configuration profile. (iOS format)
+- **sbixTT for iOS** sbix with TrueType ligatures, packaged in an iOS Configuration profile. (iOS format)
 
 
 **Other features:**
