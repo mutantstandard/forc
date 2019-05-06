@@ -21,7 +21,7 @@ def compileTTX(input, output):
     Invokes the TTX compiler and attempts to compile a font with it.
     """
 
-    # feed the assembled TTX as input to the ttx commaand line tool.
+    # feed the assembled TTX as input to the ttx command line tool.
     cmd_ttx = ['ttx', '-q', '-o', output, input]
 
     # try to export temporary PNG
