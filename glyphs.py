@@ -30,9 +30,12 @@ class img:
     Class representing a glyph image.
     """
     def __init__(self, type, strike, m, path, nusc=False, afsc=False):
+
         if not path.exists():
             raise ValueError(f"Image path '{path}' doesn't exist!'")
 
+        self.type = type
+        self.strike = strike
 
         if type == "svg":
 
@@ -50,7 +53,6 @@ class img:
 
             # do all the compensation stuff on it and make it the data.
             self.data = compensateSVG(svgImage, m, afsc)
-            self.path = path
 
 
 
@@ -59,14 +61,16 @@ class img:
             # take the PNG and use it for later.
 
 
-        self.type = type
-        self.strike = strike
+
 
 
     def getHexDump(self):
         """
         Loads and returns a hexdump of the image object's file on-demand.
         """
+
+        if self.type is "svg":
+            raise ValueError(f"Hexdump of an SVG image was attempted. You can't hexdump SVG images in forc.")
 
         try:
             with open(self.path, "rb") as read_file:
@@ -125,11 +129,17 @@ class codepointSeq:
             if userInput: testRestrictedCodepoints(self.seq)
             testZWJSanity(self.seq)
         except ValueError as e:
-            raise ValueError(f"{self.seq} is not a valid codepoint sequence. → {e}")
+            raise ValueError(f"'{sequence}' is not a valid codepoint sequence. → {e}")
 
 
 
     def name(self):
+        """
+        Generates a 'name' for the glyph based on it's codepoint sequence.
+
+        The way this is named is important and it makes the TTX compiler happy.
+        DO NOT CHANGE IT!
+        """
         return 'u' + '_'.join(map(simpleHex, self.seq))
 
     def __str__(self):
@@ -178,7 +188,7 @@ class glyph:
         try:
             self.codepoints = codepointSeq(codepoints, delim, userInput=userInput)
         except ValueError as e:
-            raise ValueError(f"The codepoint sequence ('{codepoints}') is not valid. → {e}")
+            raise ValueError(f"A codepoint sequence object for ('{codepoints}') couldn't be created. → {e}")
 
 
         if alias is None:
@@ -295,7 +305,7 @@ def compileImageGlyphs(dir, m, delim, nusc, afsc, formats):
         try:
             imgGlyphs.append(glyph(c, img=imgSet, delim=delim))
         except ValueError as e:
-            raise Exception(f"There was a problem when trying to create the glyph for {c}. → {e}")
+            raise Exception(f"There was a problem when trying to create a glyph object for {c}. → {e}")
 
 
     return imgGlyphs
@@ -442,13 +452,13 @@ def getGlyphs(inputPath, m, aliases, delim, formats, no_lig, no_vs16, nusc, afsc
     """
 
     # compile image glyphs
-    log.out(f'Compiling + validating image glyphs... (this can take a while)', 90)
+    log.out(f'Getting + validating image glyphs... (this can take a while)', 90)
     imgGlyphs = compileImageGlyphs(inputPath, m, delim, nusc, afsc, formats)
 
 
     # compile alias glyphs
     if aliases:
-        log.out(f'Compiling + validating alias glyphs...', 90)
+        log.out(f'Getting + validating alias glyphs...', 90)
         glyphs = compileAliasGlyphs(imgGlyphs, aliases, delim)
     else:
         glyphs = imgGlyphs
@@ -467,7 +477,7 @@ def getGlyphs(inputPath, m, aliases, delim, formats, no_lig, no_vs16, nusc, afsc
 
     # validating (or stripping) ligatures
     if no_lig:
-        log.out(f'Stripping any ligatures...', 90)
+        log.out(f'[--no-lig] Stripping any ligatures...', 90)
         singleGlyphs = []
 
         for g in glyphs:
