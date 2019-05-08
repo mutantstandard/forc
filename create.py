@@ -15,7 +15,6 @@ from format import formats
 
 
 
-
 def compileTTX(input, output):
     """
     Invokes the TTX compiler and attempts to compile a font with it.
@@ -56,14 +55,33 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
 
 
     # VARIABLES
+    # ------------------------------------------------------
     extension = formats[fontFormat]["extension"]
     imageFormat = formats[fontFormat]["imageFormat"]
 
+    # output folder
     outputAbsolute = pathlib.Path(outputPath).absolute()
 
 
+    # filenames
+    # the user setting custom filenames in the manifest is optional.
+    # If none are given, just use the font format as the base filename.
+
+    if "filenames" in manifest["metadata"]:
+        filename = manifest['metadata']['filenames'][fontFormat]
+    else:
+        filename = fontFormat
+
+    originalTTXPath = outputAbsolute / (filename + "_dev.ttx")
+    outputFontPath = outputAbsolute / (filename + extension)
+    afterExportTTX = outputAbsolute / (filename + ".ttx")
 
 
+
+
+
+    # DOING THE THING
+    # ------------------------------------------------------
 
     # assemble TTX
     log.out(f'Assembling initial TTX...')
@@ -73,14 +91,12 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
 
     # save TTX
     log.out(f"Saving forc's assembled (initial) TTX to file...")
-    originalTTXPath = outputAbsolute / (f"{fontFormat}_initial.ttx")
     writeFile(originalTTXPath, originalTTX, 'Could not write initial TTX to file')
     log.out(f'Initial TTX saved.', 32)
 
 
     # compile TTX to font
     log.out(f'Compiling font...')
-    outputFontPath = outputAbsolute / (fontFormat + extension)
     compileTTX(originalTTXPath, outputFontPath)
     log.out(f'Font compiled.', 32)
 
@@ -94,7 +110,6 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
     # -ttx flag
     if ttx_output:
         log.out(f'Compiling a finished TTX from the font file..')
-        afterExportTTX = outputAbsolute / (f"{fontFormat}_finished.ttx")
         compileTTX(outputFontPath, afterExportTTX)
 
 

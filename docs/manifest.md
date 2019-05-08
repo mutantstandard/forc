@@ -101,6 +101,7 @@ forc assumes you want to create a font that can work in both vertical AND horizo
 	{"created": "Mon Jan 03 13:45:00 2019"
     ,"version": "1.040"
     ,"OS2VendorID": "MTNT"
+    ,"filenames": {...}
     ,"nameRecords": {...}
 	}
 ````
@@ -113,12 +114,44 @@ forc assumes you want to create a font that can work in both vertical AND horizo
 | nameRecords | object | ✔️ | A structure represnting all of the records of the `name` table. (Described in more detail later.) |
 
 
+
+### Filenames
+
+```
+
+"filenames":
+	{ "SVGinOT": "MutantStandardEmoji-SVGinOT"
+	, "sbixTT": "MutantStandardEmoji-sbixTT"
+	, "sbixOT": "MutantStandardEmoji-sbixOT"
+	, "sbixTTiOS": "MutantStandardEmoji-sbixTT-iOS"
+	, "sbixOTiOS": "MutantStandardEmoji-sbixOT-iOS"
+	, "CBx": "MutantStandardEmoji-CBx"
+}
+        
+```
+
+What filenames your output is going to have.
+
+This is optional - if you don't set filenames, then forc will just use the export format as the filename.
+
+If you're using these, you must have a filename for each of the formats you're exporting to, and none of your custom filenames can be duplicates. Don't manually add file extensions - forc will add those by itself.
+
+[Font Development Best Practices](https://silnrsi.github.io/FDBP/en-US/Font_Naming.html) recommends that filenames are done something like this:
+
+```
+FontFamilyName-StyleName.otf
+```
+
+As you can see in the JSON example though, I personally decided to not have Regular because 'MutantStandardEmoji' plus the emoji format is long enough.
+
+
+
 ### Name Records
 
 Name records consists of a series of objects named after the font formats that forc can export (or 'default'), 
 
 ````
-,"nameRecords":
+"nameRecords":
         {"default":
             {"0" : "Copyright (c) 2017-2019 Dzuk (https://noct.zone)"
             ,"2" : "Regular"

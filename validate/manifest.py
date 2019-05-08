@@ -181,6 +181,25 @@ def validateManifest(outputFormats, m):
             raise ValueError(f"metadata.OS2VendorID doesn't conform to it's data type correctly. → {e}")
 
 
+    # Filenames
+    # ---------------------------------------------------
+
+    # filenames are currently optional.
+    # if the user doesn't set filenames, forc will just use the format name for the filename.
+    if "filenames" in metadata:
+        filenames = metadata['filenames']
+
+        # make sure they are set.
+        for format in outputFormats:
+            if not format in filenames:
+                raise ValueError(f"You haven't set a filename for your font for the {format} format in metadata.filenames. {checkDocMsg}")
+
+        # check for duplicate filenames.
+        for format1, filename1 in filenames.items():
+            for format2, filename2 in filenames.items():
+                if format2 != format1:
+                    if filename1 == filename2:
+                        raise ValueError(f" The filenames you've set for the formats {format1} and {format2} are the same. There can't be any duplicates in your custom filenames.")
 
     # Name Records
     # ---------------------------------------------------

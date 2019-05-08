@@ -8,6 +8,7 @@ import re
 
 
 # these regexes are designed to find negative results rather than positive ones.
+# (this is so the invalid characters can be read back out to the user.)
 openTypeTagRegex = "[^\u0020-\u007e]"
 postScriptNameRegex = "(?=[\[\](){}<>/%])[\u0021-\u007e]"
 
