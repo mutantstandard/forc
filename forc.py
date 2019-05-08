@@ -6,7 +6,7 @@ import sys
 from io import StringIO
 
 import log
-from export import export
+from start import start
 
 
 
@@ -160,7 +160,7 @@ def main():
         print(HELP)
         sys.exit(2)
     try:
-        export( input_path
+        start( input_path
               , output_path
               , manifest_path
               , aliases_path

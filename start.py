@@ -10,7 +10,7 @@ from format import formats
 
 
 
-# export.py
+# start.py
 # -------------------------------
 #
 # All of the data gathering and validation required before initiating font export.
@@ -57,7 +57,7 @@ def loadJson(jsonPath, fileName):
 
 
 
-def export( inputPath
+def start( inputPath
           , outputPath
           , manifestPath
           , aliasesPath
