@@ -43,12 +43,7 @@ def strike(metrics, strikeIndex, strikeRes, subfolder, glyphs):
 
 
             rawImageData = Element("rawimagedata")
-
-            with open(g.img[subfolder].path, "rb") as read_file:
-                pngHexdump = read_file.read().hex()
-            rawImageData.text = pngHexdump
-
-            # rawImageData.text = g.img[subfolder].data
+            rawImageData.text = g.img[subfolder].getHexDump()
 
             bitmapTable.append(rawImageData)
 

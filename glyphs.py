@@ -33,18 +33,47 @@ class img:
         if not path.exists():
             raise ValueError(f"Image path '{path}' doesn't exist!'")
 
+
         if type == "svg":
-            isSVGValid(path, nusc)
-            svgImage = etree.parse(path.as_uri())
+
+            # try parsing the SVG
+            try:
+                svgImage = etree.parse(path.as_uri())
+            except ValueError:
+                raise ValueError(f"Image class couldn't be built because there was a problem in retrieving or processing the image '{path}'. {e}")
+
+            # test for SVG compatibility.
+            try:
+                isSVGValid(svgImage, nusc)
+            except ValueError as e:
+                raise ValueError(f"Image class couldn't be built due to compatibility issues with the SVG image {path}. → {e}")
+
+            # do all the compensation stuff on it and make it the data.
             self.data = compensateSVG(svgImage, m, afsc)
+            self.path = path
+
+
 
         if type == "png":
-            # with open(path, "rb") as read_file:
-                # pngHexdump = read_file.read().hex()
             self.path = path
+            # take the PNG and use it for later.
+
 
         self.type = type
         self.strike = strike
+
+
+    def getHexDump(self):
+        """
+        Loads and returns a hexdump of the image object's file on-demand.
+        """
+
+        try:
+            with open(self.path, "rb") as read_file:
+                return read_file.read().hex()
+        except ValueError as e:
+            raise ValueError(f"Image object {self} couldn't be hexdumped. → {e}")
+
 
 
     def __str__(self):
@@ -117,7 +146,8 @@ class codepointSeq:
         Sorts by codepoint sequence length, then the value of the first codepoint.
 
         This is incredibly crucial to the functioning of font compilation because
-        it determines the glyphID in the glyphOrder table.
+        (once a list of these are sorted) it determines the glyphID in the
+        glyphOrder table.
 
         Single codepoint seqs have to be first and they have to be ordered
         lowest to highest because if they aren't, their glyphID can be out
@@ -165,6 +195,9 @@ class glyph:
 
         self.img = img
 
+
+    # the way that glyph classes get compared/equated is
+    # simply by their codepointseq.
 
     def __str__(self):
         return str(self.codepoints)

@@ -27,16 +27,8 @@ def strike(ppem, resolution, subfolder, glyphs):
                                             ,"originOffsetY": "0"
                                             })
             hexdata = Element("hexdata")
+            hexdata.text = g.img[subfolder].getHexDump()
 
-            with open(g.img[subfolder].path, "rb") as read_file:
-                pngHexdump = read_file.read().hex()
-
-            hexdata.text = pngHexdump
-
-            # hexdata.text = g.img[subfolder].data
-
-            # get the png, make it Base64.
-            # hexdata.text
 
             pngElement.append(hexdata)
             strike.append(pngElement)
