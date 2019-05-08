@@ -76,7 +76,7 @@ The SVGs exported by the Affinity suite of software by Serif have quirks that cl
 
 It's not that the font won't compile, but the way Affinity colours SVG exports is in such a way that certain shapes have no fill or stroke at all.
 
-For an image, this is fine (it shows as black, which is what it's intended to be), but in a font it means that area will be coloured by whatever the font colour is.
+For an image, this is fine (it shows as black, which is what it's intended to be), but in a font it means that area will be coloured by whatever the text colour is when in use.
 
 Using this flag will apply corrections to the SVG when they are loaded into forc so this doesn't happen.
 
