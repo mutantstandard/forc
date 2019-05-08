@@ -1,6 +1,6 @@
 # forc
 
-![forc logo with the text 'forc' next to it on a blue background](forc_logo.png)
+![forc logo with the text 'forc' next to it on a blue background](docs/img/forc_logo.png)
 
 Forc (a terrible portmanteau of font and orc) is an emoji font creation tool. It takes in folders of codepoint-named images and a manifest file and returns highly-compatible emoji fonts that can work in a wide variety of platforms.
 
