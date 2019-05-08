@@ -16,10 +16,10 @@ def testZWJSanity(c):
 
     if len(c) > 1 and zwj in c:
         if c[0] == zwj or c[-1] == zwj:
-            raise ValueError(f"This codepoint sequence has a ZWJ (U+200d) at the beginning and/or the end of it's codepoint seqence (when ignoring VS16/U+fe0f). This is not correct.")
+            raise ValueError(f"This codepoint sequence has a ZWJ (U+200d) at the beginning and/or the end of it's codepoint seqence (when ignoring VS16/U+fe0f). This is not valid.")
 
         if any(c[i]== zwj and c[i+1] == zwj for i in range(len(c)-1)):
-            raise ValueError(f"This codepoint sequence has two or more ZWJs (U+200d) next to each other (when ignoring VS16/U+fe0f). This is not correct.")
+            raise ValueError(f"This codepoint sequence has two or more ZWJs (U+200d) next to each other (when ignoring VS16/U+fe0f). This is not a valid.")
 
 
 def testRestrictedCodepoints(codepointSeq):

@@ -178,7 +178,7 @@ def validateManifest(outputFormats, m):
         try:
             validateOpenTypeTag(metadata['OS2VendorID'])
         except ValueError as e:
-            raise Exception(f"metadata.OS2VendorID doesn't conform to it's data type correctly. → {e}")
+            raise ValueError(f"metadata.OS2VendorID doesn't conform to it's data type correctly. → {e}")
 
 
 
@@ -224,4 +224,4 @@ def validateManifest(outputFormats, m):
         try:
             validatePostScriptName(formatRecords["6"])
         except ValueError as e:
-            raise Exception(f"There's something wrong with metadata.nameRecords. When compiled, name record 6 for the '{format}' format doesn't match the data type requirements. {e}")
+            raise ValueError(f"There's something wrong with metadata.nameRecords. When compiled, name record 6 for the '{format}' format doesn't match the data type requirements. {e}")

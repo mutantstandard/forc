@@ -32,7 +32,7 @@ class img:
     def __init__(self, type, strike, m, path, nusc=False, afsc=False):
 
         if not path.exists():
-            raise ValueError(f"Image path '{path}' doesn't exist!'")
+            raise ValueError(f"Image object couldn't be built because the path given ('{path}') doesn't exist.'")
 
         self.type = type
         self.strike = strike
@@ -43,13 +43,13 @@ class img:
             try:
                 svgImage = etree.parse(path.as_uri())
             except ValueError:
-                raise ValueError(f"Image class couldn't be built because there was a problem in retrieving or processing the image '{path}'. {e}")
+                raise ValueError(f"Image object couldn't be built because there was a problem in retrieving or processing the image '{path}'. {e}")
 
             # test for SVG compatibility.
             try:
                 isSVGValid(svgImage, nusc)
             except ValueError as e:
-                raise ValueError(f"Image class couldn't be built due to compatibility issues with the SVG image {path}. → {e}")
+                raise ValueError(f"Image object couldn't be built due to compatibility issues with the SVG image '{path}'. → {e}")
 
             # do all the compensation stuff on it and make it the data.
             self.data = compensateSVG(svgImage, m, afsc)
@@ -195,7 +195,7 @@ class glyph:
             self.alias = None
         else:
             if img:
-                raise ValueError(f"Tried to make glyph object '{name}' but it is set as an alias AND has an image path. It can't have both.")
+                raise ValueError(f"Tried to make glyph object '{name}' but it has both an alias AND an image. It can't have both.")
             else:
                 try:
                     self.alias = codepointSeq(alias, delim)
@@ -393,7 +393,7 @@ def glyphDuplicateTest(glyphs):
         for id2, g2 in enumerate(glyphs):
             if g1 == g2:
                 if id1 != id2:
-                    raise Exception(f"One of your glyphs (image paths - {g1.img}) when processed, becomes {g1}. This matches another glyph that you have - {g2}. There can't be duplicates in this scenario.")
+                    raise Exception(f"One of your glyphs (image paths - {g1.img}) when processed, becomes {g1}. This matches another glyph that you have - {g2}. Make sure that your codepoint sequences aren't duplicates when stripped of VS16s (fe0f).")
 
 
 
@@ -412,7 +412,7 @@ def areGlyphLigaturesSafe(glyphs):
     for g in ligatures:
         for codepoint in g.codepoints.seq:
             if codepoint not in singleGlyphCodepoints:
-                raise Exception(f"One of your ligatures ({g.codepoints}) does not have all non-service codepoints represented as glyphs ({simpleHex(codepoint)}). All components of all ligatures must be represented as glyphs (apart from fe0f and 200d).")
+                raise Exception(f"One of your ligatures ({g.codepoints}) has an individual codepoint (apart from fe0f and 200d) that is not represented as a glyph itself ({simpleHex(codepoint)}). All components of all ligatures (apart from fe0f and 200d) must be represented as glyphs.")
 
 
 

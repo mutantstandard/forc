@@ -12,4 +12,4 @@ def validateAliases(aliases):
         # checking the target isn't necessary because the JSON parser will break if it's not a string.
 
         if type(dest) is not str:
-            raise Exception(f"The destination for the alias '{target}' is not formatted as a string. It needs to be a string.")
+            raise ValueError(f"The destination for the alias '{target}' is not formatted as a string. It needs to be a string.")
