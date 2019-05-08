@@ -30,7 +30,6 @@ class img:
     Class representing a glyph image.
     """
     def __init__(self, type, strike, m, path, nusc=False, afsc=False):
-
         if not path.exists():
             raise ValueError(f"Image path '{path}' doesn't exist!'")
 
@@ -114,6 +113,17 @@ class codepointSeq:
         return self.seq == other.seq
 
     def __lt__(self, other):
+        """
+        Sorts by codepoint sequence length, then the value of the first codepoint.
+
+        This is incredibly crucial to the functioning of font compilation because
+        it determines the glyphID in the glyphOrder table.
+
+        Single codepoint seqs have to be first and they have to be ordered
+        lowest to highest because if they aren't, their glyphID can be out
+        of range of low-bit cmap subtables. If glyphIDs are out of range of
+        cmap subtables like this, the font won't compile.
+        """
         if len(self.seq) < len(other.seq):
             return True
         elif len(self.seq) == len(other.seq):
@@ -133,7 +143,7 @@ class glyph:
     """
     Class representing a font glyph.
     """
-    def __init__(self, codepoints, img=None, vs16=False, alias=None, delim="-", userInput=True):
+    def __init__(self, codepoints, img=None, alias=None, delim="-", userInput=True):
 
         try:
             self.codepoints = codepointSeq(codepoints, delim, userInput=userInput)
@@ -250,7 +260,7 @@ def compileImageGlyphs(dir, m, delim, nusc, afsc, formats):
                 imgSet[folderName] = folder[c]
 
         try:
-            imgGlyphs.append(glyph(c, imgSet, delim))
+            imgGlyphs.append(glyph(c, img=imgSet, delim=delim))
         except ValueError as e:
             raise Exception(f"There was a problem when trying to create the glyph for {c}. → {e}")
 
@@ -375,12 +385,14 @@ def mixAndSortGlyphs(glyphs):
         else:
             glyphStruct["all"].append(g)
 
-    # sort glyphs from lowest codepoints to highest.
+    # sort glyphs.
     #
-    # THIS IS REALLY IMPORTANT BECAUSE IT DETERMINES THE GLYPHID
+    # (using the glyphs' internal sorting mechanism, which sorts by
+    # codepoint sequence length, then the value of the first codepoint.)
     #
-    # IF CERTAIN LOW-NUMBER CHARACTERS HAVE GLYPHIDS OUR OF THEIR
-    # PARTICULAR HEXADECIMAL RANGES, IT WONT COMPILE.
+    # THIS IS INCREDIBLY CRUCIAL AND CANNOT BE SKIPPED.
+    #
+    # CHECK OUT THE CODEPOINTSEQ CLASS TO UNDERSTAND WHY.
 
     glyphStruct["all"].sort()
     glyphStruct["img"].sort()
