@@ -75,9 +75,10 @@ def start( inputPath
           , no_lig
           ):
     """
-    Performs a variety of processing and validation tasks
-    related to font format, then initiates font creation once those
-    have passed.
+    Performs a variety of initial data gathering and validation tasks,
+    designed to make sure all of the user-given data is valid and usable.
+
+    Once this has all been validated, it starts the font making process.
     """
 
     log.out(f'Fetching resources...', 35)

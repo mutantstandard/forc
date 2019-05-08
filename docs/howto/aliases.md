@@ -1,4 +1,5 @@
-# Alias Glyphs
+# Aliases
+
 Often when making an emoji font, you only tie one codepoint sequence to one glyph, but sometimes you might want more than one.
 
 Alias glyphs let you attach additional codepoint sequences to existing glyphs, so one glyph can have multiple codepoint sequences associated with it.

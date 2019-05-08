@@ -1,7 +1,7 @@
 # Manifest
 The manifest is a JSON file with a particular structure, and it contains metrics, encoding information and human-readable metadata for your font.
 
-This has been structured in such a way where data points that recur throughout a font file have been consolidated in one place.
+This has been structured in such a way where data points that recur throughout a font have been consolidated in one place.
 
 There are three main sections to the file:
 

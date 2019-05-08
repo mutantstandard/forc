@@ -2,14 +2,11 @@
 
 ![forc logo with the text 'forc' next to it on a blue background](docs/img/forc_logo.png)
 
-Forc (a terrible portmanteau of font and orc) is an emoji font creation tool. It takes in folders of codepoint-named images and a manifest file and returns highly-compatible emoji fonts that can work in a wide variety of platforms.
+forc (a terrible portmanteau of font and orc) is an emoji font creation tool. It takes in folders of codepoint-named images and a manifest file and returns highly-compatible emoji fonts that can work in a wide variety of platforms.
 
+Making fonts can be really hard, so forc is designed to help you succeed every time - it has comprehensive documentation and guides on how to make your own emoji font, gives very readable and transparent error messages and is structured in a way that tries to make making highly-compatible emoji fonts as effortless as possible.
 
-## Disclaimer
-
-This is an insider tool that has been open sourced, some effort has been made to make it friendly to use for other people, but maybe not enough.
-
-Feature requests and collaboration are welcome. Any collaborators must follow [Mutant Standard's code of conduct](code_of_conduct.md).
+**Forc is under heavy development right now. Most font exports don't work quite right or are not functional yet.**
 
 ## Features
 
@@ -34,22 +31,29 @@ Feature requests and collaboration are welcome. Any collaborators must follow [M
 - Support for ZWJ (U+200D) handling.
 - Many-to-one codepoint sequence to glyph relationships via Alias Glyphs.
 - Strictly validates your input and gives you helpful error messages, ensuring that you get it right every time.
-
-
-## Limitations
-
-forc is still in development and is not ready for use. Various exports will only either work in limited contexts, with certain kinds of inputs or will not be complete, valid fonts.
-
+- Designed to work as effortlessly as possible with [orxporter](https://github.com/mutantstandard/orxporter).
 
 ## Dependencies
 
 - Python 3.6+
-- [lxml](https://lxml.de/)
-- [fonttools](https://github.com/fonttools/fonttools)
+- [lxml](https://lxml.de/) (install via pip)
+- [fonttools](https://github.com/fonttools/fonttools) (install via pip)
+
+
+## Documentation
+
+
+#### [How to make a font](docs/howto/howto.md)
+
+#### [FAQ](docs/faq.md)
 
 ## Collaborators
 - Dzuk
-- kiilas (thanks for all the help!)
+- kiilas
+
+## Contributions
+
+Feature requests and collaboration are welcome. Any collaborators must follow [Mutant Standard's code of conduct](code_of_conduct.md).
 
 ## License
 

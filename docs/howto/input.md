@@ -1,29 +1,17 @@
-# how to use forc
+# Input
 
-## Limitations
+## Folder structure
 
-#### Square glyphs only
-
-forc produces monospaced fonts with a square aspect ratio only.
-
-#### Colour glyphs only
-
-forc expects that you only want to compile and see colour emoji data.
-
-Black and white fallback glyphs in `glyf`/`CFF`-style data will not be produced. forc just inserts dummy and empty `glyf` data to please font validation processes.
-
-If a text rendering environment doesn't support colour glyphs, the font will be invisible.
-
-
-## Input directory path
-
-### Folder structure
+Your input folder needs to meet the following criteria to be considered valid in orxporter:
 
 - Needs to contain subfolders representing the formats and/or raster strikes.
 - These subfolders need to contain the images in a flat structure.
 - The codepoints of images in these subfolders must be identical between each other.
 - PNG folder(s) should be in the format `png-<strike size>`, 'strike size' being the resolution of the emoji on a low-DPI screen.
-- they should all be lowercase.
+- The folder names should all be lowercase.
+
+
+eg:
 
 ```
 in
@@ -41,7 +29,11 @@ in
 
 ```
 
-### Image formats
+If you are exporting using [orxporter](https://github.com/mutantstandard/orxporter), using the `-f %f/%u` build flag will guarantee that you make an export that fulfills all of these requirements.
+
+---
+
+## Image formats
 
 forc accepts the following formats:
 
@@ -84,74 +76,3 @@ Aside from what's in the OpenType spec, there are some SVG aspects that are not 
 
 - `viewBox` attribute (is incredibly inconsistent and uselesss)
 	- forc automatically compensates for this by stripping the attribute and enclosing the svg image in a group with a transform.
-
----
-
-## Output directory
-
-All forc exports will be exported in a flat manner, each file named after their respective format.
-
----
-
-
-
-## Formats
-
-### SVG-based formats
-
-#### SVGinOT
-
-- SVG glyphs encoded as SVG tables
-- OpenType ligature data
-- .otf extension
-
-### PNG-based formats
-
-The strikes for PNG-based formats are inferred from whatever is inside input folder.
-
-#### sbixTT
-
-- PNG glyphs encoded as sbix tables
-- TrueType ligature data
-- .ttf extension
-
-macOS's emoji system font format.
-
-#### sbixOT
-
-- PNG glyphs encoded as sbix tables
-- OpenType ligature data
-- .otf extension
-
-#### sbixTTiOS
-
-sbixTT packaged in an iOS Configuration Profile. Designed for installation in iOS.
-
-#### sbixOTiOS
-
-sbixOT packaged in an iOS Configuration Profile.
-
-This is just a development/research thing and will probably be removed in the first proper release.
-
-#### CBx
-
-- PNG glyphs encoded as CBDT/CBLC tables
-- OpenType ligature data
-- .ttf extension
-
-This is specifically designed to mimic how Google encodes their emoji fonts.
-
-'CBDT/CBLC' is more commonly used to refer to this format, but in forc it's simplified to 'CBx' to make it easier to remember.
-
----
-
-## Manifest
-
-[Check out this document](manifest.md) for detailed information on the manifest.
-
----
-
-
-## Aliases
-
-[Check out this document](aliases) for detailed information on how to create aliases.
