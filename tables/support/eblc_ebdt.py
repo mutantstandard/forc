@@ -53,3 +53,66 @@ def BigGlyphMetrics(metrics):
     glyphMetrics.append(Element("vertAdvance",     {"value": str(vertAdvance) }))
 
     return glyphMetrics
+
+
+def sbitLineMetricsHori(metrics):
+    """
+    Creates a TTX representation of a EBDT/EBLC/CBDT/CBLC sbitLineMetrics (horizontal) subtable.
+    """
+
+    horiAscender =  round( (metrics['yMax'] / metrics['height']) * 128 )
+    horiDescender = round( (metrics['yMin'] / metrics['height']) * 128 )
+    horiWidthMax =  round( (metrics['width'] / metrics['height']) * 128 )
+
+    metrics = Element("sbitLineMetrics", {"direction": "hori"})
+
+    metrics.append(Element("ascender", {"value": str(horiAscender) }))
+    metrics.append(Element("descender", {"value": str(horiDescender) }))
+    metrics.append(Element("widthMax", {"value": str(horiWidthMax) }))
+
+    metrics.append(Element("caretSlopeNumerator", {"value": "0"}))    # hard-coded
+    metrics.append(Element("caretSlopeDenominator", {"value": "0"}))  # hard-coded
+    metrics.append(Element("caretOffset", {"value": "0"}))            # hard-coded
+
+    metrics.append(Element("minOriginSB", {"value": "0"}))
+    metrics.append(Element("minAdvanceSB", {"value": "0" }))
+
+    metrics.append(Element("maxBeforeBL", {"value": "0"}))
+    metrics.append(Element("minAfterBL", {"value": "0" }))
+    metrics.append(Element("pad1", {"value": "0"}))
+    metrics.append(Element("pad2", {"value": "0"}))
+
+    return metrics
+
+
+def sbitLineMetricsVert(metrics):
+    """
+    Creates a TTX representation of a EBDT/EBLC/CBDT/CBLC sbitLineMetrics (vertical) subtable.
+
+    I'm pretty confident this isn't proper, but vertical metrics
+    aren't actually properly represented in this font builder at present.
+    """
+
+    vertAscender =  round( (metrics['yMax'] / metrics['height']) * 128 )
+    vertDescender = round( (metrics['yMin'] / metrics['height']) * 128 )
+    vertWidthMax =  round( (metrics['width'] / metrics['height']) * 128 )
+
+    metrics = Element("sbitLineMetrics", {"direction": "vert"})
+
+    metrics.append(Element("ascender", {"value": str(vertAscender) }))
+    metrics.append(Element("descender", {"value": str(vertDescender) }))
+    metrics.append(Element("widthMax", {"value": str(vertWidthMax) }))
+
+    metrics.append(Element("caretSlopeNumerator", {"value": "0"}))      # hard-coded
+    metrics.append(Element("caretSlopeDenominator", {"value": "0"}))    # hard-coded
+    metrics.append(Element("caretOffset", {"value": "0"}))              # hard-coded
+
+    metrics.append(Element("minOriginSB", {"value": "0"}))
+    metrics.append(Element("minAdvanceSB", {"value": "0" }))
+
+    metrics.append(Element("maxBeforeBL", {"value": "0"}))
+    metrics.append(Element("minAfterBL", {"value": "0" }))
+    metrics.append(Element("pad1", {"value": "0"}))
+    metrics.append(Element("pad2", {"value": "0"}))
+
+    return metrics
