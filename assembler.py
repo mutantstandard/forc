@@ -60,8 +60,8 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
     log.out('Assembling post table...', 90)
     root.append(tables.post.create(glyphs))
 
-    log.out('Making placeholder maxp table...', 90)
-    root.append(tables.maxp.create())
+    log.out('Making semi-placeholder maxp table...', 90)
+    root.append(tables.maxp.create(glyphs))
 
     log.out('Making placeholder loca table...', 90)
     root.append(Element("loca")) # just to please macOS, it's supposed to be empty.
