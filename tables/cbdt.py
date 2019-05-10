@@ -1,19 +1,48 @@
 from lxml.etree import Element
+from tables.support.eblc_ebdt import SmallGlyphMetrics, BigGlyphMetrics
 
 
 
-def strike(metrics, strikeIndex, strikeRes, subfolder, glyphs):
+def format17(metrics, strikeIndex, strikeRes, subfolder, glyphs):
+    """
+    Generates data for a single bitmap according to EBLC/CBLC subtable format 17.
+    This is actually the only working subtable format in TTX.
 
-    height =          round( (metrics['height'] / metrics['unitsPerEm']) * 128 )
-    width =           round( (metrics['width'] / metrics['unitsPerEm']) * 128 )
+    Way to go TTX.
+    """
 
-    horiBearingX =    round( (metrics['xMin'] / metrics['unitsPerEm']) * 128 )
-    horiBearingY =    round( (metrics['yMin'] / metrics['unitsPerEm']) * 128 )
-    horiAdvance =     width
+    # start of strikes
+    # (which we're fudging right now)
+    # ------------------------------------------------------------
+    strike = Element("strikedata", {"index": str(strikeIndex)})
 
-    vertBearingX =    round( (metrics['xMin'] / metrics['unitsPerEm']) * 128 )
-    vertBearingY =    round( (metrics['yMin'] / metrics['unitsPerEm']) * 128 )
-    vertAdvance =     height
+    for g in glyphs['img']:
+
+        # you only put them in if there's an actual image
+        if g.img:
+
+            # format 18 for big metrics and PNG data.
+            bitmapTable = Element("cbdt_bitmap_format_17", {"name": g.codepoints.name() })
+
+            bitmapTable.append(SmallGlyphMetrics(metrics))
+
+            rawImageData = Element("rawimagedata")
+            rawImageData.text = g.img[subfolder].getHexDump()
+
+            bitmapTable.append(rawImageData)
+
+            strike.append(bitmapTable)
+
+    return strike
+
+
+def format18(metrics, strikeIndex, strikeRes, subfolder, glyphs):
+    """
+    Generates data for a single bitmap according to EBLC/CBLC subtable format 18.
+    This isn't actually supported in TTX but I'm making this in case it ever is supported.
+
+    Way to go TTX.
+    """
 
 
     # start of strikes
@@ -29,18 +58,40 @@ def strike(metrics, strikeIndex, strikeRes, subfolder, glyphs):
             # format 18 for big metrics and PNG data.
             bitmapTable = Element("cbdt_bitmap_format_18", {"name": g.codepoints.name() })
 
-            glyphMetrics = Element("BigGlyphMetrics")
-            glyphMetrics.append(Element("height",          {"value": str(height) }))
-            glyphMetrics.append(Element("width",           {"value": str(width) }))
-            glyphMetrics.append(Element("horiBearingX",    {"value": str(horiBearingX) }))
-            glyphMetrics.append(Element("horiBearingY",    {"value": str(horiBearingY) }))
-            glyphMetrics.append(Element("horiAdvance",     {"value": str(horiAdvance) }))
-            glyphMetrics.append(Element("vertBearingX",    {"value": str(vertBearingX) }))
-            glyphMetrics.append(Element("vertBearingY",    {"value": str(vertBearingY) }))
-            glyphMetrics.append(Element("vertAdvance",     {"value": str(vertAdvance) }))
 
-            bitmapTable.append(glyphMetrics)
+            bitmapTable.append(BigGlyphMetrics(metrics))
 
+            rawImageData = Element("rawimagedata")
+            rawImageData.text = g.img[subfolder].getHexDump()
+
+            bitmapTable.append(rawImageData)
+
+            strike.append(bitmapTable)
+
+    return strike
+
+
+
+def format19(strikeIndex, strikeRes, subfolder, glyphs):
+    """
+    Generates data for a single bitmap according to EBLC/CBLC subtable format 19.
+    This isn't actually supported in TTX but I'm making this in case it ever is supported.
+
+    Way to go TTX.
+    """
+
+    # start of strikes
+    # (which we're fudging right now)
+    # ------------------------------------------------------------
+    strike = Element("strikedata", {"index": str(strikeIndex)})
+
+    for g in glyphs['img']:
+
+        # you only put them in if there's an actual image
+        if g.img:
+
+            # format 18 for big metrics and PNG data.
+            bitmapTable = Element("cbdt_bitmap_format_19", {"name": g.codepoints.name() })
 
             rawImageData = Element("rawimagedata")
             rawImageData.text = g.img[subfolder].getHexDump()
@@ -81,7 +132,7 @@ def create(m, glyphs):
 
     for imageFormat, image in firstGlyphWithStrikes.img.items():
         if imageFormat.split('-')[0] == "png":
-            cbdt.append(strike(metrics, strikeIndex, image.strike, imageFormat, glyphs))
+            cbdt.append(format17(metrics, strikeIndex, image.strike, imageFormat, glyphs))
             strikeIndex += 1
 
 
