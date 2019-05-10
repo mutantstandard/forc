@@ -3,9 +3,9 @@ from tables.support.eblc_ebdt import SmallGlyphMetrics, BigGlyphMetrics
 
 
 
-def format17(metrics, strikeIndex, strikeRes, subfolder, glyphs):
+def bitmapFormat17(metrics, strikeIndex, strikeRes, subfolder, glyphs):
     """
-    Generates data for a single bitmap according to EBLC/CBLC subtable format 17.
+    Generates a CBDT bitmap subtable according to EBLC/CBLC subtable format 17.
     This is actually the only working subtable format in TTX.
 
     Way to go TTX.
@@ -36,9 +36,9 @@ def format17(metrics, strikeIndex, strikeRes, subfolder, glyphs):
     return strike
 
 
-def format18(metrics, strikeIndex, strikeRes, subfolder, glyphs):
+def bitmapFormat18(metrics, strikeIndex, strikeRes, subfolder, glyphs):
     """
-    Generates data for a single bitmap according to EBLC/CBLC subtable format 18.
+    Generates a CBDT bitmap subtable according to EBLC/CBLC subtable format 18.
     This isn't actually supported in TTX but I'm making this in case it ever is supported.
 
     Way to go TTX.
@@ -72,9 +72,9 @@ def format18(metrics, strikeIndex, strikeRes, subfolder, glyphs):
 
 
 
-def format19(strikeIndex, strikeRes, subfolder, glyphs):
+def bitmapFormat19(strikeIndex, strikeRes, subfolder, glyphs):
     """
-    Generates data for a single bitmap according to EBLC/CBLC subtable format 19.
+    Generates a CBDT bitmap subtable according to EBLC/CBLC subtable format 19.
     This isn't actually supported in TTX but I'm making this in case it ever is supported.
 
     Way to go TTX.
@@ -118,7 +118,8 @@ def create(m, glyphs):
 
 
 
-    # get basic strike information.
+    # get basic strike information by poking for a glyph
+    # that has strikes.
 
     for g in glyphs['img']:
         if g.img:
@@ -132,7 +133,7 @@ def create(m, glyphs):
 
     for imageFormat, image in firstGlyphWithStrikes.img.items():
         if imageFormat.split('-')[0] == "png":
-            cbdt.append(format17(metrics, strikeIndex, image.strike, imageFormat, glyphs))
+            cbdt.append(bitmapFormat17(metrics, strikeIndex, image.strike, imageFormat, glyphs))
             strikeIndex += 1
 
 
