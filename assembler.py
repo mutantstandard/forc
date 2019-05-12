@@ -37,6 +37,8 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
     Covers the entire routine for assembling a TTX file.
     """
 
+    glyphFormat = formats[chosenFormat]["imageTables"]
+
 
     # start the TTX file
     # ---------------------------------------------
@@ -61,10 +63,14 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
     root.append(tables.post.create(glyphs))
 
     log.out('Making semi-placeholder maxp table...', 90)
-    root.append(tables.maxp.create(glyphs))
+    root.append(tables.maxp.create(chosenFormat, glyphs))
 
-    log.out('Making placeholder loca table...', 90)
-    root.append(Element("loca")) # just to please macOS, it's supposed to be empty.
+    # CBDT/CBLC either doesn't use loca or TTX doesn't want
+    # an empty loca table if there's no gly table (CBDT/CBLC
+    # fonts shouldnt have glyf tables.)
+    if glyphFormat is not "CBx":
+        log.out('Making placeholder loca table...', 90)
+        root.append(Element("loca")) # just to please macOS, it's supposed to be empty.
 
     log.out('Making gasp table...', 90)
     root.append(tables.gasp.create())
@@ -133,19 +139,22 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
 
     # glyph picture data
     # ---------------------------------------------
-    log.out('Assembling passable glyf table...', 90)
-    root.append(tables.glyf.create(m, glyphs))
+
+    # CBDT/CBLC doesn't use glyf at all
+    if glyphFormat is not "CBx":
+        log.out('Assembling passable glyf table...', 90)
+        root.append(tables.glyf.create(m, glyphs))
 
 
-    if formats[chosenFormat]["imageTables"] == "SVG":
+    if glyphFormat == "SVG":
         log.out('Assembling SVG table...', 90)
         root.append(tables.svg.create(m, glyphs, afsc))
 
-    elif formats[chosenFormat]["imageTables"] == "sbix":
+    elif glyphFormat == "sbix":
         log.out('Assembling sbix table...', 90)
         root.append(tables.sbix.create(glyphs))
 
-    elif formats[chosenFormat]["imageTables"] == "CBx":
+    elif glyphFormat == "CBx":
         log.out('Assembling CBLC table...', 90)
         root.append(tables.cblc.create(m, glyphs))
 

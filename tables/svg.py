@@ -34,7 +34,7 @@ def create(m, glyphs, afsc):
 
     svgTable = etree.Element("SVG")
 
-    for ID, g in enumerate(glyphs['img']):
+    for ID, g in enumerate(glyphs["img_empty"]):
 
         if g.img:
             finishedSVG = addGlyphID(g.img['svg'].data, ID)

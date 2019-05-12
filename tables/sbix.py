@@ -3,12 +3,15 @@ from lxml.etree import Element
 
 
 def strike(ppem, resolution, subfolder, glyphs):
+
+
+
     strike = Element("strike")
     strike.append(Element("ppem", {"value": str(ppem)}))
     strike.append(Element("resolution", {"value": resolution}))
 
 
-    for ID, g in enumerate(glyphs['img']):
+    for ID, g in enumerate(glyphs["img_empty"]):
         if not g.img:
             strike.append(Element("glyph", {"name": g.codepoints.name() }))
         else:
@@ -42,7 +45,7 @@ def create(glyphs):
 
 
     # get basic strike information.
-    for g in glyphs['img']:
+    for g in glyphs["img_empty"]:
         if g.img:
             firstGlyphWithStrikes = g
             break

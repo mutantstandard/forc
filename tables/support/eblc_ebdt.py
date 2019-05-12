@@ -1,16 +1,27 @@
 from lxml.etree import Element
 
+bitScale = 127
+
+
+
+
+def getLocalScale(metrics):
+    return max(metrics['height'], metrics['width'])
+
+
 
 def SmallGlyphMetrics(metrics):
     """
     Creates a TTX representation of a EBDT/EBLC/CBDT/CBLC SmallGlyphMetrics subtable.
     """
 
-    height =      round( (metrics['height'] / metrics['height']) * 128 )
-    width =       round( (metrics['width'] / metrics['height']) * 128 )
+    localScale = getLocalScale(metrics)
 
-    BearingX =    round( (metrics['xMin'] / metrics['height']) * 128 )
-    BearingY =    128+(round( (metrics['yMin'] / metrics['height']) * 128 ))
+    height =      round( (metrics['height'] / localScale) * bitScale )
+    width =       round( (metrics['width'] / localScale) * bitScale )
+
+    BearingX =    round( (metrics['xMin'] / localScale) * bitScale )
+    BearingY =    bitScale+(round( (metrics['yMin'] / localScale) * bitScale ))
     Advance =     width
 
 
@@ -25,20 +36,24 @@ def SmallGlyphMetrics(metrics):
     return glyphMetrics
 
 
+
+
 def BigGlyphMetrics(metrics):
     """
     Creates a TTX representation of a EBDT/EBLC/CBDT/CBLC BigGlyphMetrics subtable.
     """
 
-    height =          round( (metrics['height'] / metrics['height']) * 128 )
-    width =           round( (metrics['width'] / metrics['height']) * 128 )
+    localScale = getLocalScale(metrics)
 
-    horiBearingX =    round( (metrics['xMin'] / metrics['height']) * 128 )
-    horiBearingY =    round( (metrics['yMin'] / metrics['height']) * 128 )
+    height =          round( (metrics['height'] / localScale) * bitScale )
+    width =           round( (metrics['width'] / localScale) * bitScale )
+
+    horiBearingX =    round( (metrics['xMin'] / localScale) * bitScale )
+    horiBearingY =    bitScale+(round( (metrics['yMin'] / localScale) * bitScale ))
     horiAdvance =     width
 
-    vertBearingX =    round( (metrics['xMin'] / metrics['height']) * 128 )
-    vertBearingY =    round( (metrics['yMin'] / metrics['height']) * 128 )
+    vertBearingX =    round( (metrics['xMin'] / localScale) * bitScale )
+    vertBearingY =    round( (metrics['yMin'] / localScale) * bitScale )
     vertAdvance =     height
 
 
@@ -55,14 +70,18 @@ def BigGlyphMetrics(metrics):
     return glyphMetrics
 
 
+
+
 def sbitLineMetricsHori(metrics):
     """
     Creates a TTX representation of a EBDT/EBLC/CBDT/CBLC sbitLineMetrics (horizontal) subtable.
     """
 
-    horiAscender =  round( (metrics['yMax'] / metrics['height']) * 128 )
-    horiDescender = round( (metrics['yMin'] / metrics['height']) * 128 )
-    horiWidthMax =  round( (metrics['width'] / metrics['height']) * 128 )
+    localScale = getLocalScale(metrics)
+
+    horiAscender =  round( (metrics['yMax'] / localScale) * bitScale )
+    horiDescender = round( (metrics['yMin'] / localScale) * bitScale )
+    horiWidthMax =  round( (metrics['width'] / localScale) * bitScale )
 
     metrics = Element("sbitLineMetrics", {"direction": "hori"})
 
@@ -93,9 +112,11 @@ def sbitLineMetricsVert(metrics):
     aren't actually properly represented in this font builder at present.
     """
 
-    vertAscender =  round( (metrics['yMax'] / metrics['height']) * 128 )
-    vertDescender = round( (metrics['yMin'] / metrics['height']) * 128 )
-    vertWidthMax =  round( (metrics['width'] / metrics['height']) * 128 )
+    localScale = getLocalScale(metrics)
+
+    vertAscender =  round( (metrics['yMax'] / localScale) * bitScale )
+    vertDescender = round( (metrics['yMin'] / localScale) * bitScale )
+    vertWidthMax =  round( (metrics['width'] / localScale) * bitScale )
 
     metrics = Element("sbitLineMetrics", {"direction": "vert"})
 

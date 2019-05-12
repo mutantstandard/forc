@@ -42,7 +42,7 @@ def strike(metrics, strikeIndex, ppem, glyphs):
 
     glyphIDList = []
 
-    for id, g in enumerate(glyphs['img']):
+    for id, g in enumerate(glyphs["img_empty"]):
 
         # you only put them in if there's an actual image
         if g.img:
@@ -77,7 +77,7 @@ def create(m, glyphs):
 
     # get basic strike information.
 
-    for g in glyphs['img']:
+    for g in glyphs["img_empty"]:
         if g.img:
             firstGlyphWithStrikes = g
             break

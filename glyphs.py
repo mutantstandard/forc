@@ -146,7 +146,7 @@ class codepointSeq:
         return '-'.join(map(simpleHex, self.seq))
 
     def __repr__(self):
-        return self.str()
+        return str(self)
 
     def __eq__(self, other):
         return self.seq == other.seq
@@ -199,11 +199,17 @@ class glyph:
             else:
                 try:
                     self.alias = codepointSeq(alias, delim)
+                    self.glyphType = "alias"
                 except ValueError as e:
                     raise Exception(f"The alias destination ('{alias}') for {self.codepoints} is not named correctly. → {e}")
 
-
         self.img = img
+
+        if img is not None:
+            self.glyphType = "img"
+
+        if img is None and alias is None:
+            self.glyphType = "empty"
 
 
     # the way that glyph classes get compared/equated is
@@ -213,7 +219,7 @@ class glyph:
         return str(self.codepoints)
 
     def __repr__(self):
-        return self.str()
+        return str(self.codepoints) + f" - {self.glyphType}\n"
 
     def __eq__(self, other):
         return self.codepoints == other.codepoints
@@ -419,14 +425,18 @@ def areGlyphLigaturesSafe(glyphs):
 
 def mixAndSortGlyphs(glyphs):
 
-    glyphStruct = {"all": [], "img": []}
+    glyphStruct = {"all": [], "img_empty": [], "img": []}
 
     for g in glyphs:
-        if not g.alias:
-            glyphStruct["all"].append(g)
+
+        glyphStruct["all"].append(g)
+
+        if g.glyphType is not "alias":
+            glyphStruct["img_empty"].append(g)
+
+        if g.glyphType is "img":
             glyphStruct["img"].append(g)
-        else:
-            glyphStruct["all"].append(g)
+
 
     # sort glyphs.
     #
@@ -438,6 +448,7 @@ def mixAndSortGlyphs(glyphs):
     # CHECK OUT THE CODEPOINTSEQ CLASS TO UNDERSTAND WHY.
 
     glyphStruct["all"].sort()
+    glyphStruct["img_empty"].sort()
     glyphStruct["img"].sort()
 
     return glyphStruct

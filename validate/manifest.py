@@ -10,10 +10,16 @@ reqMetricNames =  [ "unitsPerEm"
 
                   , "width"
                   , "height"
+
                   , "xMin"
                   , "xMax"
                   , "yMin"
                   , "yMax"
+
+                  , "horiAscent"
+                  , "horiDescent"
+                  , "vertAscent"
+                  , "vertDescent"
 
                   , "spaceHLength"
                   , "spaceVLength"

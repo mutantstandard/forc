@@ -15,7 +15,7 @@ def create(glyphs):
     # GlyphClassDef
     gcd = Element("GlyphClassDef", {"Format": "2"})
 
-    for g in glyphs['img']:
+    for g in glyphs["img_empty"]:
         if g.codepoints.seq[0] != 0: # filter out .notdef
             if len(g.codepoints.seq) > 1: # if a ligature
                 classNum = 2

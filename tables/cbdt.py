@@ -16,7 +16,7 @@ def bitmapFormat17(metrics, strikeIndex, strikeRes, subfolder, glyphs):
     # ------------------------------------------------------------
     strike = Element("strikedata", {"index": str(strikeIndex)})
 
-    for g in glyphs['img']:
+    for g in glyphs["img_empty"]:
 
         # you only put them in if there's an actual image
         if g.img:
@@ -50,7 +50,7 @@ def bitmapFormat18(metrics, strikeIndex, strikeRes, subfolder, glyphs):
     # ------------------------------------------------------------
     strike = Element("strikedata", {"index": str(strikeIndex)})
 
-    for g in glyphs['img']:
+    for g in glyphs["img_empty"]:
 
         # you only put them in if there's an actual image
         if g.img:
@@ -85,7 +85,7 @@ def bitmapFormat19(strikeIndex, strikeRes, subfolder, glyphs):
     # ------------------------------------------------------------
     strike = Element("strikedata", {"index": str(strikeIndex)})
 
-    for g in glyphs['img']:
+    for g in glyphs["img_empty"]:
 
         # you only put them in if there's an actual image
         if g.img:
@@ -121,7 +121,7 @@ def create(m, glyphs):
     # get basic strike information by poking for a glyph
     # that has strikes.
 
-    for g in glyphs['img']:
+    for g in glyphs["img_empty"]:
         if g.img:
             firstGlyphWithStrikes = g
             break
