@@ -7,22 +7,27 @@ def create(m, glyphs):
 
     metrics = m["metrics"]
 
-    glyfTable = Element("glyf")
+    noGraphicsChars =   [ int('0x0020', 16)
+                        , int('0x00a0', 16)
+                        , int('0x200d', 16)
+                        , int('0xfe0f', 16)
+                        ]
 
-    fakeGlyfs = 0
+
+    glyfTable = Element("glyf")
 
     for ID, g in enumerate(glyphs["img_empty"]):
 
+        # if it's not a whitespace character or a service glyph....
+        if g.codepoints.seq[0] in noGraphicsChars:
+            glyfTable.append(Element("TTGlyph", {"name": g.codepoints.name() }))
 
-        # create one dummy glyf in the right place
-        if g.codepoints.seq[0] not in [int('0x0020', 16), int('0x200d', 16), int('0xfe0f', 16)]:
+        # if it's not one of these, it needs some dummy glyf contours
 
-            # make a dummy contour for .notdef.
-            # for some reason (according to macOS validation) it's important.
-            # the others can be blank
-
-            # These attributes will be calculated by the compiler.
-            dummyDataNotDef = Element("TTGlyph",    {"name": g.codepoints.name()
+        else:
+            # These attributes will be calculated by the TTX compiler,
+            # but I'm doing them manually anyway.
+            dummyData = Element("TTGlyph",    {"name": g.codepoints.name()
                                                     ,"xMin": str(metrics["xMin"])
                                                     ,"xMax": str(metrics["xMax"])
                                                     ,"yMin": str(metrics["yMin"])
@@ -30,33 +35,26 @@ def create(m, glyphs):
                                                     })
 
 
-            # these dummy contours are designed to trick the TTX compiler to making sure the
-            # xMin/yMin/etc. parameters of the font are set to what we want them to actually be set to.
-            # (TTX will ignore the user's parameters if what's in the glyf table doesn't agree.)
+            # these dummy contours are designed to establish a bounding box to trick
+            # the TTX compiler to making sure the head.xMin/head.yMin/etc. parameters
+            # of the font are set to what we want them to actually be set to.
+            #
+            # (This is because TTX will overwrite the user's head.xMin etc. parameters
+            # if what's in the glyf table doesn't agree.)
 
             dummyContour1 = Element("contour")
             dummyContour1.append(Element("pt", {"x": str(metrics["xMin"]), "y": str(metrics["yMin"]), "on": "1"}))
-
-            dummyDataNotDef.append(dummyContour1)
-
+            dummyData.append(dummyContour1)
 
             dummyContour2 = Element("contour")
-
-            dummyDataNotDef.append(dummyContour2)
-
-
-            dummyDataNotDef.append(Element("instructions"))
             dummyContour2.append(Element("pt", {"x": str(metrics["xMax"]), "y": str(metrics["yMax"]), "on": "1"}))
-            glyfTable.append(dummyDataNotDef)
+            dummyData.append(dummyContour2)
 
-            fakeGlyfs += 1
+             # this is important, even though I don't know what it's for
+            dummyData.append(Element("instructions"))
 
+            glyfTable.append(dummyData)
 
-        else:
-            # make the others blank because nothing is depending on
-            # them actually having glyf contours and we don't want them.
-
-            glyfTable.append(Element("TTGlyph", {"name": g.codepoints.name() }))
 
 
     return glyfTable
