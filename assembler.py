@@ -63,7 +63,7 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
     root.append(tables.post.create(glyphs))
 
     log.out('Making semi-placeholder maxp table...', 90)
-    root.append(tables.maxp.create(chosenFormat, glyphs))
+    root.append(tables.maxp.create(glyphs))
 
     # CBDT/CBLC either doesn't use loca or TTX doesn't want
     # an empty loca table if there's no gly table (CBDT/CBLC

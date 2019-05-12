@@ -1,19 +1,16 @@
 from lxml.etree import Element
 
-def create(fontFormat, glyphs):
+def create(glyphs):
     """
     Create a maxp table. All of the data inside this is dummy data, the TTX
     compiler will insert actually useful data.
     """
 
-    numGlyphs = len(glyphs["all"])
-
-
 
     maxp = Element("maxp")
 
     maxp.append(Element("tableVersion", {'value': '0x10000'})) # hard-coded
-    maxp.append(Element("numGlyphs", {'value': str(numGlyphs) })) # TTX re-calculates this anyway but I'm making it manually.
+    maxp.append(Element("numGlyphs", {'value': str(len(glyphs["all"])) })) # TTX re-calculates this anyway but I'm making it manually.
     maxp.append(Element("maxPoints", {'value': '0'}))
     maxp.append(Element("maxContours", {'value': '0'}))
     maxp.append(Element("maxCompositePoints", {'value': '0'}))
