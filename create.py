@@ -101,16 +101,22 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
     log.out(f'Font compiled.', 32)
 
 
+    # compile back to TTX
+    #
+    # This is because TTX doesn't catch all font errors on the first pass.
+    log.out(f'Testing font by compiling it back to TTX...')
+    compileTTX(outputFontPath, afterExportTTX)
+    log.out(f'Font testing OK.', 32)
+
     # --dev-ttx flag
     if not dev_ttx_output:
         log.out(f'Deleting the initial TTX...')
         originalTTXPath.unlink() #delete
 
-
     # -ttx flag
-    if ttx_output:
-        log.out(f'Compiling a finished TTX from the font file..')
-        compileTTX(outputFontPath, afterExportTTX)
+    if not ttx_output:
+        log.out(f'Deleting second-pass TTX...')
+        afterExportTTX.unlink() #delete
 
 
     # iOS Configuration Profile compilation
