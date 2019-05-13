@@ -178,7 +178,7 @@ def main():
               )
 
     except Exception as e:
-        log.out(f'!!! {e}', 31)
+        log.out(f'\n!!! {e}', 31)
         raise e  ######################## TEMP
         sys.exit(1)
     log.out('All done!', 35)
