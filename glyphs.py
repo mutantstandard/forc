@@ -463,32 +463,32 @@ def getGlyphs(inputPath, m, aliases, delim, formats, no_lig, no_vs16, nusc, afsc
     """
 
     # compile image glyphs
-    log.out(f'Getting + validating image glyphs... (this can take a while)', 90)
+    log.out(f'- Getting + validating image glyphs... (this can take a while)', 90)
     imgGlyphs = compileImageGlyphs(inputPath, m, delim, nusc, afsc, formats)
 
 
     # compile alias glyphs
     if aliases:
-        log.out(f'Getting + validating alias glyphs...', 90)
+        log.out(f'- Getting + validating alias glyphs...', 90)
         glyphs = compileAliasGlyphs(imgGlyphs, aliases, delim)
     else:
         glyphs = imgGlyphs
 
 
     # process service glyphs
-    log.out(f'Adding service codepoints...', 90)
+    log.out(f'- Adding service codepoints...', 90)
     glyphs = addServiceGlyphs(glyphs, no_vs16)
 
 
     # check for duplicate codepoints without VS16
     if not no_vs16:
-        log.out(f'Checking if there are any duplicate glyphs...', 90)
+        log.out(f'- Checking if there are any duplicate glyphs...', 90)
         glyphDuplicateTest(glyphs)
 
 
     # validating (or stripping) ligatures
     if no_lig:
-        log.out(f'[--no-lig] Stripping any ligatures...', 90)
+        log.out(f'- [--no-lig] Stripping any ligatures...', 90)
         singleGlyphs = []
 
         for g in glyphs:
@@ -498,9 +498,9 @@ def getGlyphs(inputPath, m, aliases, delim, formats, no_lig, no_vs16, nusc, afsc
         glyphs = singleGlyphs
 
     else:
-        log.out(f'Validating ligatures...', 90)
+        log.out(f'- Validating ligatures...', 90)
         areGlyphLigaturesSafe(glyphs)
 
 
-    log.out(f'Mixing and sorting glyphs...', 90)
+    log.out(f'- Mixing and sorting glyphs...', 90)
     return mixAndSortGlyphs(glyphs)
