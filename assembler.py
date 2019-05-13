@@ -42,40 +42,51 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
 
     # start the TTX file
     # ---------------------------------------------
-    log.out(f'Assembling root XML...', 90)
     root = Element('ttFont', {'sfntVersion': '\\x00\\x01\\x00\\x00', 'ttLibVersion': '3.28'}) # hard-coded attrs.
 
 
 
+    # COLOR CODES:
+    # 90 (gray):        a standard table that gets compiled no matter what.
+    # 36 (dark cyan):   a table that is only compiled based on the font format.
+
 
     # headers and other weird crap
     # ---------------------------------------------
-    log.out('Assembling glyphOrder list...', 90)
+    log.out('[glyphOrder] ', 90, newline=False)
     root.append(tables.glyphOrder.create(glyphs))
 
-    log.out('Assembling head table...', 90)
+    log.out('[head] ', 90, newline=False)
     root.append(tables.head.create(m))
 
-    log.out('Assembling OS/2 table...', 90)
+    log.out('[OS/2] ', 90, newline=False)
     root.append(tables.os2.create(m, glyphs))
 
-    log.out('Assembling post table...', 90)
+    log.out('[post] ', 90, newline=False)
     root.append(tables.post.create(glyphs))
 
-    log.out('Making semi-placeholder maxp table...', 90)
+    # maxp is a semi-placeholder table.
+    log.out('[maxp] ', 90, newline=False)
     root.append(tables.maxp.create(glyphs))
 
+    log.out('[gasp] ', 90, newline=False)
+    root.append(tables.gasp.create())
+
+
+
+
+    # loca is a placeholder to make macOS happy.
+    #
     # CBDT/CBLC either doesn't use loca or TTX doesn't want
     # an empty loca table if there's no gly table (CBDT/CBLC
     # fonts shouldnt have glyf tables.)
+
     if glyphFormat is not "CBx":
-        log.out('Making placeholder loca table...', 90)
+        log.out('[loca] ', 36, newline=False)
         root.append(Element("loca")) # just to please macOS, it's supposed to be empty.
 
-    log.out('Making gasp table...', 90)
-    root.append(tables.gasp.create())
-
-    log.out('Making placeholder DSIG table...', 90)
+    # placeholder table that makes Google's font validation happy.
+    log.out('[DSIG]', 90)
     root.append(tables.dsig.create())
 
 
@@ -85,16 +96,16 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
 
     # horizontal and vertical metrics tables
     # ---------------------------------------------
-    log.out('Assembling hhea table...', 90)
+    log.out('[hhea] ', 90, newline=False)
     root.append(tables.mtx_h.create_hhea(m))
 
-    log.out('Assembling hmtx table...', 90)
+    log.out('[hmtx] ', 90, newline=False)
     root.append(tables.mtx_h.create_hmtx(m, glyphs))
 
-    log.out('Assembling vhea table...', 90)
+    log.out('[vhea] ', 90, newline=False)
     root.append(tables.mtx_v.create_vhea(m))
 
-    log.out('Assembling vmtx table...', 90)
+    log.out('[vmtx]', 90)
     root.append(tables.mtx_v.create_vmtx(m, glyphs))
 
 
@@ -104,7 +115,7 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
     # ---------------------------------------------
 
     # single glyphs
-    log.out('Assembling cmap table...', 90)
+    log.out('[cmap] ', 90, newline=False)
     root.append(tables.cmap.create(glyphs, no_vs16))
 
 
@@ -126,39 +137,45 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
             #log.out ('Assembling GPOS table...', 90)
             #root.append(tables.gpos.create())
 
-            log.out('Assembling GSUB table...', 90)
+            log.out('[GSUB] ', 36, newline=False)
             root.append(tables.gsub.create(glyphs))
 
 
         elif formats[chosenFormat]["ligatureFormat"] == "TrueType":
-            log.out('Assembling morx table...', 90)
+            log.out('[morx] ', 36, newline=False)
             root.append(tables.morx.create(glyphs))
 
 
 
 
-    # glyph picture data
+    # glyf
     # ---------------------------------------------
 
+    # glyf is used as a placeholde to please font validation,
+    # table dependencies and the TTX compiler.
+    #
     # CBDT/CBLC doesn't use glyf at all
     if glyphFormat is not "CBx":
-        log.out('Assembling passable glyf table...', 90)
+        log.out('[glyf] ', 36, newline=False)
         root.append(tables.glyf.create(m, glyphs))
 
 
+    # actual glyph picture data
+    # ---------------------------------------------
+
     if glyphFormat == "SVG":
-        log.out('Assembling SVG table...', 90)
+        log.out('[SVG ]', 36)
         root.append(tables.svg.create(m, glyphs, afsc))
 
     elif glyphFormat == "sbix":
-        log.out('Assembling sbix table...', 90)
+        log.out('[sbix]', 36)
         root.append(tables.sbix.create(glyphs))
 
     elif glyphFormat == "CBx":
-        log.out('Assembling CBLC table...', 90)
+        log.out('[CBLC] ', 36, newline=False)
         root.append(tables.cblc.create(m, glyphs))
 
-        log.out('Assembling CBDT table...', 90)
+        log.out('[CBDT]', 36)
         root.append(tables.cbdt.create(m, glyphs))
 
 
@@ -166,8 +183,9 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
 
     # human-readable metadata
     # ---------------------------------------------
-    log.out('Assembling name table...', 90)
+    log.out('[name]', 90)
     root.append(tables.name.create(chosenFormat, m))
+
 
 
 

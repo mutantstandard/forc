@@ -51,7 +51,8 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
     Calls the functions that assemble and create a font.
     """
 
-    log.out(f'[{fontFormat}]', 36)
+    log.out(f'{fontFormat}', 96)
+    log.out("-----------------", 90)
 
 
     # VARIABLES
@@ -86,36 +87,36 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
     # assemble TTX
     log.out(f'Assembling initial TTX...')
     originalTTX = assembler(fontFormat, manifest, glyphs, afsc, no_vs16)
-    log.out(f'Initial TTX successfully assembled.', 32)
+    log.out(f'Initial TTX successfully assembled.\n', 32)
 
 
     # save TTX
-    log.out(f"Saving forc's assembled (initial) TTX to file...")
+    log.out(f"📝 Saving forc's assembled (initial) TTX to file...")
     writeFile(originalTTXPath, originalTTX, 'Could not write initial TTX to file')
-    log.out(f'Initial TTX saved.', 32)
+    log.out(f'✅ Initial TTX saved.\n', 32)
 
 
     # compile TTX to font
-    log.out(f'Compiling font...')
+    log.out(f'⚙️  Compiling font...')
     compileTTX(originalTTXPath, outputFontPath)
-    log.out(f'Font compiled.', 32)
+    log.out(f'✅ Font compiled.\n', 32)
 
 
     # compile back to TTX
     #
     # This is because TTX doesn't catch all font errors on the first pass.
-    log.out(f'Testing font by compiling it back to TTX...')
+    log.out(f'⚙️  Testing font by compiling it back to TTX...')
     compileTTX(outputFontPath, afterExportTTX)
-    log.out(f'Font testing OK.', 32)
+    log.out(f'✅ Font testing OK.\n', 32)
 
     # --dev-ttx flag
     if not dev_ttx_output:
-        log.out(f'Deleting the initial TTX...')
+        log.out(f'🗑  Deleting the initial TTX...')
         originalTTXPath.unlink() #delete
 
     # -ttx flag
     if not ttx_output:
-        log.out(f'Deleting second-pass TTX...')
+        log.out(f'🗑  Deleting second-pass TTX...')
         afterExportTTX.unlink() #delete
 
 
@@ -127,7 +128,7 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
         configPath = outputAbsolute / (f"{fontFormat}.mobileconfig")
         writeFile(configPath, configString, 'Could not write iOS Configuration Profile to file')
 
-        log.out(f'Deleting the original Font...')
+        log.out(f'🗑  Deleting the original Font...')
         outputFontPath.unlink() #delete
 
-    log.out(f'This format has been successfully exported.', 32)
+    log.out(f'✅ This font has been successfully created.\n\n', 32)

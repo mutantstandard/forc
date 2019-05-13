@@ -81,8 +81,8 @@ def start( inputPath
     Once this has all been validated, it starts the font making process.
     """
 
-    log.out(f'Fetching resources...', 35)
-
+    log.out(f'\nFetching resources...', 35)
+    log.out("----------------------------------", 90)
 
 
     # check folder stuff
@@ -103,7 +103,7 @@ def start( inputPath
         aliasesPathPath = pathlib.Path(aliasesPath).absolute()
         tryDirectory(aliasesPathPath, "file", "aliases file")
 
-    log.out(f'File + folder locations OK!', 32)
+    log.out(f'File + folder locations OK!\n', 32)
 
 
 
@@ -127,7 +127,7 @@ def start( inputPath
         elif formats[f]["imageFormat"] == 'png':
             glyphImageFormats.add('png')
 
-    log.out(f'Output format(s) OK!', 32)
+    log.out(f'Output format(s) OK!\n', 32)
 
 
 
@@ -138,7 +138,7 @@ def start( inputPath
     manifest = loadJson(manifestPath, "manifest file")
     validateManifest(outputFormats, manifest)
 
-    log.out(f'Manifest OK!.', 32)
+    log.out(f'Manifest OK!.\n', 32)
 
 
 
@@ -149,7 +149,7 @@ def start( inputPath
         log.out(f'Getting + Checking aliases JSON...')
         aliases = loadJson(aliasesPath, "aliases file")
         validateAliases(aliases)
-        log.out(f'Aliases OK!.', 32)
+        log.out(f'Aliases OK!.\n', 32)
     else:
         aliases = None
 
@@ -160,7 +160,7 @@ def start( inputPath
 
     log.out(f'Getting + checking glyphs...')
     glyphs = getGlyphs(inputPathPath, manifest, aliases, delim_codepoint, glyphImageFormats, no_lig, no_vs16, nusc, afsc)
-    log.out(f'Glyphs OK!', 32)
+    log.out(f'Glyphs OK!\n', 32)
 
 
 
@@ -170,7 +170,7 @@ def start( inputPath
     # assemble each font format.
     # ------------------------------------------------
 
-    log.out(f'Starting font compilation...', 35)
+    log.out(f'Starting font compilation...\n\n', 35)
 
     for f in outputFormats:
         createFont(f, outputPath, manifest, glyphs, ttx_output, dev_ttx_output, afsc, no_vs16)
