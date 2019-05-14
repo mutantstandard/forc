@@ -10,7 +10,7 @@ from start import start
 
 
 
-VERSION = '0.0.1'
+VERSION = '0.0.2'
 
 DEF_INPUT_PATH = 'in'
 DEF_OUTPUT_PATH = 'out'
@@ -94,8 +94,8 @@ OPTIONAL EXTRA FLAGS:
 
 --afsc      Affinity SVG Correction.
             Corrects quirks in SVGs images exported by Serif's
-            Affinity software. Always use this if you are using
-            Affinity for your SVG input.
+            Affinity software. Always use this if you are making
+            a font with SVGs that come from Affinity software.
 
 --no-lig    (DEVELOPMENT OPTION) Strips ligatures from the output.
 
