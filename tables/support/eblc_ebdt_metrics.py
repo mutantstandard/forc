@@ -12,7 +12,7 @@ def getLocalScale(metrics):
 
 class SmallGlyphMetrics:
     """
-    A representation of a EBDT/EBLC/CBDT/CBLC SmallGlyphMetrics subtable.
+    A class representation of a EBDT/EBLC/CBDT/CBLC SmallGlyphMetrics subtable.
     """
 
     def __init__(self, metrics):
@@ -42,7 +42,7 @@ class SmallGlyphMetrics:
 
 class BigGlyphMetrics:
     """
-    Creates a TTX representation of a EBDT/EBLC/CBDT/CBLC BigGlyphMetrics subtable.
+    A class representation of a EBDT/EBLC/CBDT/CBLC BigGlyphMetrics subtable.
     """
 
     def __init__(self, metrics):

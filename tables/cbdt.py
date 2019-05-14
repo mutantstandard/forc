@@ -4,14 +4,14 @@ from tables.support.ebdt_bitmaps import EBDTBitmapFormat17
 
 class cbdtStrike:
     """
-    A class representing a CBDT strike.
+    A class representing a CBDT strike in a CBDT strike.
     """
 
     def __init__(self, index, glyphs, metrics, strikeRes):
         self.index = index
         self.glyphs = []
 
-        for g in glyphs["img"]:
+        for g in glyphs["img"]: #img is used here because CBDT bitmaps are identified by glyph name.
             self.glyphs.append(EBDTBitmapFormat17(metrics, strikeRes, g))
 
 
@@ -42,11 +42,14 @@ class cbdt:
                 break
 
         # iterate over each strike.
-        strikeNum = 0
+        strikeIndex = 0
+
         for imageFormat, image in firstGlyphWithStrikes.imgDict.items():
             if imageFormat.split('-')[0] == "png":
                 strikeRes = imageFormat.split('-')[1]
-                self.strikes.append(cbdtStrike(strikeNum, glyphs, m["metrics"], strikeRes))
+                self.strikes.append(cbdtStrike(strikeIndex, glyphs, m["metrics"], strikeRes))
+
+                strikeIndex += 1
 
 
     def toTTX(self):
