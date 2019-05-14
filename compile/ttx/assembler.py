@@ -59,7 +59,7 @@ def assembler(chosenFormat, m, glyphs, flags):
     root.append(tables.glyphOrder.toTTX(glyphs))
 
     log.out('[head] ', 90, newline=False)
-    root.append(tables.head.toTTX(m))
+    root.append(tables.head.head(m).toTTX())
 
     log.out('[OS/2] ', 90, newline=False)
     root.append(tables.os2.toTTX(m, glyphs))
@@ -99,7 +99,7 @@ def assembler(chosenFormat, m, glyphs, flags):
     # horizontal and vertical metrics tables
     # ---------------------------------------------
     log.out('[hhea] ', 90, newline=False)
-    root.append(tables.hhea.toTTX(m))
+    root.append(tables.hhea.hhea(m).toTTX())
 
     log.out('[hmtx] ', 90, newline=False)
     root.append(tables.hmtx.toTTX(m, glyphs))
@@ -171,7 +171,7 @@ def assembler(chosenFormat, m, glyphs, flags):
 
     elif glyphFormat == "sbix":
         log.out('[sbix]', 36)
-        root.append(tables.sbix.toTTX(glyphs))
+        root.append(tables.sbix.sbix(glyphs).toTTX())
 
     elif glyphFormat == "CBx":
         log.out('[CBLC] ', 36, newline=False)

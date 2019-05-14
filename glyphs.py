@@ -27,7 +27,7 @@ def simpleHex(int):
 
 class img:
     """
-    Class representing a glyph image.
+    Class representing a single glyph image.
     """
     def __init__(self, type, strike, m, path, nusc=False, afsc=False):
 
@@ -61,9 +61,6 @@ class img:
             # take the PNG and use it for later.
 
 
-
-
-
     def getHexDump(self):
         """
         Loads and returns a hexdump of the image object's file on-demand.
@@ -81,7 +78,7 @@ class img:
 
 
     def __str__(self):
-        return f"|{self.type}-{str(self.strike)} {self.path.name}|"
+        return f"img: [{self.type}-{str(self.strike)}] {self.path.name}|"
 
     def __repr__(self):
         return str(self)
@@ -219,7 +216,7 @@ class glyph:
         return str(self.codepoints)
 
     def __repr__(self):
-        return str(self.codepoints) + f" - {self.glyphType}\n"
+        return str(self.codepoints) + f" - {self.glyphType}"
 
     def __eq__(self, other):
         return self.codepoints == other.codepoints
