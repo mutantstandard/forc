@@ -19,7 +19,7 @@ def bitmapFormat17(metrics, strikeIndex, strikeRes, subfolder, glyphs):
     for g in glyphs["img_empty"]:
 
         # you only put them in if there's an actual image
-        if g.img:
+        if g.imgDict:
 
             # format 18 for big metrics and PNG data.
             bitmapTable = Element("cbdt_bitmap_format_17", {"name": g.codepoints.name() })
@@ -27,7 +27,7 @@ def bitmapFormat17(metrics, strikeIndex, strikeRes, subfolder, glyphs):
             bitmapTable.append(SmallGlyphMetrics(metrics))
 
             rawImageData = Element("rawimagedata")
-            rawImageData.text = g.img[subfolder].getHexDump()
+            rawImageData.text = g.imgDict[subfolder].getHexDump()
 
             bitmapTable.append(rawImageData)
 
@@ -53,7 +53,7 @@ def bitmapFormat18(metrics, strikeIndex, strikeRes, subfolder, glyphs):
     for g in glyphs["img_empty"]:
 
         # you only put them in if there's an actual image
-        if g.img:
+        if g.imgDict:
 
             # format 18 for big metrics and PNG data.
             bitmapTable = Element("cbdt_bitmap_format_18", {"name": g.codepoints.name() })
@@ -62,7 +62,7 @@ def bitmapFormat18(metrics, strikeIndex, strikeRes, subfolder, glyphs):
             bitmapTable.append(BigGlyphMetrics(metrics))
 
             rawImageData = Element("rawimagedata")
-            rawImageData.text = g.img[subfolder].getHexDump()
+            rawImageData.text = g.imgDict[subfolder].getHexDump()
 
             bitmapTable.append(rawImageData)
 
@@ -88,13 +88,13 @@ def bitmapFormat19(strikeIndex, strikeRes, subfolder, glyphs):
     for g in glyphs["img_empty"]:
 
         # you only put them in if there's an actual image
-        if g.img:
+        if g.imgDict:
 
             # format 18 for big metrics and PNG data.
             bitmapTable = Element("cbdt_bitmap_format_19", {"name": g.codepoints.name() })
 
             rawImageData = Element("rawimagedata")
-            rawImageData.text = g.img[subfolder].getHexDump()
+            rawImageData.text = g.imgDict[subfolder].getHexDump()
 
             bitmapTable.append(rawImageData)
 
@@ -122,7 +122,7 @@ def toTTX(m, glyphs):
     # that has strikes.
 
     for g in glyphs["img_empty"]:
-        if g.img:
+        if g.imgDict:
             firstGlyphWithStrikes = g
             break
 
@@ -131,7 +131,7 @@ def toTTX(m, glyphs):
 
     strikeIndex = 0
 
-    for imageFormat, image in firstGlyphWithStrikes.img.items():
+    for imageFormat, image in firstGlyphWithStrikes.imgDict.items():
         if imageFormat.split('-')[0] == "png":
             cbdt.append(bitmapFormat17(metrics, strikeIndex, image.strike, imageFormat, glyphs))
             strikeIndex += 1

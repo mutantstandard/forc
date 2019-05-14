@@ -36,8 +36,8 @@ def toTTX(m, glyphs, afsc):
 
     for ID, g in enumerate(glyphs["img_empty"]):
 
-        if g.img:
-            finishedSVG = TTXaddGlyphID(g.img['svg'].data, ID)
+        if g.imgDict:
+            finishedSVG = TTXaddGlyphID(g.imgDict['svg'].data, ID)
 
             svgDoc = etree.Element("svgDoc", {"startGlyphID": str(ID), "endGlyphID" : str(ID) })
             cdata = etree.CDATA(etree.tostring(finishedSVG, method="xml", pretty_print=False, xml_declaration=True, encoding="UTF-8"))

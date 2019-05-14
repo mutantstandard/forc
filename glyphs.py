@@ -180,7 +180,7 @@ class glyph:
     """
     Class representing a font glyph.
     """
-    def __init__(self, codepoints, img=None, alias=None, delim="-", userInput=True):
+    def __init__(self, codepoints, imgDict=None, alias=None, delim="-", userInput=True):
 
         try:
             self.codepoints = codepointSeq(codepoints, delim, userInput=userInput)
@@ -200,7 +200,7 @@ class glyph:
                 except ValueError as e:
                     raise Exception(f"The alias destination ('{alias}') for {self.codepoints} is not named correctly. → {e}")
 
-        self.img = img
+        self.imgDict = imgDict
 
         if img is not None:
             self.glyphType = "img"
@@ -297,16 +297,16 @@ def compileImageGlyphs(dir, m, delim, nusc, afsc, imageFormats):
     imgGlyphs = []
 
     for c, file in firstFolder.items():
-        imgSet = dict()
+        imgDict = dict()
 
         for folderName, folder in imgCollection.items():
             if not c in folder:
                 raise Exception(f"There's a mismatch in your files. I tried to find an image for the codepoint '{c}' in '{folderName}', but I couldn't find one. You have to make sure you have the exact same sets of filenames in each of your input folders.")
             else:
-                imgSet[folderName] = folder[c]
+                imgDict[folderName] = folder[c]
 
         try:
-            imgGlyphs.append(glyph(c, img=imgSet, delim=delim))
+            imgGlyphs.append(glyph(c, imgDict=imgDict, delim=delim))
         except ValueError as e:
             raise Exception(f"There was a problem when trying to create a glyph object for {c}. → {e}")
 
