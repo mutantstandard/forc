@@ -10,64 +10,68 @@ def getLocalScale(metrics):
 
 
 
-def SmallGlyphMetrics(metrics):
+class SmallGlyphMetrics:
     """
-    Creates a TTX representation of a EBDT/EBLC/CBDT/CBLC SmallGlyphMetrics subtable.
+    A representation of a EBDT/EBLC/CBDT/CBLC SmallGlyphMetrics subtable.
     """
 
-    localScale = getLocalScale(metrics)
+    def __init__(self, metrics):
 
-    height =      round( (metrics['height'] / localScale) * bitScale )
-    width =       round( (metrics['width'] / localScale) * bitScale )
+        localScale = getLocalScale(metrics)
 
-    BearingX =    round( (metrics['xMin'] / localScale) * bitScale )
-    BearingY =    bitScale+(round( (metrics['yMin'] / localScale) * bitScale ))
-    Advance =     width
+        self.height =      round( (metrics['height'] / localScale) * bitScale )
+        self.width =       round( (metrics['width'] / localScale) * bitScale )
 
-
-
-    glyphMetrics = Element("SmallGlyphMetrics")
-    glyphMetrics.append(Element("height",          {"value": str(height) }))
-    glyphMetrics.append(Element("width",           {"value": str(width) }))
-    glyphMetrics.append(Element("BearingX",    {"value": str(BearingX) }))
-    glyphMetrics.append(Element("BearingY",    {"value": str(BearingY) }))
-    glyphMetrics.append(Element("Advance",     {"value": str(Advance) }))
-
-    return glyphMetrics
+        self.BearingX =    round( (metrics['xMin'] / localScale) * bitScale )
+        self.BearingY =    bitScale+(round( (metrics['yMin'] / localScale) * bitScale ))
+        self.Advance =     self.width
 
 
+    def toTTX(self):
+        glyphMetrics = Element("SmallGlyphMetrics")
+        glyphMetrics.append(Element("height",          {"value": str(self.height) }))
+        glyphMetrics.append(Element("width",           {"value": str(self.width) }))
+        glyphMetrics.append(Element("BearingX",    {"value": str(self.BearingX) }))
+        glyphMetrics.append(Element("BearingY",    {"value": str(self.BearingY) }))
+        glyphMetrics.append(Element("Advance",     {"value": str(self.Advance) }))
+
+        return glyphMetrics
 
 
-def BigGlyphMetrics(metrics):
+
+
+class BigGlyphMetrics:
     """
     Creates a TTX representation of a EBDT/EBLC/CBDT/CBLC BigGlyphMetrics subtable.
     """
 
-    localScale = getLocalScale(metrics)
+    def __init__(self, metrics):
+        localScale = getLocalScale(metrics)
 
-    height =          round( (metrics['height'] / localScale) * bitScale )
-    width =           round( (metrics['width'] / localScale) * bitScale )
+        self.height =          round( (metrics['height'] / localScale) * bitScale )
+        self.width =           round( (metrics['width'] / localScale) * bitScale )
 
-    horiBearingX =    round( (metrics['xMin'] / localScale) * bitScale )
-    horiBearingY =    bitScale+(round( (metrics['yMin'] / localScale) * bitScale ))
-    horiAdvance =     width
+        self.horiBearingX =    round( (metrics['xMin'] / localScale) * bitScale )
+        self.horiBearingY =    bitScale+(round( (metrics['yMin'] / localScale) * bitScale ))
+        self.horiAdvance =     self.width
 
-    vertBearingX =    round( (metrics['xMin'] / localScale) * bitScale )
-    vertBearingY =    round( (metrics['yMin'] / localScale) * bitScale )
-    vertAdvance =     height
+        self.vertBearingX =    round( (metrics['xMin'] / localScale) * bitScale )
+        self.vertBearingY =    round( (metrics['yMin'] / localScale) * bitScale )
+        self.vertAdvance =     self.height
 
 
-    glyphMetrics = Element("BigGlyphMetrics")
-    glyphMetrics.append(Element("height",          {"value": str(height) }))
-    glyphMetrics.append(Element("width",           {"value": str(width) }))
-    glyphMetrics.append(Element("horiBearingX",    {"value": str(horiBearingX) }))
-    glyphMetrics.append(Element("horiBearingY",    {"value": str(horiBearingY) }))
-    glyphMetrics.append(Element("horiAdvance",     {"value": str(horiAdvance) }))
-    glyphMetrics.append(Element("vertBearingX",    {"value": str(vertBearingX) }))
-    glyphMetrics.append(Element("vertBearingY",    {"value": str(vertBearingY) }))
-    glyphMetrics.append(Element("vertAdvance",     {"value": str(vertAdvance) }))
+    def toTTX(self):
+        glyphMetrics = Element("BigGlyphMetrics")
+        glyphMetrics.append(Element("height",          {"value": str(self.height) }))
+        glyphMetrics.append(Element("width",           {"value": str(self.width) }))
+        glyphMetrics.append(Element("horiBearingX",    {"value": str(self.horiBearingX) }))
+        glyphMetrics.append(Element("horiBearingY",    {"value": str(self.horiBearingY) }))
+        glyphMetrics.append(Element("horiAdvance",     {"value": str(self.horiAdvance) }))
+        glyphMetrics.append(Element("vertBearingX",    {"value": str(self.vertBearingX) }))
+        glyphMetrics.append(Element("vertBearingY",    {"value": str(self.vertBearingY) }))
+        glyphMetrics.append(Element("vertAdvance",     {"value": str(self.vertAdvance) }))
 
-    return glyphMetrics
+        return glyphMetrics
 
 
 

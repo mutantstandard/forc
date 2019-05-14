@@ -167,7 +167,7 @@ def assembler(chosenFormat, m, glyphs, flags):
 
     if glyphFormat == "SVG":
         log.out('[SVG ]', 36)
-        root.append(tables.svg.toTTX(m, glyphs, flags["afsc"]))
+        root.append(tables.svg.toTTX(m, glyphs))
 
     elif glyphFormat == "sbix":
         log.out('[sbix]', 36)
@@ -178,7 +178,7 @@ def assembler(chosenFormat, m, glyphs, flags):
         root.append(tables.cblc.toTTX(m, glyphs))
 
         log.out('[CBDT]', 36)
-        root.append(tables.cbdt.toTTX(m, glyphs))
+        root.append(tables.cbdt.cbdt(m, glyphs).toTTX())
 
 
 

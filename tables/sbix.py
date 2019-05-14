@@ -73,15 +73,15 @@ class sbix:
         self.version = 1 # hard-coded
         self.flags = "00000000 00000001" # hard-coded     TODO: make this data type more accurate.
 
+        self.strikes = []
+
         # get basic strike information.
         for g in glyphs["img_empty"]:
             if g.imgDict:
                 firstGlyphWithStrikes = g
                 break
-
+                
         # iterate over each strike.
-        self.strikes = []
-
         for imageFormat, image in firstGlyphWithStrikes.imgDict.items():
             if imageFormat.split('-')[0] == "png":
                 self.strikes.append( sbixStrike(image.strike, glyphs["img_empty"]) )

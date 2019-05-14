@@ -22,7 +22,7 @@ def TTXaddGlyphID(svgImage, ID):
 
 
 
-def toTTX(m, glyphs, afsc):
+def toTTX(m, glyphs):
     """
     Generates and returns a SVG table.
 

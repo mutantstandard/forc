@@ -1,141 +1,59 @@
 from lxml.etree import Element
-from tables.support.eblc_ebdt import SmallGlyphMetrics, BigGlyphMetrics
+from tables.support.ebdt_bitmaps import EBDTBitmapFormat17
 
 
-
-def bitmapFormat17(metrics, strikeIndex, strikeRes, subfolder, glyphs):
+class cbdtStrike:
     """
-    Generates a CBDT bitmap subtable according to EBLC/CBLC subtable format 17.
-    This is actually the only working subtable format in TTX.
-
-    Way to go TTX.
+    A class representing a CBDT strike.
     """
 
-    # start of strikes
-    # (which we're fudging right now)
-    # ------------------------------------------------------------
-    strike = Element("strikedata", {"index": str(strikeIndex)})
+    def __init__(self, index, glyphs, metrics, strikeRes):
+        self.index = index
+        self.glyphs = []
 
-    for g in glyphs["img_empty"]:
-
-        # you only put them in if there's an actual image
-        if g.imgDict:
-
-            # format 18 for big metrics and PNG data.
-            bitmapTable = Element("cbdt_bitmap_format_17", {"name": g.codepoints.name() })
-
-            bitmapTable.append(SmallGlyphMetrics(metrics))
-
-            rawImageData = Element("rawimagedata")
-            rawImageData.text = g.imgDict[subfolder].getHexDump()
-
-            bitmapTable.append(rawImageData)
-
-            strike.append(bitmapTable)
-
-    return strike
+        for g in glyphs["img"]:
+            self.glyphs.append(EBDTBitmapFormat17(metrics, strikeRes, g))
 
 
-def bitmapFormat18(metrics, strikeIndex, strikeRes, subfolder, glyphs):
+    def toTTX(self):
+        strikedata = Element("strikedata", {"index": str(self.index)})
+
+        for g in self.glyphs:
+            strikedata.append(g.toTTX())
+        return strikedata
+
+
+class cbdt:
     """
-    Generates a CBDT bitmap subtable according to EBLC/CBLC subtable format 18.
-    This isn't actually supported in TTX but I'm making this in case it ever is supported.
-
-    Way to go TTX.
+    A class representing a CBDT table.
     """
 
-
-    # start of strikes
-    # (which we're fudging right now)
-    # ------------------------------------------------------------
-    strike = Element("strikedata", {"index": str(strikeIndex)})
-
-    for g in glyphs["img_empty"]:
-
-        # you only put them in if there's an actual image
-        if g.imgDict:
-
-            # format 18 for big metrics and PNG data.
-            bitmapTable = Element("cbdt_bitmap_format_18", {"name": g.codepoints.name() })
+    def __init__(self, m, glyphs):
+        self.headerVersion = 3.0 # hard-coded. the only version available right now.
+        self.strikes = []
 
 
-            bitmapTable.append(BigGlyphMetrics(metrics))
+        # get basic strike information by poking for a glyph
+        # that has strikes.
 
-            rawImageData = Element("rawimagedata")
-            rawImageData.text = g.imgDict[subfolder].getHexDump()
+        for g in glyphs["img_empty"]:
+            if g.imgDict:
+                firstGlyphWithStrikes = g
+                break
 
-            bitmapTable.append(rawImageData)
-
-            strike.append(bitmapTable)
-
-    return strike
-
-
-
-def bitmapFormat19(strikeIndex, strikeRes, subfolder, glyphs):
-    """
-    Generates a CBDT bitmap subtable according to EBLC/CBLC subtable format 19.
-    This isn't actually supported in TTX but I'm making this in case it ever is supported.
-
-    Way to go TTX.
-    """
-
-    # start of strikes
-    # (which we're fudging right now)
-    # ------------------------------------------------------------
-    strike = Element("strikedata", {"index": str(strikeIndex)})
-
-    for g in glyphs["img_empty"]:
-
-        # you only put them in if there's an actual image
-        if g.imgDict:
-
-            # format 18 for big metrics and PNG data.
-            bitmapTable = Element("cbdt_bitmap_format_19", {"name": g.codepoints.name() })
-
-            rawImageData = Element("rawimagedata")
-            rawImageData.text = g.imgDict[subfolder].getHexDump()
-
-            bitmapTable.append(rawImageData)
-
-            strike.append(bitmapTable)
-
-    return strike
+        # iterate over each strike.
+        strikeNum = 0
+        for imageFormat, image in firstGlyphWithStrikes.imgDict.items():
+            if imageFormat.split('-')[0] == "png":
+                strikeRes = imageFormat.split('-')[1]
+                self.strikes.append(cbdtStrike(strikeNum, glyphs, m["metrics"], strikeRes))
 
 
+    def toTTX(self):
+        cbdt = Element("CBDT")
+        cbdt.append(Element("header", {"version": str(self.headerVersion)})) # hard-coded
 
+        for strike in self.strikes:
+            cbdt.append(strike.toTTX())
 
-def toTTX(m, glyphs):
-    """
-    Generates and returns a glyf table with dummy data.
-    """
-
-    metrics = m['metrics']
-
-    cbdt = Element("CBDT")
-
-    cbdt.append(Element("header", {"version": "3.0"})) # hard-coded
-
-
-
-    # get basic strike information by poking for a glyph
-    # that has strikes.
-
-    for g in glyphs["img_empty"]:
-        if g.imgDict:
-            firstGlyphWithStrikes = g
-            break
-
-
-    # iterate over each strike.
-
-    strikeIndex = 0
-
-    for imageFormat, image in firstGlyphWithStrikes.imgDict.items():
-        if imageFormat.split('-')[0] == "png":
-            cbdt.append(bitmapFormat17(metrics, strikeIndex, image.strike, imageFormat, glyphs))
-            strikeIndex += 1
-
-
-
-    return cbdt
+        return cbdt

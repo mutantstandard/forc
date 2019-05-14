@@ -1,5 +1,5 @@
 from lxml.etree import Element
-from tables.support.eblc_ebdt import sbitLineMetricsHori, sbitLineMetricsVert
+from tables.support.eblc_ebdt_metrics import sbitLineMetricsHori, sbitLineMetricsVert
 
 
 def strike(metrics, strikeIndex, ppem, glyphs):

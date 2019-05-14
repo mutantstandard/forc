@@ -202,10 +202,10 @@ class glyph:
 
         self.imgDict = imgDict
 
-        if img is not None:
+        if imgDict is not None:
             self.glyphType = "img"
 
-        if img is None and alias is None:
+        if imgDict is None and alias is None:
             self.glyphType = "empty"
 
 
