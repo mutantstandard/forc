@@ -6,7 +6,7 @@ from transform.svg import stripStyles, affinityDesignerCompensate, viewboxCompen
 
 
 
-def addGlyphID(svgImage, ID):
+def TTXaddGlyphID(svgImage, ID):
     """
     Adds the glyph ID to the SVG.
     """
@@ -22,7 +22,7 @@ def addGlyphID(svgImage, ID):
 
 
 
-def create(m, glyphs, afsc):
+def toTTX(m, glyphs, afsc):
     """
     Generates and returns a SVG table.
 
@@ -37,7 +37,7 @@ def create(m, glyphs, afsc):
     for ID, g in enumerate(glyphs["img_empty"]):
 
         if g.img:
-            finishedSVG = addGlyphID(g.img['svg'].data, ID)
+            finishedSVG = TTXaddGlyphID(g.img['svg'].data, ID)
 
             svgDoc = etree.Element("svgDoc", {"startGlyphID": str(ID), "endGlyphID" : str(ID) })
             cdata = etree.CDATA(etree.tostring(finishedSVG, method="xml", pretty_print=False, xml_declaration=True, encoding="UTF-8"))

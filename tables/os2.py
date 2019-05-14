@@ -1,6 +1,6 @@
 from lxml.etree import Element
 
-def create(m, glyphs):
+def toTTX(m, glyphs):
     """
     Creates an OS/2 table and fills it with both hard-coded,
     automatically generated and user-defined metadata.

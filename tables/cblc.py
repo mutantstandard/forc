@@ -62,7 +62,7 @@ def strike(metrics, strikeIndex, ppem, glyphs):
 
 
 
-def create(m, glyphs):
+def toTTX(m, glyphs):
     """
     Generates and returns a glyf table with dummy data.
     """

@@ -2,7 +2,7 @@ from lxml.etree import Element
 
 
 
-def strike(ppem, resolution, subfolder, glyphs):
+def TTXstrike(ppem, resolution, subfolder, glyphs):
 
 
 
@@ -33,7 +33,7 @@ def strike(ppem, resolution, subfolder, glyphs):
 
 
 
-def create(glyphs):
+def toTTX(glyphs):
     """
     Generates and returns a sbix table with embedded PNG data
     """
@@ -54,7 +54,7 @@ def create(glyphs):
     # iterate over each strike.
     for imageFormat, image in firstGlyphWithStrikes.img.items():
         if imageFormat.split('-')[0] == "png":
-            sbix.append(strike(image.strike, "72", imageFormat, glyphs))
+            sbix.append(TTXstrike(image.strike, "72", imageFormat, glyphs))
 
 
 

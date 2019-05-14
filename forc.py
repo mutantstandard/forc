@@ -38,16 +38,26 @@ by Mutant Standard
 
 USAGE: forc.py [options...]
 
-OPTIONS:
-
+HELP:
+----------------------------------------------------
 -h      Prints this help message.
 
+Also look at /docs for full documentation.
+
+
+WHAT TO BUILD FROM:
+----------------------------------------------------
 -i      Image glyphs directory (default: {DEF_INPUT_PATH})
 -a      Alias glyphs file (optional)
 -m      Manifest file (default: {DEF_MANIFEST})
 -o      Output directory (default: {DEF_OUTPUT_PATH})
 
+-d      Delimiter between ligatured codepoints
+        (default: '{DEF_DELIM_CODEPOINT}')
 
+
+HOW TO BUILD IT:
+----------------------------------------------------
 -F      Format (default: {DEF_OUTPUT_FORMATS})
 
         Formats that require SVG images:
@@ -61,12 +71,9 @@ OPTIONS:
         - CBx           (Google/Android)
 
 
--d      Delimiter between ligatured codepoints
-        (default: '{DEF_DELIM_CODEPOINT}')
 
-
-
-
+OPTIONAL EXTRA FLAGS:
+----------------------------------------------------
 --ttx       Exports a matching ttx (.ttx) file for each format.
 
 --dev-ttx   Keeps the initial ttx that forc compiles before
@@ -83,19 +90,13 @@ OPTIONS:
             that are not guaranteed to work in SVG checks.
 
 --afsc      Affinity SVG Correction.
-            The SVG exporter in Serif's Affinity software has
-            quirks which cause problems in SVGinOT fonts. This
-            build flag makes forc correct SVG glyphs when
-            being built.
+            Corrects quirks in SVGs images exported by Serif's
+            Affinity software. Always use this if you are using
+            Affinity for your SVG input.
 
 --no-lig    (DEVELOPMENT OPTION) Strips ligatures from the output.
 
 
-
-
-
-
-look at docs/howto.md for more information on how to use many of these.
 
 '''
 

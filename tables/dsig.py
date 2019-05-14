@@ -1,6 +1,6 @@
 from lxml.etree import Element
 
-def create():
+def toTTX():
     """
     Create a dummy DSIG table.
     """

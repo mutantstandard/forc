@@ -12,8 +12,10 @@ import tables.maxp
 import tables.gasp
 import tables.dsig
 
-import tables.mtx_h
-import tables.mtx_v
+import tables.hhea
+import tables.hmtx
+import tables.vhea
+import tables.vmtx
 
 import tables.cmap
 import tables.gdef
@@ -54,23 +56,23 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
     # headers and other weird crap
     # ---------------------------------------------
     log.out('[glyphOrder] ', 90, newline=False)
-    root.append(tables.glyphOrder.create(glyphs))
+    root.append(tables.glyphOrder.toTTX(glyphs))
 
     log.out('[head] ', 90, newline=False)
-    root.append(tables.head.create(m))
+    root.append(tables.head.toTTX(m))
 
     log.out('[OS/2] ', 90, newline=False)
-    root.append(tables.os2.create(m, glyphs))
+    root.append(tables.os2.toTTX(m, glyphs))
 
     log.out('[post] ', 90, newline=False)
-    root.append(tables.post.create(glyphs))
+    root.append(tables.post.toTTX(glyphs))
 
     # maxp is a semi-placeholder table.
     log.out('[maxp] ', 90, newline=False)
-    root.append(tables.maxp.create(glyphs))
+    root.append(tables.maxp.toTTX(glyphs))
 
     log.out('[gasp] ', 90, newline=False)
-    root.append(tables.gasp.create())
+    root.append(tables.gasp.toTTX())
 
 
 
@@ -87,7 +89,7 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
 
     # placeholder table that makes Google's font validation happy.
     log.out('[DSIG]', 90)
-    root.append(tables.dsig.create())
+    root.append(tables.dsig.toTTX())
 
 
 
@@ -97,16 +99,16 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
     # horizontal and vertical metrics tables
     # ---------------------------------------------
     log.out('[hhea] ', 90, newline=False)
-    root.append(tables.mtx_h.create_hhea(m))
+    root.append(tables.hhea.toTTX(m))
 
     log.out('[hmtx] ', 90, newline=False)
-    root.append(tables.mtx_h.create_hmtx(m, glyphs))
+    root.append(tables.hmtx.toTTX(m, glyphs))
 
     log.out('[vhea] ', 90, newline=False)
-    root.append(tables.mtx_v.create_vhea(m))
+    root.append(tables.vhea.toTTX(m))
 
     log.out('[vmtx]', 90)
-    root.append(tables.mtx_v.create_vmtx(m, glyphs))
+    root.append(tables.vmtx.toTTX(m, glyphs))
 
 
 
@@ -116,7 +118,7 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
 
     # single glyphs
     log.out('[cmap] ', 90, newline=False)
-    root.append(tables.cmap.create(glyphs, no_vs16))
+    root.append(tables.cmap.toTTX(glyphs, no_vs16))
 
 
 
@@ -132,18 +134,18 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
 
         if formats[chosenFormat]["ligatureFormat"] == "OpenType":
             #log.out ('Assembling GDEF table...', 90)
-            #root.append(tables.gdef.create(glyphs))
+            #root.append(tables.gdef.toTTX(glyphs))
 
             #log.out ('Assembling GPOS table...', 90)
-            #root.append(tables.gpos.create())
+            #root.append(tables.gpos.toTTX())
 
             log.out('[GSUB] ', 36, newline=False)
-            root.append(tables.gsub.create(glyphs))
+            root.append(tables.gsub.toTTX(glyphs))
 
 
         elif formats[chosenFormat]["ligatureFormat"] == "TrueType":
             log.out('[morx] ', 36, newline=False)
-            root.append(tables.morx.create(glyphs))
+            root.append(tables.morx.toTTX(glyphs))
 
 
 
@@ -157,7 +159,7 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
     # CBDT/CBLC doesn't use glyf at all
     if glyphFormat is not "CBx":
         log.out('[glyf] ', 36, newline=False)
-        root.append(tables.glyf.create(m, glyphs))
+        root.append(tables.glyf.toTTX(m, glyphs))
 
 
     # actual glyph picture data
@@ -165,18 +167,18 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
 
     if glyphFormat == "SVG":
         log.out('[SVG ]', 36)
-        root.append(tables.svg.create(m, glyphs, afsc))
+        root.append(tables.svg.toTTX(m, glyphs, afsc))
 
     elif glyphFormat == "sbix":
         log.out('[sbix]', 36)
-        root.append(tables.sbix.create(glyphs))
+        root.append(tables.sbix.toTTX(glyphs))
 
     elif glyphFormat == "CBx":
         log.out('[CBLC] ', 36, newline=False)
-        root.append(tables.cblc.create(m, glyphs))
+        root.append(tables.cblc.toTTX(m, glyphs))
 
         log.out('[CBDT]', 36)
-        root.append(tables.cbdt.create(m, glyphs))
+        root.append(tables.cbdt.toTTX(m, glyphs))
 
 
 
@@ -184,7 +186,7 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
     # human-readable metadata
     # ---------------------------------------------
     log.out('[name]', 90)
-    root.append(tables.name.create(chosenFormat, m))
+    root.append(tables.name.toTTX(chosenFormat, m))
 
 
 

@@ -1,6 +1,6 @@
 from lxml.etree import Element
 
-def create(glyphs):
+def toTTX(glyphs):
     """
     Generates and returns a GlyphOrder XML element.
 

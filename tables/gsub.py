@@ -11,9 +11,9 @@ def singleGlyphName(g):
     return glyphName(g.codepoints.seq[0])
 
 
-def create(glyphs):
+def toTTX(glyphs):
     """
-    Generates and returns a GSUB table with ligature data.
+    Generates and returns a TTX GSUB table with ligature data.
     """
 
     gsub = Element("GSUB")

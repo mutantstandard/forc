@@ -1,6 +1,6 @@
 from lxml.etree import Element
 
-def create(glyphs):
+def toTTX(glyphs):
     post = Element("post")
 
     post.append(Element("formatType", {'value': '2.0'})) # hard-coded, Apple suggests against using formats 2.5, 3 and 4.

@@ -17,12 +17,12 @@ def makeGlyphSubtable(tag, attrs, cmapGlyphSet):
 
 
 
-def create(glyphs, no_vs16):
+def toTTX(glyphs, no_vs16):
     cmap = Element("cmap")
     cmap.append(Element("tableVersion", {"version": "0"}))
 
 
-    # check what's what in this set to determine what subtables to create.
+    # check what's what in this set to determine what subtables to toTTX.
     # ---------------------------------------------------------
     vs16Presence = False
     oneByte = []

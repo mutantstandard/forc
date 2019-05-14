@@ -18,7 +18,7 @@ def morphFeature(index, featureType, featureSetting, enableFlags, disableFlags):
     return feature
 
 
-def create(glyphs):
+def toTTX(glyphs):
     """
     Generates and returns a morx table with ligature data.
     """

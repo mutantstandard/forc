@@ -1,6 +1,6 @@
 from lxml.etree import Element
 
-def create_hhea(m):
+def toTTX(m):
     metrics = m['metrics']
 
     hhea = Element("hhea")
@@ -30,17 +30,3 @@ def create_hhea(m):
     hhea.append(Element("numberOfHMetrics", {'value': '0'})) # maybe TTX auto-denerates this?
 
     return hhea
-
-
-def create_hmtx(m, glyphs):
-    metrics = m['metrics']
-
-    hmtx = Element("hmtx")
-
-    for g in glyphs["img_empty"]:
-        hmtx.append(Element("mtx", {"name": g.codepoints.name()
-                                    ,"width": str(metrics['normalWidth'])
-                                    ,"lsb": str(metrics['normalLSB'])
-                                    }))
-
-    return hmtx

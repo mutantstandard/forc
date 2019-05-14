@@ -2,7 +2,7 @@ from lxml.etree import Element, ElementTree, fromstring
 
 
 
-def create(glyphs):
+def toTTX(glyphs):
     """
     Creates a basic GDEF table.
     """

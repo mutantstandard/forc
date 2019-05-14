@@ -105,7 +105,7 @@ def bitmapFormat19(strikeIndex, strikeRes, subfolder, glyphs):
 
 
 
-def create(m, glyphs):
+def toTTX(m, glyphs):
     """
     Generates and returns a glyf table with dummy data.
     """

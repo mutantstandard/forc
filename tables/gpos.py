@@ -2,9 +2,9 @@ from lxml.etree import Element, ElementTree, fromstring
 
 
 
-def create():
+def toTTX():
     """
-    Generates and returns a GSUB table with ligature data.
+    Generates and returns a placeholder GPOS table.
     """
 
     gpos = Element("GPOS")

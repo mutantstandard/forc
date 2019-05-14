@@ -6,42 +6,48 @@
 
 
 formats = {"SVGinOT":
-             {"imageFormat": "svg"
+             {"name": "SVGinOT"
+             ,"imageFormat": "svg"
              ,"imageTables": "SVG"
              ,"ligatureFormat": "OpenType"
              ,"extension": ".otf"
              ,"iOSCompile": False
              }
          ,"sbixTT":
-              {"imageFormat": "png"
+              {"name": "sbixTT"
+              ,"imageFormat": "png"
               ,"imageTables": "sbix"
               ,"ligatureFormat": "TrueType"
               ,"extension": ".otf"
               ,"iOSCompile": False
               }
          ,"sbixOT":
-              {"imageFormat": "png"
+              {"name": "sbixOT"
+              ,"imageFormat": "png"
               ,"imageTables": "sbix"
               ,"ligatureFormat": "OpenType"
               ,"extension": ".ttf"
               ,"iOSCompile": False
               }
          ,"sbixTTiOS":
-              {"imageFormat": "png"
+              {"name": "sbixTTiOS"
+              ,"imageFormat": "png"
               ,"imageTables": "sbix"
               ,"ligatureFormat": "TrueType"
               ,"extension": ".ttf"
               ,"iOSCompile": True
               }
         ,"sbixOTiOS":
-             {"imageFormat": "png"
+             {"name": "sbixOTiOS"
+             ,"imageFormat": "png"
              ,"imageTables": "sbix"
              ,"ligatureFormat": "OpenType"
              ,"extension": ".ttf"
              ,"iOSCompile": True
              }
         ,"CBx":
-             {"imageFormat": "png"
+             {"name": "CBx"
+             ,"imageFormat": "png"
              ,"imageTables": "CBx"
              ,"ligatureFormat": "OpenType"
              ,"extension": ".ttf"
