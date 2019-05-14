@@ -1,7 +1,9 @@
 import subprocess
 import pathlib
 import log
+import shutil
 
+import files
 import compile.ttx.create
 import compile.ios.create
 from format import formats
@@ -13,8 +15,10 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
     log.out("-----------------", 90)
 
     # output folder
-    outPathAbsolute = pathlib.Path(outputPath).absolute()
-    tempPath = outPathAbsolute / '.tmp'
+    outPath = pathlib.Path(outputPath).absolute()
+    tempPath = outPath / '.forc_tmp'
+
+    files.tryDirectory(tempPath, "dir", "temporary font build folder", tryMakeFolder=True)
 
 
     # filenames
@@ -30,7 +34,21 @@ def createFont(fontFormat, outputPath, manifest, glyphs, ttx_output, dev_ttx_out
     formatData = formats[fontFormat]
 
 
-    outputFontPath = compile.ttx.create.createFont(formatData, outPathAbsolute, tempPath, filename, manifest, glyphs, ttx_output, dev_ttx_output, afsc, no_vs16)
+
+
+
+    tempFontPath = compile.ttx.create.createFont(formatData, outPath, tempPath, filename, manifest, glyphs, ttx_output, dev_ttx_output, afsc, no_vs16)
 
     if formats[fontFormat]["iOSCompile"]:
-        compile.ios.create.createPackage(formatData, filename, outPathAbsolute, outputFontPath, manifest)
+        compile.ios.create.createPackage(formatData, filename, outPath, tempFontPath, manifest)
+    else:
+        shutil.copy(str(tempFontPath), str(outPath / (filename + formatData["extension"])))
+
+
+
+
+    # delete the temporary folder (recursively)
+    log.out(f'🗑  Cleaning up...')
+    shutil.rmtree(tempPath)
+
+    log.out(f'✅ Format finished!\n\n', 32)

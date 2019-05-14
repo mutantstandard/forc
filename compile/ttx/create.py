@@ -1,9 +1,11 @@
 import subprocess
 import pathlib
 import log
+import pathlib
+import shutil
 
+import files
 from format import formats
-from compile.shared import writeFile
 from compile.ttx.assembler import assembler
 
 # create.py
@@ -35,7 +37,7 @@ def compileTTX(input, output):
 
 
 
-def createFont(formatData, outputPath, tempPath, filename, manifest, glyphs, ttx_output, dev_ttx_output, afsc, no_vs16):
+def createFont(formatData, outPath, tempPath, filename, manifest, glyphs, ttx_output, dev_ttx_output, afsc, no_vs16):
     """
     Calls the functions that assemble and create a font via TTX.
     """
@@ -49,9 +51,11 @@ def createFont(formatData, outputPath, tempPath, filename, manifest, glyphs, ttx
     formatName = formatData["name"]
 
 
-    originalTTXPath = outputPath / (filename + "_dev.ttx")
-    outputFontPath = outputPath / (filename + extension)
-    afterExportTTX = outputPath / (filename + ".ttx")
+    originalTTXPath = tempPath / (filename + "_dev.ttx")
+    afterExportTTX = tempPath / (filename + ".ttx")
+
+    outFontPath = tempPath / (filename + extension)
+
 
 
 
@@ -70,36 +74,32 @@ def createFont(formatData, outputPath, tempPath, filename, manifest, glyphs, ttx
     log.out(f"⚙️  Compiling and testing font...")
     log.out(f"- Saving forc's assembled (initial) TTX to file...", 90)
 
-    writeFile(originalTTXPath, originalTTX, 'Could not write initial TTX to file')
+    files.writeFile(originalTTXPath, originalTTX, 'Could not write initial TTX to file')
 
 
     # compile TTX to font
     log.out(f'- Compiling font...', 90)
-    compileTTX(originalTTXPath, outputFontPath)
+    compileTTX(originalTTXPath, outFontPath)
 
 
     # compile back to TTX
     #
     # This is because TTX doesn't catch all font errors on the first pass.
     log.out(f'- Testing font by compiling it back to TTX...', 90)
-    compileTTX(outputFontPath, afterExportTTX)
+    compileTTX(outFontPath, afterExportTTX)
 
 
     log.out(f'✅ Compiling and testing OK.\n', 32)
 
 
 
-
-    if not dev_ttx_output or not ttx_output:
-        log.out(f'🗑  Cleaning up...')
-
     # --dev-ttx flag
-    if not dev_ttx_output:
-        originalTTXPath.unlink() #delete
+    if dev_ttx_output:
+        shutil.copy(str(originalTTXPath), str(outPath / (filename + "_dev.ttx")))
 
     # -ttx flag
-    if not ttx_output:
-        afterExportTTX.unlink() #delete
+    if ttx_output:
+        shutil.copy(str(originalTTXPath), str(outPath / (filename + ".ttx")))
 
 
-    return outputFontPath
+    return outFontPath

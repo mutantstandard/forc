@@ -1,7 +1,7 @@
 import pathlib
-import json
 
 import log
+import files
 from create import createFont
 from validate.manifest import validateManifest
 from validate.aliases import validateAliases
@@ -15,46 +15,6 @@ from format import formats
 #
 # All of the data gathering and validation required before initiating font export.
 # Also initiates font export when all of these things are completed and satisfactory.
-
-
-def tryDirectory(absolutePath, dirOrFile, dirName, tryMakeFolder=False):
-    """
-    Function for checking if a directory exists and/or fulfils certain requirements.
-    WIll raise an Exception or ValueError if it doesn't meet these expectations.
-    """
-    if not absolutePath.exists():
-        if not tryMakeFolder:
-            raise ValueError(f"The {dirName} you gave ({absolutePath}) doesn't exist.")
-        else:
-            try:
-                absolutePath.mkdir(parents=True, exist_ok=True)
-            except Exception as e:
-                raise Exception(f"Couldn't make the {dirName} ({absolutePath}). ({e})" )
-    else:
-        if dirOrFile == "file" and absolutePath.is_dir():
-                raise ValueError(f"The {dirName} you gave ({absolutePath}) is a folder, not a file.")
-        elif dirOrFile == "dir" and absolutePath.is_file():
-                raise ValueError(f"The {dirName} you gave ({absolutePath}) is a file, not a folder.")
-
-
-
-
-def loadJson(jsonPath, fileName):
-    """
-    Repetitive function for attempting to load a JSON file.
-    """
-    try:
-        with open(jsonPath, "r") as read_file:
-            return json.load(read_file)
-    except Exception as e:
-        raise ValueError(f"Loading the {fileName} file failed! ({e})")
-
-
-
-
-
-
-
 
 
 def start( inputPath
@@ -91,17 +51,17 @@ def start( inputPath
     log.out(f'Checking file + folder locations...')
 
     inputPathPath = pathlib.Path(inputPath).absolute()
-    tryDirectory(inputPathPath, "dir", "input folder")
+    files.tryUserDirectory(inputPathPath, "dir", "input folder")
 
     outputPathPath = pathlib.Path(outputPath).absolute()
-    tryDirectory(outputPathPath, "dir", "output folder", tryMakeFolder=True)
+    files.tryUserDirectory(outputPathPath, "dir", "output folder", tryMakeFolder=True)
 
     manifestPathPath = pathlib.Path(manifestPath).absolute()
-    tryDirectory(manifestPathPath, "file", "manifest file")
+    files.tryUserDirectory(manifestPathPath, "file", "manifest file")
 
     if aliasesPath:
         aliasesPathPath = pathlib.Path(aliasesPath).absolute()
-        tryDirectory(aliasesPathPath, "file", "aliases file")
+        files.tryUserDirectory(aliasesPathPath, "file", "aliases file")
 
     log.out(f'File + folder locations OK!\n', 32)
 
@@ -135,7 +95,7 @@ def start( inputPath
     # ------------------------------------------------
 
     log.out(f'Getting + Checking manifest JSON...')
-    manifest = loadJson(manifestPath, "manifest file")
+    manifest = files.loadJson(manifestPath, "manifest file")
     validateManifest(outputFormats, manifest)
 
     log.out(f'Manifest OK!.\n', 32)
@@ -147,7 +107,7 @@ def start( inputPath
 
     if aliasesPath:
         log.out(f'Getting + Checking aliases JSON...')
-        aliases = loadJson(aliasesPath, "aliases file")
+        aliases = files.loadJson(aliasesPath, "aliases file")
         validateAliases(aliases)
         log.out(f'Aliases OK!.\n', 32)
     else:
