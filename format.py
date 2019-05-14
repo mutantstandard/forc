@@ -54,3 +54,6 @@ formats = {"SVGinOT":
              ,"iOSCompile": False
              }
          }
+
+
+compilers = ["ttx"]

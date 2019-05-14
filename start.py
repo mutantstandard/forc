@@ -6,7 +6,7 @@ from create import createFont
 from validate.manifest import validateManifest
 from validate.aliases import validateAliases
 from glyphs import getGlyphs
-from format import formats
+from format import formats, compilers
 
 
 
@@ -21,9 +21,10 @@ def start( inputPath
           , outputPath
           , manifestPath
           , aliasesPath
+          , delim_codepoint
 
           , outputFormats
-          , delim_codepoint
+          , compiler
 
           , ttx_output
           , dev_ttx_output
@@ -74,7 +75,7 @@ def start( inputPath
 
     glyphImageFormats = set()
 
-    log.out(f'Checking output format(s)...')
+    log.out(f'Checking output parameters(s)...')
     for f in outputFormats:
 
         # check if it's in the list of accepted formats
@@ -88,6 +89,11 @@ def start( inputPath
             glyphImageFormats.add('png')
 
     log.out(f'Output format(s) OK!\n', 32)
+
+
+    if compiler not in compilers:
+        raise ValueError(f"'{compiler}' isn't a valid compiler option!")
+
 
 
 
@@ -133,4 +139,4 @@ def start( inputPath
     log.out(f'Starting font compilation...\n\n', 35)
 
     for f in outputFormats:
-        createFont(f, outputPath, manifest, glyphs, ttx_output, dev_ttx_output, afsc, no_vs16)
+        createFont(f, outputPath, manifest, glyphs, compiler, ttx_output, dev_ttx_output, afsc, no_vs16)

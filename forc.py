@@ -16,9 +16,10 @@ DEF_INPUT_PATH = 'in'
 DEF_OUTPUT_PATH = 'out'
 DEF_MANIFEST = 'manifest.json'
 DEF_ALIASES = None
+DEF_DELIM_CODEPOINT = "-"
 
 DEF_OUTPUT_FORMATS = ['SVGinOT']
-DEF_DELIM_CODEPOINT = "-"
+DEF_COMPILER = 'ttx'
 
 DEF_TTX_OUTPUT = False
 DEF_DEV_TTX = False
@@ -70,6 +71,8 @@ HOW TO BUILD IT:
         - sbixOTiOS     (DEVELOPMENT/TESTING)
         - CBx           (Google/Android)
 
+-C      Compiler (default: {DEF_COMPILER})
+        Currently the only compiler is 'ttx'.
 
 
 OPTIONAL EXTRA FLAGS:
@@ -107,9 +110,10 @@ def main():
     output_path = DEF_OUTPUT_PATH
     manifest_path = DEF_MANIFEST
     aliases_path = DEF_ALIASES
+    delim_codepoint = DEF_DELIM_CODEPOINT
 
     output_formats = DEF_OUTPUT_FORMATS
-    delim_codepoint = DEF_DELIM_CODEPOINT
+    compiler = DEF_COMPILER
 
     ttx_output = DEF_TTX_OUTPUT
     dev_ttx_output = DEF_DEV_TTX
@@ -123,12 +127,13 @@ def main():
 
     try:
         opts, _ = getopt.getopt(sys.argv[1:],
-                                'hi:o:m:a:F:d:',
+                                'hi:o:m:a:d:F:C:',
                                 ['help', 'ttx', 'dev-ttx', 'no-vs16', 'nusc', 'afsc', 'no-lig'])
         for opt, arg in opts:
             if opt in ['-h', '--help']:
                 print(HELP)
                 sys.exit()
+
             elif opt == '-i':
                 input_path = arg
             elif opt == '-o':
@@ -137,9 +142,12 @@ def main():
                 manifest_path = arg
             elif opt == '-a':
                 aliases_path = arg
+            elif opt =='-d':
+                delim_codepoint = arg
+
             elif opt == '-F':
                 output_formats = arg.split(',')
-            elif opt =='-d':
+            elif opt =='-C':
                 delim_codepoint = arg
 
             elif opt =='--ttx':
@@ -165,8 +173,10 @@ def main():
               , output_path
               , manifest_path
               , aliases_path
-              , output_formats
               , delim_codepoint
+
+              , output_formats
+              , compiler
 
               , ttx_output
               , dev_ttx_output
