@@ -34,7 +34,7 @@ import tables.cblc
 
 
 
-def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
+def assembler(chosenFormat, m, glyphs, flags):
     """
     Covers the entire routine for assembling a TTX file.
     """
@@ -118,7 +118,7 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
 
     # single glyphs
     log.out('[cmap] ', 90, newline=False)
-    root.append(tables.cmap.toTTX(glyphs, no_vs16))
+    root.append(tables.cmap.toTTX(glyphs, flags["no_vs16"]))
 
 
 
@@ -167,7 +167,7 @@ def assembler(chosenFormat, m, glyphs, afsc, no_vs16):
 
     if glyphFormat == "SVG":
         log.out('[SVG ]', 36)
-        root.append(tables.svg.toTTX(m, glyphs, afsc))
+        root.append(tables.svg.toTTX(m, glyphs, flags["afsc"]))
 
     elif glyphFormat == "sbix":
         log.out('[sbix]', 36)

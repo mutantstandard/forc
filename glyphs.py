@@ -238,13 +238,13 @@ class glyph:
 
 
 
-def compileImageGlyphs(dir, m, delim, nusc, afsc, formats):
+def compileImageGlyphs(dir, m, delim, nusc, afsc, imageFormats):
 
     ## get a rough list of everything
 
     imgCollection = dict()
 
-    if 'svg' in formats:
+    if 'svg' in imageFormats:
 
         if not (dir / 'svg').exists():
             raise Exception(f"You don't have an 'svg' folder in your input!")
@@ -259,7 +259,7 @@ def compileImageGlyphs(dir, m, delim, nusc, afsc, formats):
 
 
 
-    if 'png' in formats:
+    if 'png' in imageFormats:
 
         if not list(dir.glob("png*")):
             raise Exception(f"There are no PNG folders in your input folder.")
@@ -457,14 +457,14 @@ def mixAndSortGlyphs(glyphs):
 
 
 
-def getGlyphs(inputPath, m, aliases, delim, formats, no_lig, no_vs16, nusc, afsc):
+def getGlyphs(inputPath, m, aliases, delim, imageFormats, flags):
     """
     Runs inputs through all of the necessary processes and checks to create a glyphs structure.
     """
 
     # compile image glyphs
     log.out(f'- Getting + validating image glyphs... (this can take a while)', 90)
-    imgGlyphs = compileImageGlyphs(inputPath, m, delim, nusc, afsc, formats)
+    imgGlyphs = compileImageGlyphs(inputPath, m, delim, flags["nusc"], flags["afsc"], imageFormats)
 
 
     # compile alias glyphs
@@ -477,17 +477,17 @@ def getGlyphs(inputPath, m, aliases, delim, formats, no_lig, no_vs16, nusc, afsc
 
     # process service glyphs
     log.out(f'- Adding service codepoints...', 90)
-    glyphs = addServiceGlyphs(glyphs, no_vs16)
+    glyphs = addServiceGlyphs(glyphs, flags["no_vs16"])
 
 
     # check for duplicate codepoints without VS16
-    if not no_vs16:
+    if not flags["no_vs16"]:
         log.out(f'- Checking if there are any duplicate glyphs...', 90)
         glyphDuplicateTest(glyphs)
 
 
     # validating (or stripping) ligatures
-    if no_lig:
+    if flags["no_lig"]:
         log.out(f'- [--no-lig] Stripping any ligatures...', 90)
         singleGlyphs = []
 

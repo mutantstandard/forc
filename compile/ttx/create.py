@@ -37,7 +37,7 @@ def compileTTX(input, output):
 
 
 
-def createFont(formatData, outPath, tempPath, filename, manifest, glyphs, ttx_output, dev_ttx_output, afsc, no_vs16):
+def createFont(formatData, outPath, tempPath, filename, manifest, glyphs, flags):
     """
     Calls the functions that assemble and create a font via TTX.
     """
@@ -66,7 +66,7 @@ def createFont(formatData, outPath, tempPath, filename, manifest, glyphs, ttx_ou
 
     # assemble TTX
     log.out(f'🛠  Assembling initial TTX...')
-    originalTTX = assembler(formatName, manifest, glyphs, afsc, no_vs16)
+    originalTTX = assembler(formatName, manifest, glyphs, flags)
     log.out(f'✅ Initial TTX successfully assembled.\n', 32)
 
 
@@ -94,11 +94,11 @@ def createFont(formatData, outPath, tempPath, filename, manifest, glyphs, ttx_ou
 
 
     # --dev-ttx flag
-    if dev_ttx_output:
+    if flags["dev_ttx_output"]:
         shutil.copy(str(originalTTXPath), str(outPath / (filename + "_dev.ttx")))
 
     # -ttx flag
-    if ttx_output:
+    if flags["ttx_output"]:
         shutil.copy(str(originalTTXPath), str(outPath / (filename + ".ttx")))
 
 

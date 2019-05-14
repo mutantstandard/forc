@@ -39,11 +39,14 @@ by Mutant Standard
 
 USAGE: forc.py [options...]
 
+
+
 HELP:
 ----------------------------------------------------
 -h      Prints this help message.
 
 Also look at /docs for full documentation.
+
 
 
 WHAT TO BUILD FROM:
@@ -55,6 +58,7 @@ WHAT TO BUILD FROM:
 
 -d      Delimiter between ligatured codepoints
         (default: '{DEF_DELIM_CODEPOINT}')
+
 
 
 HOW TO BUILD IT:
@@ -75,18 +79,17 @@ HOW TO BUILD IT:
         Currently the only compiler is 'ttx'.
 
 
+
 OPTIONAL EXTRA FLAGS:
 ----------------------------------------------------
---ttx       Exports a matching ttx (.ttx) file for each format.
 
---dev-ttx   Keeps the initial ttx that forc compiles before
-            passing it to fonttools. This is different to the above,
-            which is a full representation of the font file.
-
-
-
+FOR CODEPOINTS
 
 --no-vs16   Strips any presence of VS16 (U+fe0f) from the output.
+--no-lig    (DEVELOPMENT OPTION) Strips ligatures from the output.
+
+
+FOR SVGs
 
 --nusc      No Unenforced SVG Contents Checking.
             Makes SVG checking less strict by allowing SVG contents
@@ -97,7 +100,16 @@ OPTIONAL EXTRA FLAGS:
             Affinity software. Always use this if you are making
             a font with SVGs that come from Affinity software.
 
---no-lig    (DEVELOPMENT OPTION) Strips ligatures from the output.
+
+FOR TTX COMPILER
+Will be ignored if you are using a different compiler.
+
+--ttx       Exports a matching ttx (.ttx) file for each format.
+
+--dev-ttx   (DEVELOPMENT OPTION) Keeps the initial ttx that forc
+            compiles before passing it to fonttools. This is
+            different to the above, which is a full representation
+            of the font file.
 
 
 
@@ -169,6 +181,16 @@ def main():
         print(HELP)
         sys.exit(2)
     try:
+        flags = { "no_vs16": no_vs16
+                , "no_lig": no_lig
+
+                , "nusc": nusc
+                , "afsc": afsc
+
+                , "ttx_output": ttx_output
+                , "dev_ttx_output": dev_ttx_output
+                }
+
         start( input_path
               , output_path
               , manifest_path
@@ -177,15 +199,7 @@ def main():
 
               , output_formats
               , compiler
-
-              , ttx_output
-              , dev_ttx_output
-
-              , no_vs16
-              , nusc
-              , afsc
-
-              , no_lig
+              , flags
               )
 
     except Exception as e:

@@ -25,15 +25,7 @@ def start( inputPath
 
           , outputFormats
           , compiler
-
-          , ttx_output
-          , dev_ttx_output
-
-          , no_vs16
-          , nusc
-          , afsc
-
-          , no_lig
+          , flags
           ):
     """
     Performs a variety of initial data gathering and validation tasks,
@@ -95,6 +87,7 @@ def start( inputPath
         raise ValueError(f"'{compiler}' isn't a valid compiler option!")
 
 
+    # flags
 
 
     # manifest
@@ -125,9 +118,8 @@ def start( inputPath
     # ------------------------------------------------
 
     log.out(f'Getting + checking glyphs...')
-    glyphs = getGlyphs(inputPathPath, manifest, aliases, delim_codepoint, glyphImageFormats, no_lig, no_vs16, nusc, afsc)
+    glyphs = getGlyphs(inputPathPath, manifest, aliases, delim_codepoint, glyphImageFormats, flags)
     log.out(f'Glyphs OK!\n', 32)
-
 
 
     log.out(f'All resources OK!', 32)
@@ -139,4 +131,4 @@ def start( inputPath
     log.out(f'Starting font compilation...\n\n', 35)
 
     for f in outputFormats:
-        createFont(f, outputPath, manifest, glyphs, compiler, ttx_output, dev_ttx_output, afsc, no_vs16)
+        createFont(f, outputPath, manifest, glyphs, compiler, flags)

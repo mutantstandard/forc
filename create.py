@@ -9,7 +9,7 @@ import compile.ios.create
 from format import formats
 
 
-def createFont(fontFormat, outputPath, manifest, glyphs, compiler, ttx_output, dev_ttx_output, afsc, no_vs16):
+def createFont(fontFormat, outputPath, manifest, glyphs, compiler, flags):
 
     log.out(f'{fontFormat}', 96)
     log.out("-----------------", 90)
@@ -37,7 +37,7 @@ def createFont(fontFormat, outputPath, manifest, glyphs, compiler, ttx_output, d
 
 
     if compiler is 'ttx':
-        tempFontPath = compile.ttx.create.createFont(formatData, outPath, tempPath, filename, manifest, glyphs, ttx_output, dev_ttx_output, afsc, no_vs16)
+        tempFontPath = compile.ttx.create.createFont(formatData, outPath, tempPath, filename, manifest, glyphs, flags)
 
     if formats[fontFormat]["iOSCompile"]:
         compile.ios.create.createPackage(formatData, filename, outPath, tempFontPath, manifest)
