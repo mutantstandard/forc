@@ -23,6 +23,9 @@ class vmtx:
     """
     Class representing a vmtx table.
     """
+
+    # number of Vmetrics must equal the total number of glyphs in the font.
+
     def __init__(self, m, glyphs):
         self.metrics = []
 

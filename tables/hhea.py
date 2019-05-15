@@ -1,3 +1,4 @@
+import struct
 from lxml.etree import Element
 
 
@@ -10,7 +11,9 @@ class hhea:
 
         metrics = m['metrics']
 
-        self.tableVersion = '0x00010000' # hard-coded    TODO: put it in a more accurate data format.
+        self.majorVersion = 1
+        self.minorVersion = 0
+        self.tableVersionTTX = '0x00010000' # hard-coded    TODO: merge with the normal version
 
         self.ascent = metrics['horiAscent']
         self.descent = metrics['horiDescent']
@@ -26,13 +29,13 @@ class hhea:
         self.caretSlopeRun = 0
         self.caretOffset = 0
 
-        # reserved and hard-coded.
+        # reserved, hardcoded; meant to be 0.
         self.reserved0 = 0
         self.reserved1 = 0
         self.reserved2 = 0
         self.reserved3 = 0
 
-        self.metricDataFormat = 0 # hardcoded
+        self.metricDataFormat = 0 # hardcoded, meant to be 0.
         self.numberofHMetrics = 0 # TODO: try to actually generate this based on the actual number of hmetrics that exist.
 
 
@@ -44,7 +47,7 @@ class hhea:
 
         hhea = Element("hhea")
 
-        hhea.append(Element("tableVersion", {'value': self.tableVersion }))
+        hhea.append(Element("tableVersion", {'value': self.tableVersionTTX }))
 
         hhea.append(Element("ascent", {'value': str(self.ascent) }))
         hhea.append(Element("descent", {'value': str(self.descent) }))
@@ -69,3 +72,31 @@ class hhea:
         hhea.append(Element("numberOfHMetrics", {'value': str(self.numberofHMetrics) }))
 
         return hhea
+
+
+    def toBinary(self):
+        return struct.pack('>HHhhhHhhhhhhhhhhhH'
+                          , self.majorVersion # UInt16
+                          , self.minorVersion # UInt16
+
+                          , self.ascent # Int16
+                          , self.descent # Int16
+                          , self.lineGap # Int16
+
+                          , self.advanceWidthMax # UInt16 (yep, definitely unsigned)
+                          , self.minLeftSideBearing # Int16
+                          , self.minRightSideBearing # Int16
+                          , self.xMaxExtent # Int16
+
+                          , self.caretSlopeRise # Int16
+                          , self.caretSlopeRun # Int16
+                          , self.caretOffset # Int16
+
+                          , self.reserved0 # Int16
+                          , self.reserved1 # Int16
+                          , self.reserved2 # Int16
+                          , self.reserved3 # Int16
+
+                          , self.metricDataFormat # Int16
+                          , self.numberofHMetrics # UInt16
+                          )

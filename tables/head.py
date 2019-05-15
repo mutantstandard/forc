@@ -1,3 +1,4 @@
+import struct
 from lxml.etree import Element
 
 class head:
@@ -23,7 +24,8 @@ class head:
 
 
 
-        self.tableVersion = 1.0 # hard-coded
+        self.majorVersion = 1 # hard-coded, is meant to be 1.
+        self.minorVersion = 0 # hard-coded, is meant to be 0.
         self.fontRevision = headVersionHex
         self.fontRevisionTTXfriendly = m['metadata']['version'] # TTX is weird about font versioning, only accepts a basic string.
 
@@ -44,7 +46,7 @@ class head:
         self.macStyle = '00000000 00000000' # hard-coded. Must agree with OS/2's fsType. TODO: Work on a more accurate format for internal use.
         self.lowestRecPPEM = m['metrics']['lowestRecPPEM']
 
-        self.fontDirectionHint = 2 # depreciated, hard-coded
+        self.fontDirectionHint = 2 # depreciated; is meant to be 2.
         self.indexToLocFormat = 0 # not important, hard-coded
         self.glyphDataFormat = 0 # not important, hard-coded
 
@@ -59,7 +61,7 @@ class head:
 
         head = Element("head")
 
-        head.append(Element("tableVersion", {'value': str(self.tableVersion) }))
+        head.append(Element("tableVersion", {'value': str(self.majorVersion) + '.' + str(self.minorVersion)  }))
         head.append(Element("fontRevision", {'value': str(self.fontRevisionTTXfriendly)  })) # have to use the TTX-friendly version
 
         head.append(Element("checkSumAdjustment", {'value': str(self.checkSumAdjustment) })) # TTX changes this at compilation
@@ -84,3 +86,33 @@ class head:
         head.append(Element("glyphDataFormat", {'value': str(self.glyphDataFormat) }))
 
         return head
+
+
+
+    def toBinary(self):
+        return struct.pack( '>HHiIIHHqqhhhhHHhhh'
+                            , self.majorVersion # UInt16
+                            , self.minorVersion # UInt16
+                            , self.fontRevision # Fixed (Int32 but fixed-point)
+
+                            , self.checksumAdjustment # UInt32
+                            , self.magicNumber # UInt32
+
+                            , self.flags # UInt16
+
+                            , self.unitsPerEm # UInt16
+                            , self.created # LONGDATETIME (Int64) # TODO: get the date stuff to actually pack into this.
+                            , self.modified # LONGDATETIME (Int64) # TODO: get the date stuff to actually pack into this.
+
+                            , self.xMin # Int16
+                            , self.yMin # Int16
+                            , self.xMax # Int16
+                            , self.yMax # Int16
+
+                            , self.macStyle # UInt16
+                            , self.lowerstRecPPEM # UInt16
+
+                            , self.fontDirectionHint # Int16
+                            , self.indexToLocFormat # Int16
+                            , self.glyphDataFormat # Int16
+                            )
