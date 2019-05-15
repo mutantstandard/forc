@@ -1,5 +1,5 @@
 from lxml.etree import Element
-from tables.support.eblc_ebdt_metrics import SmallGlyphMetrics, BigGlyphMetrics
+from tables.support.ebx_metrics import SmallGlyphMetrics, BigGlyphMetrics
 
 
 

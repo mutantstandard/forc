@@ -1,98 +1,56 @@
 from lxml.etree import Element
-from tables.support.eblc_ebdt_metrics import sbitLineMetricsHori, sbitLineMetricsVert
-
-
-def strike(metrics, strikeIndex, ppem, glyphs):
-
-    strike = Element("strike", {"index": str(strikeIndex)})
-
-
-    # bitmapSizeTable
-    # --------------------------------
-
-    bSizeTable = Element("bitmapSizeTable")
-
-    bSizeTable.append(sbitLineMetricsHori(metrics))
-    bSizeTable.append(sbitLineMetricsVert(metrics))
+from tables.support.ebx_metrics import BitmapSize
+from tables.support.ebx_indexes import IndexSubTable1
 
 
 
-    # other stuff
-    # --------------------------------
-    bSizeTable.append(Element("colorRef", {"value": "0"}))
+class cblcStrike:
 
-    bSizeTable.append(Element("startGlyphIndex", {"value": "0"}))
-    bSizeTable.append(Element("endGlyphIndex", {"value": "0"}))
+    def __init__(self, metrics, index, ppem, glyphs):
 
-    bSizeTable.append(Element("ppemX", {"value": str(ppem) }))
-    bSizeTable.append(Element("ppemY", {"value": str(ppem) }))
-
-    bSizeTable.append(Element("bitDepth", {"value": "32"}))
-    bSizeTable.append(Element("flags", {"value": "1"}))
-
-    strike.append(bSizeTable)
-
-    eblcSub = Element("eblc_index_sub_table_1", {"imageFormat": "17"})
+        self.index = index
+        self.bitmapSizeTable = BitmapSize(metrics, ppem, glyphs)
+        self.indexSubTable = IndexSubTable1(glyphs)
 
 
+    def toTTX(self):
+        strike = Element("strike", {"index": str(self.index) })
 
+        strike.append(self.bitmapSizeTable.toTTX())
+        strike.append(self.indexSubTable.toTTX())
 
-    # EBLC index subtable
-    # --------------------------------
-
-    glyphIDList = []
-
-    for id, g in enumerate(glyphs["img_empty"]):
-
-        # you only put them in if there's an actual image
-        if g.imgDict:
-            glyphIDList.append(id)
-            eblcSub.append(Element("glyphLoc", {"id": str(id), "name": g.codepoints.name() }))
-
-    eblcSub.attrib['firstGlyphIndex'] = str(glyphIDList[0])
-    eblcSub.attrib['lastGlyphIndex'] = str(glyphIDList[-1])
-    bSizeTable.attrib['firstGlyphIndex'] = str(glyphIDList[0])
-    bSizeTable.attrib['lastGlyphIndex'] = str(glyphIDList[0])
-
-    strike.append(eblcSub)
-
-    return strike
+        return strike
 
 
 
+class cblc:
+
+    def __init__(self, m, glyphs):
+
+        self.version = float(3.0) # hard-coded, the only CBLC version that exists.
+        self.strikes = []
+
+        # get basic strike information.
+
+        for g in glyphs["img_empty"]:
+            if g.imgDict:
+                firstGlyphWithStrikes = g
+                break
+
+        # iterate over each strike.
+        strikeIndex = 0
+
+        for imageFormat, image in firstGlyphWithStrikes.imgDict.items():
+            if imageFormat.split('-')[0] == "png":
+                self.strikes.append(cblcStrike(m["metrics"], strikeIndex, image.strike, glyphs))
+                strikeIndex += 1
 
 
-def toTTX(m, glyphs):
-    """
-    Generates and returns a glyf table with dummy data.
-    """
+    def toTTX(self):
+        cblc = Element("CBLC")
+        cblc.append(Element("header", {"version": str(self.version) })) # hard-coded
 
-    metrics = m['metrics']
+        for s in self.strikes:
+            cblc.append(s.toTTX())
 
-    cblc = Element("CBLC")
-
-    cblc.append(Element("header", {"version": "3.0"})) # hard-coded
-
-
-
-    # get basic strike information.
-
-    for g in glyphs["img_empty"]:
-        if g.imgDict:
-            firstGlyphWithStrikes = g
-            break
-
-
-    # iterate over each strike.
-
-    strikeIndex = 0
-
-    for imageFormat, image in firstGlyphWithStrikes.imgDict.items():
-        if imageFormat.split('-')[0] == "png":
-            cblc.append(strike(metrics, strikeIndex, image.strike, glyphs))
-            strikeIndex += 1
-
-
-
-
-    return cblc
+        return cblc

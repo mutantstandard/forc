@@ -3,7 +3,7 @@ from lxml.etree import Element
 
 class hhea:
     """
-    Class representing an 'hhea' table.
+    Class representing an hhea table.
     """
 
     def __init__(self, m):

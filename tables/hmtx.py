@@ -1,14 +1,39 @@
 from lxml.etree import Element
 
-def toTTX(m, glyphs):
-    metrics = m['metrics']
 
-    hmtx = Element("hmtx")
+class hmtxMetric:
+    """
+    Class representing a single metric in an hmtx table.
+    """
 
-    for g in glyphs["img_empty"]:
-        hmtx.append(Element("mtx", {"name": g.codepoints.name()
-                                    ,"width": str(metrics['normalWidth'])
-                                    ,"lsb": str(metrics['normalLSB'])
-                                    }))
+    def __init__(self, name, width, lsb):
+        self.name = name
+        self.width = width
+        self.LSB = lsb
 
-    return hmtx
+    def toTTX(self):
+        return Element("mtx", {"name": self.name
+                                ,"width": str(self.width)
+                                ,"lsb": str(self.LSB)
+                                })
+
+
+
+class hmtx:
+    """
+    Class representing an hmtx table.
+    """
+    def __init__(self, m, glyphs):
+
+        self.metrics = []
+
+        for g in glyphs["img_empty"]:
+            self.metrics.append(hmtxMetric(g.codepoints.name(), m['metrics']['normalWidth'], m['metrics']['normalLSB']))
+
+    def toTTX(self):
+        hmtx = Element("hmtx")
+
+        for m in self.metrics:
+            hmtx.append(m.toTTX())
+
+        return hmtx

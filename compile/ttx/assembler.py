@@ -102,13 +102,13 @@ def assembler(chosenFormat, m, glyphs, flags):
     root.append(tables.hhea.hhea(m).toTTX())
 
     log.out('[hmtx] ', 90, newline=False)
-    root.append(tables.hmtx.toTTX(m, glyphs))
+    root.append(tables.hmtx.hmtx(m, glyphs).toTTX())
 
     log.out('[vhea] ', 90, newline=False)
-    root.append(tables.vhea.toTTX(m))
+    root.append(tables.vhea.vhea(m).toTTX())
 
     log.out('[vmtx]', 90)
-    root.append(tables.vmtx.toTTX(m, glyphs))
+    root.append(tables.vmtx.vmtx(m, glyphs).toTTX())
 
 
 
@@ -175,7 +175,7 @@ def assembler(chosenFormat, m, glyphs, flags):
 
     elif glyphFormat == "CBx":
         log.out('[CBLC] ', 36, newline=False)
-        root.append(tables.cblc.toTTX(m, glyphs))
+        root.append(tables.cblc.cblc(m, glyphs).toTTX())
 
         log.out('[CBDT]', 36)
         root.append(tables.cbdt.cbdt(m, glyphs).toTTX())

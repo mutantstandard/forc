@@ -1,5 +1,5 @@
 from lxml.etree import Element
-from tables.support.ebdt_bitmaps import EBDTBitmapFormat17
+from tables.support.ebx_bitmaps import EBDTBitmapFormat17
 
 
 class cbdtStrike:

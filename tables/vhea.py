@@ -1,32 +1,73 @@
 from lxml.etree import Element
 
-def toTTX(m):
-    metrics = m['metrics']
 
-    vhea = Element("vhea")
+class vhea:
+    """
+    Class representing a vhea table.
+    """
 
-    vhea.append(Element("tableVersion", {'value': '0x00010000'})) # hard-coded
+    def __init__(self, m):
 
-    vhea.append(Element("ascent", {'value': str(metrics['vertAscent']) }))
-    vhea.append(Element("descent", {'value': str(metrics['vertDescent']) }))
-    vhea.append(Element("lineGap", {'value': "0" })) # hard-coded based on best practices
+        metrics = m['metrics']
 
-    vhea.append(Element("advanceHeightMax", {'value': str(metrics['yMax']) }))
-    vhea.append(Element("minTopSideBearing", {'value': "0" }))
-    vhea.append(Element("minBottomSideBearing", {'value': "0" }))
-    vhea.append(Element("yMaxExtent", {'value': '2048'}))
+        self.tableVersion = '0x00010000' # hard-coded    TODO: put it in a more accurate data format.
 
-    vhea.append(Element("caretSlopeRise", {'value': '1'})) # probably hard-coded
-    vhea.append(Element("caretSlopeRun", {'value': '0'})) # probably hard-coded
-    vhea.append(Element("caretOffset", {'value': '0'})) # probably hard-coded
+        self.ascent = metrics['vertAscent']
+        self.descent = metrics['vertDescent']
+        self.lineGap = 0 # hard-coded based on best practices
 
-    ## yes, the numbers are different from vhea. tables are weird.
-    vhea.append(Element("reserved1", {'value': '0'})) # hard-coded
-    vhea.append(Element("reserved2", {'value': '0'})) # hard-coded
-    vhea.append(Element("reserved3", {'value': '0'})) # hard-coded
-    vhea.append(Element("reserved4", {'value': '0'})) # hard-coded
+        self.advanceHeightMax = metrics['height']
+        self.minTopSideBearing = 0
+        self.minBottomSideBearing = 0
+        self.yMaxExtent = metrics['height']
 
-    vhea.append(Element("metricDataFormat", {'value': '0'})) # hard-coded
-    vhea.append(Element("numberOfHMetrics", {'value': '0'})) # maybe TTX auto-denerates this?
+        # carets should be this ratio for emoji fonts.
+        self.caretSlopeRise = 1
+        self.caretSlopeRun = 0
+        self.caretOffset = 0
 
-    return vhea
+        # reserved and hard-coded.
+        # yes, the numbers are different from hhea. That's meant to be the case.
+        self.reserved1 = 0
+        self.reserved2 = 0
+        self.reserved3 = 0
+        self.reserved4 = 0
+
+        self.metricDataFormat = 0 # hardcoded
+        self.numberofVMetrics = 0 # TODO: try to actually generate this based on the actual number of vmetrics that exist.
+
+
+
+    def toTTX(self):
+        """
+        Compiles table to TTX.
+        """
+
+        vhea = Element("vhea")
+
+        vhea.append(Element("tableVersion", {'value': self.tableVersion }))
+
+        vhea.append(Element("ascent", {'value': str(self.ascent) }))
+        vhea.append(Element("descent", {'value': str(self.descent) }))
+        vhea.append(Element("lineGap", {'value': str(self.lineGap) }))
+
+        vhea.append(Element("advanceHeightMax", {'value': str(self.advanceHeightMax) }))
+        vhea.append(Element("minTopSideBearing", {'value': str(self.minTopSideBearing) }))
+        vhea.append(Element("minBottomSideBearing", {'value': str(self.minBottomSideBearing) }))
+        vhea.append(Element("yMaxExtent", {'value': str(self.yMaxExtent) }))
+
+        vhea.append(Element("caretSlopeRise", {'value': str(self.caretSlopeRise) }))
+        vhea.append(Element("caretSlopeRun", {'value': str(self.caretSlopeRun) }))
+        vhea.append(Element("caretOffset", {'value': str(self.caretOffset) }))
+
+        vhea.append(Element("reserved1", {'value': str(self.reserved1) }))
+        vhea.append(Element("reserved2", {'value': str(self.reserved2) }))
+        vhea.append(Element("reserved3", {'value': str(self.reserved3) }))
+        vhea.append(Element("reserved4", {'value': str(self.reserved4) }))
+
+        vhea.append(Element("metricDataFormat", {'value': str(self.metricDataFormat) }))
+        # I think it's supposed to be called this way. *shrugs*
+        vhea.append(Element("numberOfHMetrics", {'value': str(self.numberofVMetrics) }))
+
+
+        return vhea
