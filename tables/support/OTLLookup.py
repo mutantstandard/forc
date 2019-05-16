@@ -22,6 +22,8 @@ class LookupType4:
     """
     Table somewhat representing a LookupType 4.
     (https://docs.microsoft.com/en-us/typography/opentype/spec/gsub#lookuptype-4-ligature-substitution-subtable)
+
+    Generated from user input glyphs.
     """
     def __init__(self, glyphs):
         self.lookupType = 4

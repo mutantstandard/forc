@@ -12,7 +12,7 @@ from data import tag
 class Script:
     """
     Class representing a placeholder Script table.
-    Intended to have the right data for TTX GSUB generation.
+    Currently not editable atm - it's just designed to have the right data for forc's particular context.
     """
     def __init(self):
         self.whatever = 0
@@ -34,7 +34,7 @@ class Script:
 class ScriptRecord:
     """
     Class representing a placeholder ScriptRecord table.
-    Intended to have the right data for TTX GSUB generation.
+    Currently not editable atm - it's just designed to have the right data for forc's particular context.
     """
     def __init__(self):
 

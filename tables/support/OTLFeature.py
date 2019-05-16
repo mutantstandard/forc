@@ -11,8 +11,8 @@ from data import tag
 
 class Feature:
     """
-    Class representing a placeholder Feature table.
-    Intended to have the right data for TTX GSUB generation.
+    Class representing a Feature table.
+    Currently not editable atm - it's just designed to have the right data for forc's particular context.
     """
     def __init__(self):
         self.whatever = 0
@@ -26,7 +26,7 @@ class Feature:
 class FeatureRecord:
     """
     Class representing a placeholder FeatureRecord table.
-    Intended to have the right data for TTX GSUB generation.
+    Currently not editable atm - it's just designed to have the right data for forc's particular context.
     """
     def __init__(self):
         self.tag = tag("liga")

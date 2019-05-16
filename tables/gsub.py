@@ -15,9 +15,9 @@ class gsub:
         self.majorVersion = 1
         self.minorVersion = 0
 
-        self.scriptList = ScriptList() # placeholder ScriptList
-        self.featureList = FeatureList() # placeholder FeatureList
-        self.lookupList = LookupList(glyphs) # placeholder LookupList
+        self.scriptList = ScriptList() # non-editable ScriptList
+        self.featureList = FeatureList() # non-editable FeatureList
+        self.lookupList = LookupList(glyphs) # non-editable LookupList
 
 
     def toTTX(self):
