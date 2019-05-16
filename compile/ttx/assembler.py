@@ -62,7 +62,7 @@ def assembler(chosenFormat, m, glyphs, flags):
     root.append(tables.head.head(m).toTTX())
 
     log.out('[OS/2] ', 90, newline=False)
-    root.append(tables.os2.toTTX(m, glyphs))
+    root.append(tables.os2.os2(m, glyphs).toTTX())
 
     log.out('[post] ', 90, newline=False)
     root.append(tables.post.toTTX(glyphs))

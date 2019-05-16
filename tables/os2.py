@@ -1,125 +1,299 @@
+import struct
 from lxml.etree import Element
 
-def toTTX(m, glyphs):
+
+
+
+class os2PANOSE:
     """
-    Creates an OS/2 table and fills it with both hard-coded,
-    automatically generated and user-defined metadata.
+    Class representing the PANOSE segment of an OS/2 table.
     """
 
-    metrics = m['metrics']
+    def __init__(self):
 
-    singleCodepoints = []
-    twoByte = []
-
-    # the only bit in ulUnicodeRange that's *really* necessary to set.
-    supplementaryPlane = False
-
-    for g in glyphs['all']:
-        if g.codepoints.seq[0] >= int('0x10000', 16) and g.codepoints.seq[0] <= int('0x10ffff', 16):
-            supplementaryPlane = True
-
-        if len(g.codepoints.seq) == 1:
-            singleCodepoints.append(g.codepoints.seq[0])
-
-            if g.codepoints.seq[0] < int('ffff', 16):
-                twoByte.append(g.codepoints.seq[0])
+        # these are all hard-coded to be the optimal values for an emoji font.
+        self.bFamilyType = 2
+        self.bSerifStyle = 0
+        self.bWeight = 6
+        self.bProportion = 9
+        self.bContrast = 0
+        self.bStrokeVariation = 0
+        self.bArmStyle = 0
+        self.bLetterForm = 0
+        self.bMidline = 0
+        self.bXHeight = 0
 
 
-    # ttx actually cannibalises this, but screw it, I'll do it anyway.
-    usFirstCharIndex = str(hex(min(twoByte)))
-    usLastCharIndex = str(hex(max(twoByte)))
+    def toTTX(self):
+        panose = Element("panose")
+        panose.append(Element("bFamilyType", {'value': str(self.bFamilyType) }))
+        panose.append(Element("bSerifStyle", {'value': str(self.bSerifStyle) }))
+        panose.append(Element("bWeight", {'value': str(self.bWeight) }))
+        panose.append(Element("bProportion", {'value': str(self.bProportion) }))
+        panose.append(Element("bContrast", {'value': str(self.bContrast) }))
+        panose.append(Element("bStrokeVariation", {'value': str(self.bStrokeVariation) }))
+        panose.append(Element("bArmStyle", {'value': str(self.bArmStyle) }))
+        panose.append(Element("bLetterForm", {'value': str(self.bLetterForm) }))
+        panose.append(Element("bMidline", {'value': str(self.bMidline) }))
+        panose.append(Element("bXHeight", {'value': str(self.bXHeight) }))
+
+        return panose
+
+    def toBinary(self):
+        return struct.pack(">HHHHHHHHHH"
+                          , self.bFamilyType
+                          , self.bSerifStyle
+                          , self.bWeight
+                          , self.bProportion
+                          , self.bContrast
+                          , self.bStrokeVariation
+                          , self.bArmStyle
+                          , self.bLetterForm
+                          , self.bMidline
+                          , self.bXHeight
+                          )
 
 
+class os2:
+    """
+    Class representing an OS/2 table.
+    """
 
+    def __init__(self, m, glyphs):
 
+        # PREPARE DATA
+        # --------------------------
 
+        metrics = m['metrics']
 
+        singleCodepoints = []
+        twoByte = []
 
-    # Make the table
-    # ----------------------------------------------------------------
+        # the only bit in ulUnicodeRange that's *really* necessary to set.
+        supplementaryPlane = False
 
-    os2 = Element("OS_2")
+        for g in glyphs['all']:
+            if g.codepoints.seq[0] >= int('0x10000', 16) and g.codepoints.seq[0] <= int('0x10ffff', 16):
+                supplementaryPlane = True
 
-    os2.append(Element("version", {'value': '5'})) # hard-coded
+            if len(g.codepoints.seq) == 1:
+                singleCodepoints.append(g.codepoints.seq[0])
 
-    os2.append(Element("xAvgCharWidth", {'value': str(metrics['xMax']) })) # xMax
-    os2.append(Element("usWeightClass", {'value': '500'})) # hard-coded?
-    os2.append(Element("usWidthClass", {'value': '5'})) # hard-coded?
+                if g.codepoints.seq[0] < int('ffff', 16):
+                    twoByte.append(g.codepoints.seq[0])
 
-    os2.append(Element("fsType", {'value': '00000000 00000000'}))                                   # hard-coded. must agree with head.macStyle
-
-
-
-
-
-    os2.append(Element("ySubscriptXSize", {'value': str(metrics['OS2ySubscriptXSize']) }))
-    os2.append(Element("ySubscriptYSize", {'value': str(metrics['OS2ySubscriptYSize']) }))
-    os2.append(Element("ySubscriptXOffset", {'value': str(metrics['OS2ySubscriptXOffset']) }))
-    os2.append(Element("ySubscriptYOffset", {'value': str(metrics['OS2ySubscriptYOffset']) }))
-
-    os2.append(Element("ySuperscriptXSize", {'value': str(metrics['OS2ySuperscriptXSize']) }))
-    os2.append(Element("ySuperscriptYSize", {'value': str(metrics['OS2ySuperscriptYSize']) }))
-    os2.append(Element("ySuperscriptXOffset", {'value': str(metrics['OS2ySuperscriptXOffset']) }))
-    os2.append(Element("ySuperscriptYOffset", {'value': str(metrics['OS2ySuperscriptYOffset']) }))
-
-    os2.append(Element("yStrikeoutSize", {'value': str(metrics['OS2yStrikeoutSize']) }))
-    os2.append(Element("yStrikeoutPosition", {'value': str(metrics['OS2yStrikeoutPosition']) }))
-
-
-
-
-    os2.append(Element("sFamilyClass", {'value': '5'})) # hard-coded
-
-
-
-
-    # all panose elements are hard-coded
-    panose = Element("panose")
-    panose.append(Element("bFamilyType", {'value': "2"}))
-    panose.append(Element("bSerifStyle", {'value': "0"}))
-    panose.append(Element("bWeight", {'value': "6"}))
-    panose.append(Element("bProportion", {'value': "9"}))
-    panose.append(Element("bContrast", {'value': "0"}))
-    panose.append(Element("bStrokeVariation", {'value': "0"}))
-    panose.append(Element("bArmStyle", {'value': "0"}))
-    panose.append(Element("bLetterForm", {'value': "0"}))
-    panose.append(Element("bMidline", {'value': "0"}))
-    panose.append(Element("bXHeight", {'value': "0"}))
-    os2.append(panose)
+        usFirstCharIndex = hex(min(twoByte))
+        usLastCharIndex = hex(max(twoByte))
 
 
 
+        # STORE DATA
+        # --------------------------
 
-    os2.append(Element("ulUnicodeRange1", {'value': '00000000 00000000 00000000 00000000'}))
-    os2.append(Element("ulUnicodeRange2", {'value': '000000'+ str(int(supplementaryPlane)) + '0 00000000 00000000 00000000'})) #it's Big-endian
-    os2.append(Element("ulUnicodeRange3", {'value': '00000000 00000000 00000000 00000000'}))
-    os2.append(Element("ulUnicodeRange4", {'value': '00000000 00000000 00000000 00000000'}))
+        self.version = 5 # hard-coded, the current (also the latest) version for this table generation is 5.
 
-    os2.append(Element("achVendID", {'value': m['metadata']['OS2VendorID']}))
+        self.xAvgCharWidth = metrics['xMax']
+        self.usWeightClass = 500 # hard-coded for now. This is ideal for emoji.
+        self.usWidthClass = 5 # hard-coded for now. This is ideal for emoji.
 
-    os2.append(Element("fsSelection", {'value': '00000000 00000000'}))                          # hard-coded
+        self.fsType = '00000000 00000000'
+        # self.fsType = int('00000000' '00000000', 2) # hard-coded. must agree with head.macStyle
 
-    os2.append(Element("usFirstCharIndex", {'value': usFirstCharIndex}))
-    os2.append(Element("usLastCharIndex", {'value': usLastCharIndex}))
+        self.ySubscriptXSize = metrics['OS2ySubscriptXSize']
+        self.ySubscriptYSize = metrics['OS2ySubscriptYSize']
+        self.ySubscriptXOffset = metrics['OS2ySubscriptXOffset']
+        self.ySubscriptYOffset = metrics['OS2ySubscriptYOffset']
 
-    os2.append(Element("sTypoAscender", {'value': str(metrics['yMax']) }))
-    os2.append(Element("sTypoDescender", {'value': str(metrics['yMin']) }))                     # this should be this way based on validators and best practices.
-    os2.append(Element("sTypoLineGap", {'value': "0" }))                                        # hard-coded based on best practices
-    os2.append(Element("usWinAscent", {'value': str(metrics['yMax']) }))
-    os2.append(Element("usWinDescent", {'value': str(- metrics['yMin']) }))                     # should be -yMin: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#uswindescent
+        self.ySuperscriptXSize = metrics['OS2ySuperscriptXSize']
+        self.ySuperscriptYSize = metrics['OS2ySuperscriptYSize']
+        self.ySuperscriptXOffset = metrics['OS2ySuperscriptXOffset']
+        self.ySuperscriptYOffset = metrics['OS2ySuperscriptYOffset']
 
-    os2.append(Element("ulCodePageRange1", {'value': '00000000 00000000 00000000 00000000'}))
-    os2.append(Element("ulCodePageRange2", {'value': '00000000 00000000 00000000 00000000'}))
+        self.yStrikeoutSize = metrics['OS2yStrikeoutSize']
+        self.yStrikeoutPosition = metrics['OS2yStrikeoutPosition']
 
-    os2.append(Element("sxHeight", {'value': '0'}))                                             # leaving it hard-coded at 0 for now.
-    os2.append(Element("sCapHeight", {'value': str(metrics['yMax']) }))
+        self.sFamilyClass = 5 # hard-coded for now. This is ideal for emoji.
 
-    os2.append(Element("usDefaultChar", {'value': '0'}))
-    os2.append(Element("usBreakChar", {'value': '0x20'}))
-    os2.append(Element("usMaxContext", {'value': '1'}))
+        self.panose = os2PANOSE()
 
-    os2.append(Element("usLowerOpticalPointSize", {'value': '0'}))
-    os2.append(Element("usUpperOpticalPointSize", {'value': '0'}))
+        self.ulUnicodeRange1 = '00000000 00000000 00000000 00000000'
+        self.ulUnicodeRange2 = '000000'+ str(int(supplementaryPlane)) + '0 00000000 00000000 00000000'
+        self.ulUnicodeRange3 = '00000000 00000000 00000000 00000000'
+        self.ulUnicodeRange4 = '00000000 00000000 00000000 00000000'
+        # self.ulUnicodeRange1 = int('00000000' '00000000' '00000000' '00000000', 2)
+        # self.ulUnicodeRange2 = int('000000'+ str(int(supplementaryPlane)) + '0' '00000000' '00000000' '00000000', 2)
+        # self.ulUnicodeRange3 = int('00000000' '00000000' '00000000' '00000000', 2)
+        # self.ulUnicodeRange4 = int('00000000' '00000000' '00000000' '00000000', 2)
+
+        # TODO: convert this into a real Tag data format at the very beginning.
+        # probably make your own data type to cover for this.
+        self.achVendID = m['metadata']['OS2VendorID']
+
+        self.fsSelection = '00000000 00000000' # hard-coded
+        # self.fsSelection = int('00000000' '00000000', 2)
+
+        self.usFirstCharIndex = usFirstCharIndex
+        self.usLastCharIndex = usLastCharIndex
+
+        self.sTypoAscender = metrics['yMax']
+        self.sTypoDescender = metrics['yMin'] # this should be this way based on validators and best practices.
+        self.sTypoLineGap = 0 # hard-coded based on best practices.
+        self.usWinAscent = metrics['yMax']
+        self.usWinDescent = (- metrics['yMin']) # should be -yMin: https://docs.microsoft.com/en-us/typography/opentype/spec/os2#uswindescent
+
+        self.ulCodePageRange1 = '00000000 00000000 00000000 00000000'
+        self.ulCodePageRange2 = '00000000 00000000 00000000 00000000'
+        # self.ulCodePageRange1 = int('00000000' '00000000' '00000000' '00000000', 2)
+        # self.ulCodePageRange2 = int('00000000' '00000000' '00000000' '00000000', 2)
+
+        self.sxHeight = 0 # leaving it hard-coded at 0 for now.
+        self.sCapHeight = metrics['yMax']
+
+        self.usDefaultChar = 0
+        self.usBreakChar = 0x20
+        self.usMaxContent = 1
+
+        self.usLowerOpticalPointSize = 0
+        self.usUpperOpticalPointSize = 0
 
 
-    return os2
+
+    def toTTX(self):
+        """
+        Outputs table to TTX format.
+        """
+
+        os2 = Element("OS_2")
+
+        os2.append(Element("version", {'value': '5'})) # hard-coded
+
+        os2.append(Element("xAvgCharWidth", {'value': str(self.xAvgCharWidth) }))
+        os2.append(Element("usWeightClass", {'value': str(self.usWeightClass) }))
+        os2.append(Element("usWidthClass", {'value': str(self.usWidthClass) }))
+
+        # TODO: This is unfinished, work on it more later.
+        # os2.append(Element("fsType", {'value': str(struct.pack(">H", self.fsType)) })) # convert to binary string
+        os2.append(Element("fsType", {'value': self.fsType })) # convert to binary string
+
+        os2.append(Element("ySubscriptXSize", {'value': str(self.ySubscriptXSize) }))
+        os2.append(Element("ySubscriptYSize", {'value': str(self.ySubscriptYSize) }))
+        os2.append(Element("ySubscriptXOffset", {'value': str(self.ySubscriptXOffset) }))
+        os2.append(Element("ySubscriptYOffset", {'value': str(self.ySubscriptYOffset) }))
+
+        os2.append(Element("ySuperscriptXSize", {'value': str(self.ySuperscriptXSize) }))
+        os2.append(Element("ySuperscriptYSize", {'value': str(self.ySuperscriptYSize) }))
+        os2.append(Element("ySuperscriptXOffset", {'value': str(self.ySuperscriptXOffset) }))
+        os2.append(Element("ySuperscriptYOffset", {'value': str(self.ySuperscriptYOffset) }))
+
+        os2.append(Element("yStrikeoutSize", {'value': str(self.yStrikeoutSize) }))
+        os2.append(Element("yStrikeoutPosition", {'value': str(self.yStrikeoutPosition) }))
+
+
+
+        os2.append(Element("sFamilyClass", {'value': str(self.sFamilyClass) }))
+
+
+        os2.append(self.panose.toTTX())
+        
+
+        # TODO: This is unfinished, work on it more later.
+        # reminder: TTX takes in binary literals in Big-endian format.
+        os2.append(Element("ulUnicodeRange1", {'value': self.ulUnicodeRange1 }))
+        os2.append(Element("ulUnicodeRange2", {'value': self.ulUnicodeRange2 }))
+        os2.append(Element("ulUnicodeRange3", {'value': self.ulUnicodeRange3 }))
+        os2.append(Element("ulUnicodeRange4", {'value': self.ulUnicodeRange4 }))
+
+        os2.append(Element("achVendID", {'value': self.achVendID }))
+
+        os2.append(Element("fsSelection", {'value': self.fsSelection }))
+
+        # TTX actually cannibalises this input, but it's going to input them anyway.
+        os2.append(Element("usFirstCharIndex", {'value': str(self.usFirstCharIndex) }))
+        os2.append(Element("usLastCharIndex", {'value': str(self.usLastCharIndex) }))
+
+        os2.append(Element("sTypoAscender", {'value': str(self.sTypoAscender) }))
+        os2.append(Element("sTypoDescender", {'value': str(self.sTypoDescender) }))
+        os2.append(Element("sTypoLineGap", {'value': str(self.sTypoLineGap) }))
+        os2.append(Element("usWinAscent", {'value': str(self.usWinAscent) }))
+        os2.append(Element("usWinDescent", {'value': str(self.usWinDescent) }))
+
+        os2.append(Element("ulCodePageRange1", {'value': self.ulCodePageRange1 }))
+        os2.append(Element("ulCodePageRange2", {'value': self.ulCodePageRange2 }))
+
+        os2.append(Element("sxHeight", {'value': str(self.sxHeight) }))
+        os2.append(Element("sCapHeight", {'value': str(self.sCapHeight) }))
+
+        os2.append(Element("usDefaultChar", {'value': str(self.usDefaultChar) }))
+        os2.append(Element("usBreakChar", {'value': str(hex(self.usBreakChar)) }))
+        os2.append(Element("usMaxContext", {'value': str(self.usMaxContent) }))
+
+        os2.append(Element("usLowerOpticalPointSize", {'value': str(self.usLowerOpticalPointSize) }))
+        os2.append(Element("usUpperOpticalPointSize", {'value': str(self.usUpperOpticalPointSize) }))
+
+        return os2
+
+
+
+
+    def toBinary(self):
+        """
+        Outputs table to binary, formatted for sfnt.
+        """
+
+        return struct.pack( ">hhHHHhhhhhhhhhhhbIIIIIHHHhhhHHHHhhHHHHH"
+                          , self.version # UInt16
+
+                          , self.xAvgCharWidth # Int16
+                          , self.usWeightClass # UInt16
+                          , self.usWidthClass # UInt16
+
+                          , self.fsType # UInt16
+
+                          , self.ySubscriptXSize # Int16
+                          , self.ySubscriptYSize # Int16
+                          , self.ySubscriptXOffset # Int16
+                          , self.ySubscriptYOffset # Int16
+
+                          , self.ySuperscriptXSize # Int16
+                          , self.ySuperscriptYSize # Int16
+                          , self.ySuperscriptXOffset # Int16
+                          , self.ySuperscriptYOffset # Int16
+
+                          , self.yStrikeoutSize # Int16
+                          , self.yStrikeoutPosition # Int16
+
+                          , self.sFamilyClass # Int16
+
+                          , self.panose # 10 UInt16s. TODO: Dunno how to do this.
+
+                          , self.ulUnicodeRange1 # UInt32
+                          , self.ulUnicodeRange2 # UInt32
+                          , self.ulUnicodeRange3 # UInt32
+                          , self.ulUnicodeRange4 # UInt32
+
+                          , self.achVendID # Tag (UInt32)
+
+                          , self.fsSelection # UInt16
+
+                          , self.usFirstCharIndex # UInt16
+                          , self.usLastCharIndex # UInt16
+
+                          , self.sTypoAscender # Int16
+                          , self.sTypoDescender # Int16
+                          , self.sTypoLineGap # Int16
+                          , self.usWinAscent # UInt16
+                          , self.usWinDescent # UInt16
+
+                          , self.ulCodePageRange1 # UInt32
+                          , self.ulCodePageRange2 # UInt32
+
+                          , self.sxHeight # Int16
+                          , self.sCapHeight # Int16
+
+                          , self.usDefaultChar # UInt16
+                          , self.usBreakChar # UInt16
+                          , self.usMaxContent # UInt16
+
+                          , self.usLowerOpticalPointSize # UInt16
+                          , self.usUpperOpticalPointSize # UInt16
+                          )
