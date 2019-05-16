@@ -194,7 +194,7 @@ class os2:
 
 
         os2.append(self.panose.toTTX())
-        
+
 
         # TODO: This is unfinished, work on it more later.
         # reminder: TTX takes in binary literals in Big-endian format.
@@ -203,7 +203,7 @@ class os2:
         os2.append(Element("ulUnicodeRange3", {'value': self.ulUnicodeRange3 }))
         os2.append(Element("ulUnicodeRange4", {'value': self.ulUnicodeRange4 }))
 
-        os2.append(Element("achVendID", {'value': self.achVendID }))
+        os2.append(Element("achVendID", {'value': str(self.achVendID) }))
 
         os2.append(Element("fsSelection", {'value': self.fsSelection }))
 
@@ -271,7 +271,7 @@ class os2:
                           , self.ulUnicodeRange3 # UInt32
                           , self.ulUnicodeRange4 # UInt32
 
-                          , self.achVendID # Tag (UInt32)
+                          , int(self.achVendID) # Tag (UInt32)
 
                           , self.fsSelection # UInt16
 

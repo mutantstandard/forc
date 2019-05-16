@@ -1,5 +1,5 @@
-from validate.data import validateOpenTypeTag, validatePostScriptName
-
+from validate.data import validatePostScriptName
+from data import tag
 
 
 
@@ -182,7 +182,8 @@ def validateManifest(outputFormats, m):
     # ---------------------------------------------------
     if 'OS2VendorID' in metadata:
         try:
-            validateOpenTypeTag(metadata['OS2VendorID'])
+            # try to overwrite the string version with a tag data type version.
+            metadata['OS2VendorID'] = tag(metadata['OS2VendorID'])
         except ValueError as e:
             raise ValueError(f"metadata.OS2VendorID doesn't conform to it's data type correctly. → {e}")
 
