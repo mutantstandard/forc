@@ -21,7 +21,7 @@ def simpleHex(int):
     returns a hexadecimal number as a string without the '0x' prefix.
     """
 
-    return (hex(int)[2:])
+    return f"{int:x}"
 
 
 
@@ -132,10 +132,13 @@ class codepointSeq:
 
     def name(self):
         """
-        Generates a 'name' for the glyph based on it's codepoint sequence.
+        Generates a TTX 'name' for the glyph based on it's codepoint sequence.
 
         The way this is named is important and it makes the TTX compiler happy.
         DO NOT CHANGE IT!
+
+        eg. ['1f44d', '101601']
+        -> u1f44d_101601
         """
         return 'u' + '_'.join(map(simpleHex, self.seq))
 
@@ -226,6 +229,9 @@ class glyph:
 
     def __len__(self):
         return len(self.codepoints)
+
+    def name(self):
+        return self.codepoints.name()
 
 
 

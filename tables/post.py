@@ -22,7 +22,7 @@ def toTTX(glyphs):
     # extraNames to please macOS.
     extraNames = Element("extraNames")
     for g in glyphs["img_empty"]:
-        extraNames.append(Element("psName", {"name": g.codepoints.name() }))
+        extraNames.append(Element("psName", {"name": g.name() }))
 
     post.append(extraNames)
 

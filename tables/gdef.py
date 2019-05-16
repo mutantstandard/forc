@@ -22,7 +22,7 @@ def toTTX(glyphs):
             else:
                 classNum = 1
 
-            gcd.append(Element("ClassDef", {"glyph": g.codepoints.name(), "class": str(classNum)}))
+            gcd.append(Element("ClassDef", {"glyph": g.name(), "class": str(classNum)}))
 
     gdef.append(gcd)
 

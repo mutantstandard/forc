@@ -29,6 +29,9 @@ class tag:
     def __str__(self):
         return self.tag
 
+    def __repr__(self):
+        return str(self.tag)
+
     def __int__(self):
         """
         Converts tag to it's data representation in an OpenType font.

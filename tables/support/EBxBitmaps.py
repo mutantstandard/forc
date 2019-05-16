@@ -1,5 +1,5 @@
 from lxml.etree import Element
-from tables.support.ebx_metrics import SmallGlyphMetrics, BigGlyphMetrics
+from tables.support.EBxMetrics import SmallGlyphMetrics, BigGlyphMetrics
 
 
 
@@ -10,7 +10,7 @@ class EBDTBitmapFormat17:
     (this is the only CBDT subtable format supported by TTX)
     """
     def __init__(self, metrics, strikeRes, glyph):
-        self.name = glyph.codepoints.name()
+        self.name = glyph.name()
         self.metrics = SmallGlyphMetrics(metrics)
         self.img = glyph.imgDict["png-" + strikeRes]
 
@@ -38,7 +38,7 @@ class EBDTBitmapFormat18:
     """
 
     def __init__(self, metrics, strikeRes, img):
-        self.name = glyph.codepoints.name()
+        self.name = glyph.name()
         self.metrics = BigGlyphMetrics(metrics)
         self.img = img
 
@@ -65,7 +65,7 @@ class EBDTBitmapFormat19:
     """
 
     def __init__(self, metrics, strikeRes, img):
-        self.name = glyph.codepoints.name()
+        self.name = glyph.name()
         self.img = img
 
 

@@ -30,7 +30,7 @@ class vmtx:
         self.metrics = []
 
         for g in glyphs["img_empty"]:
-            self.metrics.append(vmtxMetric(g.codepoints.name(), m['metrics']['normalHeight'], m['metrics']['normalTSB']))
+            self.metrics.append(vmtxMetric(g.name(), m['metrics']['normalHeight'], m['metrics']['normalTSB']))
 
     def toTTX(self):
         vmtx = Element("vmtx")

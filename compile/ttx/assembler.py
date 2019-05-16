@@ -140,7 +140,7 @@ def assembler(chosenFormat, m, glyphs, flags):
             #root.append(tables.gpos.toTTX())
 
             log.out('[GSUB] ', 36, newline=False)
-            root.append(tables.gsub.toTTX(glyphs))
+            root.append(tables.gsub.gsub(glyphs).toTTX())
 
 
         elif formats[chosenFormat]["ligatureFormat"] == "TrueType":

@@ -20,14 +20,14 @@ def toTTX(m, glyphs):
 
         # if it's not a whitespace character or a service glyph....
         if g.codepoints.seq[0] in noGraphicsChars:
-            glyfTable.append(Element("TTGlyph", {"name": g.codepoints.name() }))
+            glyfTable.append(Element("TTGlyph", {"name": g.name() }))
 
         # if it's not one of these, it needs some dummy glyf contours
 
         else:
             # These attributes will be calculated by the TTX compiler,
             # but I'm doing them manually anyway.
-            dummyData = Element("TTGlyph",    {"name": g.codepoints.name()
+            dummyData = Element("TTGlyph",    {"name": g.name()
                                                     ,"xMin": str(metrics["xMin"])
                                                     ,"xMax": str(metrics["xMax"])
                                                     ,"yMin": str(metrics["yMin"])

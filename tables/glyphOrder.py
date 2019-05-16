@@ -13,7 +13,7 @@ def toTTX(glyphs):
 
     # add all of the juicy glyphs
     for id, g in enumerate(glyphs["img_empty"]):
-        glyphOrder.append(Element("GlyphID", {"id": str(id), "name": g.codepoints.name() }))
+        glyphOrder.append(Element("GlyphID", {"id": str(id), "name": g.name() }))
 
 
     return glyphOrder

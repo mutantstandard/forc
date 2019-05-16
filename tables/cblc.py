@@ -1,6 +1,6 @@
 from lxml.etree import Element
-from tables.support.ebx_metrics import BitmapSize
-from tables.support.ebx_indexes import IndexSubTable1
+from tables.support.EBxMetrics import BitmapSize
+from tables.support.EBxIndexes import IndexSubTable1
 
 
 

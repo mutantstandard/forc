@@ -13,7 +13,7 @@ class IndexSubTable1:
 
         for id, g in enumerate(glyphs["img_empty"]):
             if g.imgDict:
-                self.glyphs.append({"id": id, "name": g.codepoints.name() })
+                self.glyphs.append({"id": id, "name": g.name() })
 
 
     def toTTX(self):

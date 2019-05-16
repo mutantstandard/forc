@@ -28,7 +28,7 @@ class hmtx:
         self.metrics = []
 
         for g in glyphs["img_empty"]:
-            self.metrics.append(hmtxMetric(g.codepoints.name(), m['metrics']['normalWidth'], m['metrics']['normalLSB']))
+            self.metrics.append(hmtxMetric(g.name(), m['metrics']['normalWidth'], m['metrics']['normalLSB']))
 
     def toTTX(self):
         hmtx = Element("hmtx")

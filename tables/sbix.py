@@ -6,7 +6,7 @@ class sbixBitmap:
     Class representing a single bitmap within a strike within an sbix table.
     """
     def __init__(self, glyph, ppem):
-        self.name = glyph.codepoints.name()
+        self.name = glyph.name()
         self.graphicType = "png " # hard-coded for now
         self.originOffsetX = 0 # hard-coded for now
         self.originOffsetY = 0 # hard-coded for now

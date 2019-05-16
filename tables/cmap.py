@@ -7,7 +7,7 @@ def makeGlyphSubtable(tag, attrs, cmapGlyphSet):
 
     for g in cmapGlyphSet:
         if not g.alias:
-            subtable.append(Element("map", {"code": hex(g.codepoints.seq[0]), "name": g.codepoints.name() }))
+            subtable.append(Element("map", {"code": hex(g.codepoints.seq[0]), "name": g.name() }))
         else:
             subtable.append(Element("map", {"code": hex(g.codepoints.seq[0]), "name": g.alias.name() }))
     return subtable
@@ -142,7 +142,7 @@ def toTTX(glyphs, no_vs16):
         for g in glyphs['all']:
             if g.codepoints.vs16:
                 if not g.alias:
-                    cmap14_1.append(Element("map", {"uvs": "0xfe0f", "uv": hex(g.codepoints.seq[0]), "name": g.codepoints.name()}))
+                    cmap14_1.append(Element("map", {"uvs": "0xfe0f", "uv": hex(g.codepoints.seq[0]), "name": g.name()}))
                 else:
                     cmap14_1.append(Element("map", {"uvs": "0xfe0f", "uv": hex(g.codepoints.seq[0]), "name": g.alias.name()}))
 
