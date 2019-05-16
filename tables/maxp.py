@@ -1,28 +1,85 @@
 from lxml.etree import Element
 
-def toTTX(glyphs):
-    """
-    Create a maxp table. All of the data inside this is dummy data, the TTX
-    compiler will insert actually useful data.
-    """
+
+class maxp:
+    def __init__(self, glyphs):
+        self.version = '0x00010000' # TODO: make fixed type.
+
+        self.numGlyphs = len(glyphs["all"])
+
+        self.maxPoints = 0
+        self.maxContours = 0
+        self.maxCompositePoints = 0
+        self.maxCompositeContours = 0
+
+        self.maxZones = 0
+        self.maxTwilightPoints = 0
+
+        self.maxStorage = 1
+        self.maxFunctionDefs = 1
+        self.maxInstructionDefs = 0
+        self.maxStackElements = 64
+
+        self.maxSizeOfInstructions = 0
+        self.maxComponentElements = 0
+        self.maxComponentDepth = 0
 
 
-    maxp = Element("maxp")
 
-    maxp.append(Element("tableVersion", {'value': '0x10000'})) # hard-coded
-    maxp.append(Element("numGlyphs", {'value': str(len(glyphs["all"])) })) # TTX re-calculates this anyway but I'm making it manually.
-    maxp.append(Element("maxPoints", {'value': '0'}))
-    maxp.append(Element("maxContours", {'value': '0'}))
-    maxp.append(Element("maxCompositePoints", {'value': '0'}))
-    maxp.append(Element("maxCompositeContours", {'value': '0'}))
-    maxp.append(Element("maxZones", {'value': '0'}))
-    maxp.append(Element("maxTwilightPoints", {'value': '0'}))
-    maxp.append(Element("maxStorage", {'value': '1'}))
-    maxp.append(Element("maxFunctionDefs", {'value': '1'}))
-    maxp.append(Element("maxInstructionDefs", {'value': '0'}))
-    maxp.append(Element("maxStackElements", {'value': '64'}))
-    maxp.append(Element("maxSizeOfInstructions", {'value': '0'}))
-    maxp.append(Element("maxComponentElements", {'value': '0'}))
-    maxp.append(Element("maxComponentDepth", {'value': '0'}))
+    def toTTX(self):
+        """
+        Create a maxp table. All of the data inside this is dummy data, the TTX
+        compiler will insert actually useful data.
+        """
 
-    return maxp
+
+        maxp = Element("maxp")
+
+        maxp.append(Element("tableVersion", {'value': self.version })) # hard-coded
+
+        maxp.append(Element("numGlyphs", {'value': str(self.numGlyphs) })) # TTX re-calculates this anyway but I'm making it manually.
+
+        maxp.append(Element("maxPoints", {'value': str(self.maxPoints) }))
+        maxp.append(Element("maxContours", {'value': str(self.maxContours) }))
+        maxp.append(Element("maxCompositePoints", {'value': str(self.maxCompositePoints) }))
+        maxp.append(Element("maxCompositeContours", {'value': str(self.maxCompositeContours) }))
+
+        maxp.append(Element("maxZones", {'value': str(self.maxZones) }))
+        maxp.append(Element("maxTwilightPoints", {'value': str(self.maxTwilightPoints) }))
+
+        maxp.append(Element("maxStorage", {'value': str(self.maxStorage) }))
+        maxp.append(Element("maxFunctionDefs", {'value': str(self.maxFunctionDefs) }))
+        maxp.append(Element("maxInstructionDefs", {'value': str(self.maxInstructionDefs) }))
+        maxp.append(Element("maxStackElements", {'value': str(self.maxStackElements) }))
+
+        maxp.append(Element("maxSizeOfInstructions", {'value': str(self.maxSizeOfInstructions) }))
+        maxp.append(Element("maxComponentElements", {'value': str(self.maxComponentElements) }))
+        maxp.append(Element("maxComponentDepth", {'value': str(self.maxComponentDepth) }))
+
+        return maxp
+
+
+
+    def toBinary(self):
+        return struct.pack( ">iHHHHHHHHHHHHHH"
+                          , self.version # Fixed (Int32)
+
+                          , self.numGlyphs # UInt16
+
+                          , self.maxPoints # UInt16
+                          , self.maxContours # UInt16
+                          , self.maxCompositePoints # UInt16
+                          , self.maxCompositeContours # UInt16
+
+                          , self.maxZones # UInt16
+                          , self.maxTwilightPoints # UInt16
+
+                          , self.maxStorage # UInt16
+                          , self.maxFunctionDefs # UInt16
+                          , self.maxInstructionDefs # UInt16
+                          , self.maxStackElements # UInt16
+
+                          , self.maxSizeOfInstructions # UInt16
+                          , self.maxComponentElements # UInt16
+                          , self.maxComponentDepth # UInt16
+                          )

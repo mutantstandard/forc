@@ -69,7 +69,7 @@ def assembler(chosenFormat, m, glyphs, flags):
 
     # maxp is a semi-placeholder table.
     log.out('[maxp] ', 90, newline=False)
-    root.append(tables.maxp.toTTX(glyphs))
+    root.append(tables.maxp.maxp(glyphs).toTTX())
 
     log.out('[gasp] ', 90, newline=False)
     root.append(tables.gasp.toTTX())
