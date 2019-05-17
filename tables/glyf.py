@@ -7,19 +7,12 @@ def toTTX(m, glyphs):
 
     metrics = m["metrics"]
 
-    noGraphicsChars =   [ int('0x0020', 16)
-                        , int('0x00a0', 16)
-                        , int('0x200d', 16)
-                        , int('0xfe0f', 16)
-                        ]
-
-
     glyfTable = Element("glyf")
 
     for ID, g in enumerate(glyphs["img_empty"]):
 
         # if it's not a whitespace character or a service glyph....
-        if g.codepoints.seq[0] in noGraphicsChars:
+        if g.type is "empty":
             glyfTable.append(Element("TTGlyph", {"name": g.name() }))
 
         # if it's not one of these, it needs some dummy glyf contours

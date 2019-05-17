@@ -428,17 +428,7 @@ def areGlyphLigaturesSafe(glyphs):
 
 def mixAndSortGlyphs(glyphs):
 
-    glyphStruct = {"all": [], "img_empty": [], "img": []}
-
-    for g in glyphs:
-
-        glyphStruct["all"].append(g)
-
-        if g.glyphType is not "alias":
-            glyphStruct["img_empty"].append(g)
-
-        if g.glyphType is "img":
-            glyphStruct["img"].append(g)
+    glyphStruct = {"all": [], "img_empty": [], "img": [], "empty": []}
 
 
     # sort glyphs.
@@ -450,9 +440,21 @@ def mixAndSortGlyphs(glyphs):
     #
     # CHECK OUT THE CODEPOINTSEQ CLASS TO UNDERSTAND WHY.
 
-    glyphStruct["all"].sort()
-    glyphStruct["img_empty"].sort()
-    glyphStruct["img"].sort()
+    glyphs.sort()
+
+    for g in glyphs:
+
+        glyphStruct["all"].append(g)
+
+        if g.glyphType is not "alias":
+            glyphStruct["img_empty"].append(g)
+
+        if g.glyphType is "img":
+            glyphStruct["img"].append(g)
+
+        if g.glyphType is "empty":
+            glyphStruct["empty"].append(g)
+
 
     return glyphStruct
 

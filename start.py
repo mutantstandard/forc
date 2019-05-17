@@ -67,7 +67,7 @@ def start( inputPath
 
     glyphImageFormats = set()
 
-    log.out(f'Checking output parameters(s)...')
+    log.out(f'Checking output parameters...')
     for f in outputFormats:
 
         # check if it's in the list of accepted formats

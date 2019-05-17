@@ -7,6 +7,8 @@ from data import tag
 # Classes representing common OpenType Layout Lookup structures.
 # (https://docs.microsoft.com/en-us/typography/opentype/spec/chapter2#features-and-lookups)
 
+
+
 def singleGlyphName(g): # TODO: replace this with a more complex name system for glyph classes.
     """
     Takes the first codepoint of a ligature and returns a string of it's glyph name.
