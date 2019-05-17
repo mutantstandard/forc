@@ -118,7 +118,7 @@ def assembler(chosenFormat, m, glyphs, flags):
 
     # single glyphs
     log.out('[cmap] ', 90, newline=False)
-    root.append(tables.cmap.toTTX(glyphs, flags["no_vs16"]))
+    root.append(tables.cmap.cmap(glyphs, flags["no_vs16"]).toTTX())
 
 
 
