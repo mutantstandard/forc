@@ -1,63 +1,26 @@
-from validate.data import validatePostScriptName
 from data import tag
+from validate.data import validatePostScriptName
 
 
 
-checkDocMsg = "Check the documentation to make sure you're doing the manifest right'."
 
-reqMetricNames =  [ "unitsPerEm"
-                  , "lowestRecPPEM"
-
-                  , "width"
-                  , "height"
-
-                  , "xMin"
-                  , "xMax"
-                  , "yMin"
-                  , "yMax"
-
-                  , "horiAscent"
-                  , "horiDescent"
-                  , "vertAscent"
-                  , "vertDescent"
-
-                  , "spaceHLength"
-                  , "spaceVLength"
-                  , "normalWidth"
-                  , "normalLSB"
-                  , "normalHeight"
-                  , "normalTSB"
-
-                  , "OS2ySubscriptXSize"
-                  , "OS2ySubscriptYSize"
-
-                  , "OS2ySubscriptXOffset"
-                  , "OS2ySubscriptYOffset"
-
-                  , "OS2ySuperscriptXSize"
-                  , "OS2ySuperscriptYSize"
-
-                  , "OS2ySuperscriptXOffset"
-                  , "OS2ySuperscriptYOffset"
-
-                  , "OS2yStrikeoutSize"
-                  , "OS2yStrikeoutPosition"
-                  ]
-
-
-def compileNameRecords(outputFormats, nameRecords):
+def compileNameRecords(nameRecords, outputFormats):
     """
-    Creates a quick structure for the name records that can be easily searched and validated.
+    Creates a quick structure for the name records for searching and validation.
     """
 
     compiledNameRecords = dict()
 
+    # make a dict for each format the user is exporting to.
     for f in outputFormats:
         compiledNameRecords[f] = dict()
 
+        # create initial round of records based on default.
         for index, record in nameRecords['default'].items():
             compiledNameRecords[f][index] = record
 
+        # overwrite that initial round if there are specific overlapping
+        # name records for this format.
         if f in nameRecords:
             for index, record in nameRecords[f].items():
                 compiledNameRecords[f][index] = record
@@ -67,91 +30,27 @@ def compileNameRecords(outputFormats, nameRecords):
 
 
 
-
-
-
-
-
-
-
-
-def validateManifest(outputFormats, m):
+def compileFinalNameRecords(compiledNameRecords, version):
     """
-    Validates manifest data, both at a structural and value level.
-
-    Will raise a ValueError if anything critically non-standard has been entered by the user.
+    Compiles a final name record package for data by applying version data according to guidelines.
     """
 
-    if 'metrics' not in m:
-        raise ValueError(f"No metrics data found in the manifest. {checkDocMsg}")
-    if 'encoding' not in m:
-        raise ValueError(f"No encoding data found in the manifest. {checkDocMsg}")
-    if 'metadata' not in m:
-        raise ValueError(f"No metadata data found in the manifest. {checkDocMsg}")
+    for format, records in compiledNameRecords.items():
+        if "5" in records:
+            records["5"] = "Version " + version + " " + records["5"]
+        else:
+            records["5"] = "Version " + version
 
-    metrics = m['metrics']
-    encoding = m['encoding']
-    metadata = m['metadata']
-
-
-
-    # METRICS
-    # --------------------------------------------------
-    # --------------------------------------------------
-    # --------------------------------------------------
-
-    # make sure there are no excess unchecked values.
-    if not len(metrics) == len(reqMetricNames):
-        raise ValueError(f"You have more values than the required values than your metrics. {checkDocMsg}")
-
-    # check for appropriate names.
-    for reqName in reqMetricNames:
-        if not reqName in metrics:
-            raise ValueError(f"metric.{reqName} is missing from your manifest. {checkDocMsg}")
-
-    # make sure all the values are ints.
-    for name, value in metrics.items():
-        if type(value) is not int:
-            raise ValueError(f"metric.{name} is not an int (it's '{value}'). All of your metrics need to be formatted as ints.")
+    return compiledNameRecords
 
 
 
 
-    # ENCODING
-    # --------------------------------------------------
-    # --------------------------------------------------
-    # --------------------------------------------------
 
-
-    if 'macLangID' not in encoding:
-        raise ValueError(f"encoding.macLangID not found in the manifest. {checkDocMsg}")
-    if 'msftLangID' not in encoding:
-        raise ValueError(f"encoding.msftLangID not found in the manifest. {checkDocMsg}")
-
-    if type(encoding['macLangID']) is not str:
-        raise ValueError(f"encoding.macLangID is not formatted as a string. {checkDocMsg}")
-    try:
-        int(encoding['macLangID'])
-    except ValueError:
-        raise ValueError(f"encoding.macLangID is not a string that represents a valid integer. {checkDocMsg}")
-
-
-
-    if type(encoding['msftLangID']) is not str:
-        raise ValueError(f"encoding.msftLangID is not formatted as a string. {checkDocMsg}")
-    try:
-        int(encoding['msftLangID'], 16)
-    except ValueError:
-        raise ValueError(f"encoding.msftLangID is not a string that represents a valid hexadecimal number. {checkDocMsg}")
-
-
-
-
-    # METADATA
-    # --------------------------------------------------
-    # --------------------------------------------------
-    # --------------------------------------------------
-
+def checkTransformMetadata(metadata, outputFormats):
+    """
+    Checks and transforms manifest metadata, ready for font assembly.
+    """
 
     # Font Version
     # ---------------------------------------------------
@@ -178,6 +77,8 @@ def validateManifest(outputFormats, m):
 
 
 
+
+
     # OS2VendorID
     # ---------------------------------------------------
     if 'OS2VendorID' in metadata:
@@ -186,6 +87,8 @@ def validateManifest(outputFormats, m):
             metadata['OS2VendorID'] = tag(metadata['OS2VendorID'])
         except ValueError as e:
             raise ValueError(f"metadata.OS2VendorID doesn't conform to it's data type correctly. → {e}")
+
+
 
 
     # Filenames
@@ -208,12 +111,17 @@ def validateManifest(outputFormats, m):
                     if filename1 == filename2:
                         raise ValueError(f" The filenames you've set for the formats {format1} and {format2} are the same. There can't be any duplicates in your custom filenames.")
 
+
+
+
+
+
     # Name Records
     # ---------------------------------------------------
     if not "nameRecords" in metadata:
         raise ValueError(f"There is no metadata.nameRecords. Your manifest has to have this.")
 
-    compiledNameRecords = compileNameRecords(outputFormats, metadata['nameRecords'])
+    compiledNameRecords = compileNameRecords(metadata['nameRecords'], outputFormats)
     requiredNameRecords = [1,2,3,4,6,16,17]
 
     # make sure all keys and values are strings.
@@ -237,7 +145,6 @@ def validateManifest(outputFormats, m):
                 raise ValueError(f"There's a problem with metadata.nameRecords. The name record '{record}' for the key {key} that corresponds to the format '{format}' is not a string.")
 
 
-
     # see if the required name records are here.
     for format, formatRecords in compiledNameRecords.items():
         for f in requiredNameRecords:
@@ -251,3 +158,8 @@ def validateManifest(outputFormats, m):
             validatePostScriptName(formatRecords["6"])
         except ValueError as e:
             raise ValueError(f"There's something wrong with metadata.nameRecords. When compiled, name record 6 for the '{format}' format doesn't match the data type requirements. {e}")
+
+
+
+
+    metadata['nameRecords'] = compileFinalNameRecords(compiledNameRecords, metadata['version'])

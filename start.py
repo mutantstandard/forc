@@ -3,7 +3,7 @@ import pathlib
 import log
 import files
 from create import createFont
-from validate.manifest import validateManifest
+from manifest.manifest import checkTransformManifest
 from validate.aliases import validateAliases
 from glyphs import getGlyphs
 from format import formats, compilers
@@ -95,7 +95,7 @@ def start( inputPath
 
     log.out(f'Getting + Checking manifest JSON...')
     manifest = files.loadJson(manifestPath, "manifest file")
-    validateManifest(outputFormats, manifest)
+    checkTransformManifest(outputFormats, manifest)
 
     log.out(f'Manifest OK!.\n', 32)
 

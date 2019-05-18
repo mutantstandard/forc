@@ -89,7 +89,7 @@ def assembler(chosenFormat, m, glyphs, flags):
 
     # placeholder table that makes Google's font validation happy.
     log.out('[DSIG]', 90)
-    root.append(tables.dsig.toTTX())
+    root.append(tables.dsig.dsig().toTTX())
 
 
 
@@ -186,7 +186,7 @@ def assembler(chosenFormat, m, glyphs, flags):
     # human-readable metadata
     # ---------------------------------------------
     log.out('[name]', 90)
-    root.append(tables.name.toTTX(chosenFormat, m))
+    root.append(tables.name.name(chosenFormat, m).toTTX())
 
 
 

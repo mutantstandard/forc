@@ -1,15 +1,30 @@
 from lxml.etree import Element
 
-def toTTX():
+
+
+class dsig:
     """
-    Create a dummy DSIG table.
+    Class representing a placeholder DSIG table.
     """
 
-    dsig = Element("DSIG")
+    def __init__(self):
 
-    dsig.append(Element("tableHeader", {'version': '0x00000001'
-                                       ,'flag': '00000000'
-                                       ,'numSigs': '0'
-                                       }))
+        # all the data here is just formatted for TTX output atm.
+        self.version = '0x00000001'
+        self.flag = '00000000'
+        self.numSigs = 0
 
-    return dsig
+
+    def toTTX(self):
+        """
+        Create a dummy DSIG table.
+        """
+
+        dsig = Element("DSIG")
+
+        dsig.append(Element("tableHeader", {'version': self.version
+                                           ,'flag': self.flag
+                                           ,'numSigs': str(self.numSigs)
+                                           }))
+
+        return dsig

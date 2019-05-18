@@ -12,7 +12,7 @@ def toTTX(m, glyphs):
     for ID, g in enumerate(glyphs["img_empty"]):
 
         # if it's not a whitespace character or a service glyph....
-        if g.type is "empty":
+        if g.glyphType is "empty":
             glyfTable.append(Element("TTGlyph", {"name": g.name() }))
 
         # if it's not one of these, it needs some dummy glyf contours
