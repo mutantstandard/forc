@@ -1,14 +1,25 @@
 from lxml.etree import Element
 
-def toTTX():
+
+class gasp:
     """
-    Create a really basic gasp table.
+    Class representing a placeholder gasp table.
     """
 
-    gasp = Element("gasp")
+    def __init__(self):
 
-    gasp.append(Element("gaspRange", {'rangeMaxPPEM': '65535'
-                                     ,'rangeGaspBehavior': '0x0f'
-                                     }))
+        self.rangeMaxPPEM = 65535
+        self.rangeGaspBehavior = 0x0f
 
-    return gasp
+    def toTTX(self):
+        """
+        Create a really basic gasp table.
+        """
+
+        gasp = Element("gasp")
+
+        gasp.append(Element("gaspRange", {'rangeMaxPPEM': str(self.rangeMaxPPEM)
+                                         ,'rangeGaspBehavior': hex(self.rangeGaspBehavior)
+                                         }))
+
+        return gasp

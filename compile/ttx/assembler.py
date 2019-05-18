@@ -56,7 +56,7 @@ def assembler(chosenFormat, m, glyphs, flags):
     # headers and other weird crap
     # ---------------------------------------------
     log.out('[glyphOrder] ', 90, newline=False)
-    root.append(tables.glyphOrder.toTTX(glyphs))
+    root.append(tables.glyphOrder.glyphOrder(glyphs).toTTX())
 
     log.out('[head] ', 90, newline=False)
     root.append(tables.head.head(m).toTTX())
@@ -65,14 +65,14 @@ def assembler(chosenFormat, m, glyphs, flags):
     root.append(tables.os2.os2(m, glyphs).toTTX())
 
     log.out('[post] ', 90, newline=False)
-    root.append(tables.post.toTTX(glyphs))
+    root.append(tables.post.post(glyphs).toTTX())
 
     # maxp is a semi-placeholder table.
     log.out('[maxp] ', 90, newline=False)
     root.append(tables.maxp.maxp(glyphs).toTTX())
 
     log.out('[gasp] ', 90, newline=False)
-    root.append(tables.gasp.toTTX())
+    root.append(tables.gasp.gasp().toTTX())
 
 
 
