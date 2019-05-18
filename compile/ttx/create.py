@@ -61,7 +61,7 @@ def createFont(formatData, outPath, tempPath, filename, manifest, glyphs, flags)
 
 
 
-    # DOING THE THING
+    # ASSEMBLER -> TTX
     # ------------------------------------------------------
 
     # assemble TTX
@@ -76,30 +76,30 @@ def createFont(formatData, outPath, tempPath, filename, manifest, glyphs, flags)
 
     files.writeFile(originalTTXPath, originalTTX, 'Could not write initial TTX to file')
 
-
-    # compile TTX to font
-    log.out(f'- Compiling font...', 90)
-    compileTTX(originalTTXPath, outFontPath)
-
-
-    # compile back to TTX
-    #
-    # This is because TTX doesn't catch all font errors on the first pass.
-    log.out(f'- Testing font by compiling it back to TTX...', 90)
-    compileTTX(outFontPath, afterExportTTX)
-
-
-    log.out(f'✅ Compiling and testing OK.\n', 32)
-
-
-
     # --dev-ttx flag
     if flags["dev_ttx_output"]:
         shutil.copy(str(originalTTXPath), str(outPath / (filename + "_dev.ttx")))
 
+
+    # TTX -> FONT
+    # ------------------------------------------------------
+    log.out(f'- Compiling font...', 90)
+    compileTTX(originalTTXPath, outFontPath)
+
+
+
+
+    # FONT -> TTX
+    # ------------------------------------------------------
+    # This is because TTX doesn't catch all font errors on the first pass.
+    log.out(f'- Testing font by compiling it back to TTX...', 90)
+    compileTTX(outFontPath, afterExportTTX)
+
     # -ttx flag
     if flags["ttx_output"]:
-        shutil.copy(str(originalTTXPath), str(outPath / (filename + ".ttx")))
+        shutil.copy(str(afterExportTTX), str(outPath / (filename + ".ttx")))
 
+
+    log.out(f'✅ Compiling and testing OK.\n', 32)
 
     return outFontPath
