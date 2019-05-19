@@ -10,6 +10,7 @@ import tables.post
 import tables.name
 import tables.maxp
 import tables.gasp
+import tables.loca
 import tables.dsig
 
 import tables.hhea
@@ -18,10 +19,10 @@ import tables.vhea
 import tables.vmtx
 
 import tables.cmap
-import tables.gdef
-import tables.gpos
+# import tables.gdef
+# import tables.gpos
 import tables.gsub
-import tables.morx
+# import tables.morx
 
 import tables.glyf
 import tables.svg
@@ -85,7 +86,7 @@ def assembler(chosenFormat, m, glyphs, flags):
 
     if glyphFormat is not "CBx":
         log.out('[loca] ', 36, newline=False)
-        root.append(Element("loca")) # just to please macOS, it's supposed to be empty.
+        root.append(tables.loca.loca().toTTX())
 
     # placeholder table that makes Google's font validation happy.
     log.out('[DSIG]', 90)
@@ -133,20 +134,8 @@ def assembler(chosenFormat, m, glyphs, flags):
     if ligatures:
 
         if formats[chosenFormat]["ligatureFormat"] == "OpenType":
-            #log.out ('Assembling GDEF table...', 90)
-            #root.append(tables.gdef.toTTX(glyphs))
-
-            #log.out ('Assembling GPOS table...', 90)
-            #root.append(tables.gpos.toTTX())
-
             log.out('[GSUB] ', 36, newline=False)
             root.append(tables.gsub.gsub(glyphs).toTTX())
-
-
-        elif formats[chosenFormat]["ligatureFormat"] == "TrueType":
-            log.out('[morx] ', 36, newline=False)
-            root.append(tables.morx.toTTX(glyphs))
-
 
 
 
@@ -159,7 +148,7 @@ def assembler(chosenFormat, m, glyphs, flags):
     # CBDT/CBLC doesn't use glyf at all
     if glyphFormat is not "CBx":
         log.out('[glyf] ', 36, newline=False)
-        root.append(tables.glyf.toTTX(m, glyphs))
+        root.append(tables.glyf.glyf(m, glyphs).toTTX())
 
 
     # actual glyph picture data
