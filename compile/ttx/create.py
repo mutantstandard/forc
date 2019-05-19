@@ -5,8 +5,8 @@ import pathlib
 import shutil
 
 import files
+from font import font
 from format import formats
-from compile.ttx.assembler import assembler
 
 # create.py
 # -------------------------------
@@ -65,16 +65,16 @@ def createFont(formatData, outPath, tempPath, filename, manifest, glyphs, flags)
     # ------------------------------------------------------
 
     # assemble TTX
-    log.out(f'🛠  Assembling initial TTX...')
-    originalTTX = assembler(formatName, manifest, glyphs, flags)
-    log.out(f'✅ Initial TTX successfully assembled.\n', 32)
+    log.out(f'🛠  Assembling font...')
+    ttxfont = font(formatName, manifest, glyphs, flags)
+    log.out(f'✅ Font successfully assembled.\n', 32)
 
 
     # save TTX
     log.out(f"⚙️  Compiling and testing font...")
     log.out(f"- Saving forc's assembled (initial) TTX to file...", 90)
 
-    files.writeFile(originalTTXPath, originalTTX, 'Could not write initial TTX to file')
+    files.writeFile(originalTTXPath, ttxfont.toTTX(asString=True), 'Could not write initial TTX to file')
 
     # --dev-ttx flag
     if flags["dev_ttx_output"]:
