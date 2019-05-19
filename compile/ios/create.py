@@ -15,5 +15,3 @@ def createPackage(formatData, filename, outputPath, fontPath, manifest):
     configString = compileiOSConfig(manifest, fontPath, outputPath)
     configPath = outputPath / (f"{filename}.mobileconfig")
     files.writeFile(configPath, configString, 'Could not write iOS Configuration Profile to file')
-
-    log.out(f'✅ Package has been successfully created.\n', 32)

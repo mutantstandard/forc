@@ -83,11 +83,13 @@ def start( inputPath
     log.out(f'Output format(s) OK!\n', 32)
 
 
+
+
+    # check compiler
+    # ------------------------------------------------
     if compiler not in compilers:
         raise ValueError(f"'{compiler}' isn't a valid compiler option!")
 
-
-    # flags
 
 
     # manifest

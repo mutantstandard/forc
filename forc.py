@@ -63,7 +63,7 @@ WHAT TO BUILD FROM:
 
 HOW TO BUILD IT:
 ----------------------------------------------------
--F      Format (default: {DEF_OUTPUT_FORMATS})
+-F      Format (default: {DEF_OUTPUT_FORMATS[0]})
 
         Formats that require SVG images:
         - SVGinOT       (Many platforms)
@@ -76,7 +76,8 @@ HOW TO BUILD IT:
         - CBx           (Google/Android)
 
 -C      Compiler (default: {DEF_COMPILER})
-        Currently the only compiler is 'ttx'.
+        - ttx
+        - binary (*will* give broken results atm)
 
 
 

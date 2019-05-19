@@ -175,7 +175,7 @@ class font:
 
     def toTTX(self, asString=False):
         """
-
+        Compiles font to TTX.
         """
 
         # start the TTX file
@@ -193,3 +193,12 @@ class font:
             return tostring(root, pretty_print=True, method="xml", xml_declaration=True, encoding="UTF-8")
         else:
             return root
+
+
+    def toBinary(self):
+        """
+        Compiles font to binary.
+        (Just a placeholder right now.)
+        """
+
+        return "0"

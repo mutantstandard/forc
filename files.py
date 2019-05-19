@@ -1,3 +1,4 @@
+import subprocess
 import pathlib
 import json
 
@@ -71,3 +72,21 @@ def writeFile(path, contents, exceptionString):
             file.write(contents)
     except Exception:
         raise Exception(exceptionString)
+
+
+
+def compileTTX(input, output):
+    """
+    Invokes the TTX compiler and attempts to compile a font with it.
+    """
+
+    # feed the assembled TTX as input to the ttx command line tool.
+    cmd_ttx = ['ttx', '-q', '-o', output, input]
+
+    # try to export temporary PNG
+    try:
+        r = subprocess.run(cmd_ttx, stdout=subprocess.DEVNULL).returncode
+    except Exception as e:
+        raise Exception('TTX compiler invocation failed: ' + str(e))
+    if r:
+        raise Exception('TTX compiler returned error code: ' + str(r))

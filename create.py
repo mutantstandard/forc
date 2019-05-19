@@ -4,8 +4,9 @@ import log
 import shutil
 
 import files
-import compile.ttx.create
-import compile.ios.create
+from font import font
+import compile.ttx
+import compile.ios
 from format import formats
 
 
@@ -13,6 +14,10 @@ def createFont(fontFormat, outputPath, manifest, glyphs, compiler, flags):
 
     log.out(f'{fontFormat}', 96)
     log.out("-----------------", 90)
+
+
+    # prepare some variables
+    # --------------------------------------------------------------
 
     # output folder
     outPath = pathlib.Path(outputPath).absolute()
@@ -36,16 +41,37 @@ def createFont(fontFormat, outputPath, manifest, glyphs, compiler, flags):
 
 
 
+
+
+    # create the font!
+    # --------------------------------------------------------------
+    log.out(f'🛠  Assembling font...')
+    emojiFont = font(formatData["name"], manifest, glyphs, flags)
+    log.out(f'✅ Font successfully assembled.\n', 32)
+
+
+    # pass it to compilers and packagers
+    # --------------------------------------------------------------
+    log.out(f"⚙️  Compiling and testing font...")
+    
     if compiler is 'ttx':
-        tempFontPath = compile.ttx.create.createFont(formatData, outPath, tempPath, filename, manifest, glyphs, flags)
+        tempFontPath = compile.ttx.createFont(formatData, outPath, tempPath, filename, flags, emojiFont)
+    elif compiler is 'binary':
+        tempFontPath = compile.binary.createFont(formatData, outPath, tempPath, filename, flags, emojiFont)
+
+    log.out(f'✅ Compiling and testing OK.\n', 32)
+
 
     if formats[fontFormat]["iOSCompile"]:
+        log.out(f"⚙️  Packaging font...")
         compile.ios.create.createPackage(formatData, filename, outPath, tempFontPath, manifest)
+        log.out(f'✅ Packaging OK.\n', 32)
     else:
         shutil.copy(str(tempFontPath), str(outPath / (filename + formatData["extension"])))
 
 
-
+    # finish!
+    # --------------------------------------------------------------
 
     # delete the temporary folder (recursively)
     log.out(f'🗑  Cleaning up...')
