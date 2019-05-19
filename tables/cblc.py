@@ -6,15 +6,14 @@ from tables.support.EBxIndexes import IndexSubTable1
 
 class cblcStrike:
 
-    def __init__(self, metrics, index, ppem, glyphs):
+    def __init__(self, metrics, ppem, glyphs):
 
-        self.index = index
         self.bitmapSizeTable = BitmapSize(metrics, ppem, glyphs)
         self.indexSubTable = IndexSubTable1(glyphs)
 
 
-    def toTTX(self):
-        strike = Element("strike", {"index": str(self.index) })
+    def toTTX(self, index):
+        strike = Element("strike", {"index": str(index) })
 
         strike.append(self.bitmapSizeTable.toTTX())
         strike.append(self.indexSubTable.toTTX())
@@ -30,27 +29,23 @@ class cblc:
         self.version = float(3.0) # hard-coded, the only CBLC version that exists.
         self.strikes = []
 
-        # get basic strike information.
-
-        for g in glyphs["img_empty"]:
-            if g.imgDict:
-                firstGlyphWithStrikes = g
-                break
-
         # iterate over each strike.
-        strikeIndex = 0
 
-        for imageFormat, image in firstGlyphWithStrikes.imgDict.items():
+
+        for imageFormat, image in glyphs["img"][0].imgDict.items():
             if imageFormat.split('-')[0] == "png":
-                self.strikes.append(cblcStrike(m["metrics"], strikeIndex, image.strike, glyphs))
-                strikeIndex += 1
+                self.strikes.append(cblcStrike(m["metrics"], image.strike, glyphs))
+
 
 
     def toTTX(self):
         cblc = Element("CBLC")
         cblc.append(Element("header", {"version": str(self.version) })) # hard-coded
 
+        strikeIndex = 0
+
         for s in self.strikes:
-            cblc.append(s.toTTX())
+            cblc.append(s.toTTX(strikeIndex))
+            strikeIndex += 1
 
         return cblc

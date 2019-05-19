@@ -75,14 +75,8 @@ class sbix:
 
         self.strikes = []
 
-        # get basic strike information.
-        for g in glyphs["img_empty"]:
-            if g.imgDict:
-                firstGlyphWithStrikes = g
-                break
-                
         # iterate over each strike.
-        for imageFormat, image in firstGlyphWithStrikes.imgDict.items():
+        for imageFormat, image in glyphs["img"][0].imgDict.items():
             if imageFormat.split('-')[0] == "png":
                 self.strikes.append( sbixStrike(image.strike, glyphs["img_empty"]) )
 
