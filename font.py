@@ -201,4 +201,14 @@ class font:
         (Just a placeholder right now.)
         """
 
+        ## create a valid font header
+
+        ## build first time + put together
+
+        ## make a checksum for it
+
+        ## edit head.checkSumAdjustment to have this checksum
+
+        ## build + put together one last time and return that.
+
         return "0"

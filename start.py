@@ -88,14 +88,14 @@ def start( inputPath
     # check compiler
     # ------------------------------------------------
     if compiler not in compilers:
-        raise ValueError(f"'{compiler}' isn't a valid compiler option!")
+        raise ValueError(f"You gave '{compiler}' as the compiler to use. This doesn't exist in forc. Check the help menu (-h) to see which compilers you can use.")
 
 
 
     # manifest
     # ------------------------------------------------
 
-    log.out(f'Getting + Checking manifest JSON...')
+    log.out(f'Getting + checking manifest data...')
     manifest = files.loadJson(manifestPath, "manifest file")
     checkTransformManifest(outputFormats, manifest)
 
@@ -107,7 +107,7 @@ def start( inputPath
     # ------------------------------------------------
 
     if aliasesPath:
-        log.out(f'Getting + Checking aliases JSON...')
+        log.out(f'Getting + checking aliases data...')
         aliases = files.loadJson(aliasesPath, "aliases file")
         validateAliases(aliases)
         log.out(f'Aliases OK!.\n', 32)

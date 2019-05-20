@@ -64,6 +64,7 @@ WHAT TO BUILD FROM:
 HOW TO BUILD IT:
 ----------------------------------------------------
 -F      Format (default: {DEF_OUTPUT_FORMATS[0]})
+        comma separated with no spaces (ie. 'SVGinOT,CBx,sbixOT')
 
         Formats that require SVG images:
         - SVGinOT       (Many platforms)
@@ -160,8 +161,8 @@ def main():
 
             elif opt == '-F':
                 output_formats = arg.split(',')
-            elif opt =='-C':
-                delim_codepoint = arg
+            elif opt == '-C':
+                compiler = arg
 
             elif opt =='--ttx':
                 ttx_output = True

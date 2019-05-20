@@ -41,8 +41,6 @@ def createFont(fontFormat, outputPath, manifest, glyphs, compiler, flags):
 
 
 
-
-
     # create the font!
     # --------------------------------------------------------------
     log.out(f'🛠  Assembling font...')
@@ -53,11 +51,14 @@ def createFont(fontFormat, outputPath, manifest, glyphs, compiler, flags):
     # pass it to compilers and packagers
     # --------------------------------------------------------------
     log.out(f"⚙️  Compiling and testing font...")
-    
-    if compiler is 'ttx':
+
+
+    if compiler == 'ttx':
         tempFontPath = compile.ttx.createFont(formatData, outPath, tempPath, filename, flags, emojiFont)
-    elif compiler is 'binary':
+    elif compiler == 'binary':
         tempFontPath = compile.binary.createFont(formatData, outPath, tempPath, filename, flags, emojiFont)
+    else:
+        raise ValueError("Something went wrong with the build process. I'm not able to run the font data through a compiler.")
 
     log.out(f'✅ Compiling and testing OK.\n', 32)
 
@@ -66,6 +67,7 @@ def createFont(fontFormat, outputPath, manifest, glyphs, compiler, flags):
         log.out(f"⚙️  Packaging font...")
         compile.ios.create.createPackage(formatData, filename, outPath, tempFontPath, manifest)
         log.out(f'✅ Packaging OK.\n', 32)
+
     else:
         shutil.copy(str(tempFontPath), str(outPath / (filename + formatData["extension"])))
 
