@@ -194,7 +194,7 @@ class glyph:
         if alias is None:
             self.alias = None
         else:
-            if img:
+            if imgDict:
                 raise ValueError(f"Tried to make glyph object '{name}' but it has both an alias AND an image. It can't have both.")
             else:
                 try:

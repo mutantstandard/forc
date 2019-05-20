@@ -15,13 +15,9 @@ Making fonts can be really hard, so forc is designed to help you succeed every t
 - **SVGinOT**: SVGinOT
 - **sbixOT**: sbix with OpenType ligatures
 - **sbixOT for iOS**: sbix with OpenType ligatures, packaged in an iOS Configuration Profile.
-
-**In development/experimental export options:**
-
+- **sbixTT**: sbix with TrueType ligatures
+- **sbixTT for iOS** sbix with TrueType ligatures, packaged in an iOS Configuration profile.
 - **CBDT/CBLC** (Google/Android format)
-- **sbixTT**: sbix with TrueType ligatures (macOS format)
-- **sbixTT for iOS** sbix with TrueType ligatures, packaged in an iOS Configuration profile. (iOS format)
-
 
 **Other features:**
 
@@ -41,7 +37,6 @@ Making fonts can be really hard, so forc is designed to help you succeed every t
 
 
 ## Documentation
-
 
 #### [How to make a font](docs/howto/howto.md)
 
