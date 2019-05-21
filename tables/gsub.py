@@ -1,7 +1,7 @@
 from lxml.etree import Element, ElementTree, fromstring
-from tables.support.OTLScript import ScriptList, ScriptRecord, Script
-from tables.support.OTLFeature import FeatureList, FeatureRecord, Feature
-from tables.support.OTLLookup import LookupList, LookupType4
+from tables.support.otlScript import ScriptList, ScriptRecord, Script
+from tables.support.otlFeature import FeatureList, FeatureRecord, Feature
+from tables.support.otlLookup import LookupList, LookupType4
 
 
 

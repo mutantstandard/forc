@@ -4,7 +4,6 @@ from lxml.etree import Element
 
 
 
-
 class nameRecord:
     """
     Class representing a record in a name table.
@@ -27,7 +26,6 @@ class nameRecord:
                                         })
         record.text = self.text
         return record
-
 
 
 

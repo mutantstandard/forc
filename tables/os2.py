@@ -1,57 +1,9 @@
 import struct
 from lxml.etree import Element
+from tables.support.os2Extra import panose
 
 
 
-
-class os2PANOSE:
-    """
-    Class representing the PANOSE segment of an OS/2 table.
-    """
-
-    def __init__(self):
-
-        # these are all hard-coded to be the optimal values for an emoji font.
-        self.bFamilyType = 2
-        self.bSerifStyle = 0
-        self.bWeight = 6
-        self.bProportion = 9
-        self.bContrast = 0
-        self.bStrokeVariation = 0
-        self.bArmStyle = 0
-        self.bLetterForm = 0
-        self.bMidline = 0
-        self.bXHeight = 0
-
-
-    def toTTX(self):
-        panose = Element("panose")
-        panose.append(Element("bFamilyType", {'value': str(self.bFamilyType) }))
-        panose.append(Element("bSerifStyle", {'value': str(self.bSerifStyle) }))
-        panose.append(Element("bWeight", {'value': str(self.bWeight) }))
-        panose.append(Element("bProportion", {'value': str(self.bProportion) }))
-        panose.append(Element("bContrast", {'value': str(self.bContrast) }))
-        panose.append(Element("bStrokeVariation", {'value': str(self.bStrokeVariation) }))
-        panose.append(Element("bArmStyle", {'value': str(self.bArmStyle) }))
-        panose.append(Element("bLetterForm", {'value': str(self.bLetterForm) }))
-        panose.append(Element("bMidline", {'value': str(self.bMidline) }))
-        panose.append(Element("bXHeight", {'value': str(self.bXHeight) }))
-
-        return panose
-
-    def toBinary(self):
-        return struct.pack(">HHHHHHHHHH"
-                          , self.bFamilyType
-                          , self.bSerifStyle
-                          , self.bWeight
-                          , self.bProportion
-                          , self.bContrast
-                          , self.bStrokeVariation
-                          , self.bArmStyle
-                          , self.bLetterForm
-                          , self.bMidline
-                          , self.bXHeight
-                          )
 
 
 class os2:
@@ -114,7 +66,7 @@ class os2:
 
         self.sFamilyClass = 5 # hard-coded for now. This is ideal for emoji.
 
-        self.panose = os2PANOSE()
+        self.panose = panose(2, 0, 6, 9, 0, 0, 0, 0, 0, 0)
 
         self.ulUnicodeRange1 = '00000000 00000000 00000000 00000000'
         self.ulUnicodeRange2 = '000000'+ str(int(supplementaryPlane)) + '0 00000000 00000000 00000000'
@@ -264,7 +216,7 @@ class os2:
 
                           , self.sFamilyClass # Int16
 
-                          , self.panose # 10 UInt16s. TODO: Dunno how to do this.
+                          , self.panose.toBinary() # 10 UInt16s. TODO: Dunno how to do this.
 
                           , self.ulUnicodeRange1 # UInt32
                           , self.ulUnicodeRange2 # UInt32
