@@ -14,7 +14,7 @@ class gsub:
         # featureVariations table, because we don't need it.
         self.majorVersion = 1
         self.minorVersion = 0
-        self.TTXversion = '0x00010000' # TTX is weird. It's unclear how TTX's hex versions work.
+        self.TTXversion = '0x00010000' # TODO: Convert in some way so it can dynamically reflect the official values.
 
         self.scriptList = ScriptList() # non-editable ScriptList
         self.featureList = FeatureList() # non-editable FeatureList

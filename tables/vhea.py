@@ -11,7 +11,7 @@ class vhea:
 
         metrics = m['metrics']
 
-        self.version = '0x00010000' # hard-coded    TODO: put it in a more accurate data format.
+        self.version = 0x00010000 # hard-coded # TODO: convert to fixed.
 
         self.ascent = metrics['vertAscent']
         self.descent = metrics['vertDescent']
@@ -46,7 +46,7 @@ class vhea:
 
         vhea = Element("vhea")
 
-        vhea.append(Element("tableVersion", {'value': self.version }))
+        vhea.append(Element("tableVersion", {'value': hex(self.version) }))
 
         vhea.append(Element("ascent", {'value': str(self.ascent) }))
         vhea.append(Element("descent", {'value': str(self.descent) }))

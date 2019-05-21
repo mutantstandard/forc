@@ -3,7 +3,7 @@ from lxml.etree import Element
 
 class maxp:
     def __init__(self, glyphs):
-        self.version = '0x00010000' # TODO: make fixed type.
+        self.version = 0x00010000 # TODO: make fixed type.
 
         self.numGlyphs = len(glyphs["all"])
 
@@ -35,7 +35,7 @@ class maxp:
 
         maxp = Element("maxp")
 
-        maxp.append(Element("tableVersion", {'value': self.version })) # hard-coded
+        maxp.append(Element("tableVersion", {'value': hex(self.version) })) # hard-coded
 
         maxp.append(Element("numGlyphs", {'value': str(self.numGlyphs) })) # TTX re-calculates this anyway but I'm making it manually.
 

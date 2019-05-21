@@ -9,7 +9,8 @@ class post:
 
     def __init__(self, glyphs):
         self.version = 0x0002000 # binary version
-        self.versionTTX = '2.0' # TODO: merge with normal version.
+        self.versionTTX = '2.0' # TODO: merge with normal version. Probably by converting it to some kind of fixed.
+        # Apple suggests against using formats 2.5, 3 and 4.
 
         self.italicAngle = 0.0
 
@@ -33,7 +34,7 @@ class post:
     def toTTX(self):
         post = Element("post")
 
-        post.append(Element("formatType", {'value': self.versionTTX })) # hard-coded, Apple suggests against using formats 2.5, 3 and 4.
+        post.append(Element("formatType", {'value': self.versionTTX })) # hard-coded,
         post.append(Element("italicAngle", {'value': str(self.italicAngle) })) # hard-coded
 
         post.append(Element("underlinePosition", {'value': str(self.underlinePosition) }))

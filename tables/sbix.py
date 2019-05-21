@@ -1,5 +1,6 @@
 from lxml.etree import Element
 
+from data import bFlags
 
 class sbixBitmap:
     """
@@ -71,7 +72,7 @@ class sbix:
     def __init__(self, glyphs):
 
         self.version = 1 # hard-coded
-        self.flags = "00000000 00000001" # hard-coded     TODO: make this data type more accurate.
+        self.flags = bFlags("00000000 00000001") # hard-coded
 
         self.strikes = []
 
@@ -85,7 +86,7 @@ class sbix:
         sbix = Element("sbix")
 
         sbix.append(Element("version", {"value": str(self.version) })) # hard-coded
-        sbix.append(Element("flags", {"value": str(self.flags) })) # hard-coded
+        sbix.append(Element("flags", {"value": self.flags.toTTXStr() })) # hard-coded
 
         for strike in self.strikes:
             sbix.append(strike.toTTX())
