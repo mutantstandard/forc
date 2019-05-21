@@ -1,6 +1,8 @@
 import struct
 from lxml.etree import Element
 
+from data import bFlags
+
 class head:
     """
     Class representing a 'head' table.
@@ -32,7 +34,7 @@ class head:
         self.checkSumAdjustment = 0 # this is only set at compilation.
         self.magicNumber = "0x5f0f3cf5" # hard-coded
 
-        self.flags = '00000000 00001011' # hard-coded    TODO: Work on a more accurate format for internal use.
+        self.flags = bFlags('11010000 00000000') # hard-coded
 
         self.unitsPerEm = m['metrics']['unitsPerEm']
         self.created = m['metadata']['created'] #TODO: Work on a more accurate format for internal use.
@@ -43,7 +45,7 @@ class head:
         self.xMax = m['metrics']['xMax']
         self.yMax = m['metrics']['yMax']
 
-        self.macStyle = '00000000 00000000' # hard-coded. Must agree with OS/2's fsType. TODO: Work on a more accurate format for internal use.
+        self.macStyle = bFlags('00000000 00000000') # hard-coded. Must agree with OS/2's fsType.
         self.lowestRecPPEM = m['metrics']['lowestRecPPEM']
 
         self.fontDirectionHint = 2 # depreciated; is meant to be 2.
@@ -67,7 +69,7 @@ class head:
         head.append(Element("checkSumAdjustment", {'value': str(self.checkSumAdjustment) })) # TTX changes this at compilation
         head.append(Element("magicNumber", {'value': str(self.magicNumber) }))
 
-        head.append(Element("flags", {'value': self.flags }))
+        head.append(Element("flags", {'value': self.flags.toTTXStr() }))
 
         head.append(Element("unitsPerEm", {'value': str( self.unitsPerEm )}))
         head.append(Element("created", {'value':  self.created }))
@@ -78,7 +80,7 @@ class head:
         head.append(Element("xMax", {'value': str(self.xMax) }))
         head.append(Element("yMax", {'value': str(self.yMax) }))
 
-        head.append(Element("macStyle", {'value': self.macStyle }))
+        head.append(Element("macStyle", {'value': self.macStyle.toTTXStr() }))
         head.append(Element("lowestRecPPEM", {'value': str(self.lowestRecPPEM) }))
 
         head.append(Element("fontDirectionHint", {'value': str(self.fontDirectionHint) }))
@@ -98,7 +100,7 @@ class head:
                             , self.checksumAdjustment # UInt32
                             , self.magicNumber # UInt32
 
-                            , self.flags # UInt16
+                            , self.flags.toBinary() # UInt16
 
                             , self.unitsPerEm # UInt16
                             , self.created # LONGDATETIME (Int64) # TODO: get the date stuff to actually pack into this.
@@ -109,7 +111,7 @@ class head:
                             , self.xMax # Int16
                             , self.yMax # Int16
 
-                            , self.macStyle # UInt16
+                            , self.macStyle.toBinary() # UInt16
                             , self.lowerstRecPPEM # UInt16
 
                             , self.fontDirectionHint # Int16

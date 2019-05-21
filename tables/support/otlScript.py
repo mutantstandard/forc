@@ -43,12 +43,21 @@ class ScriptRecord:
 
         self.script = Script() # placeholder script table.
 
+
     def toTTX(self, index):
         scriptRecord = Element("ScriptRecord", {"index": str(index) })
         scriptRecord.append(Element("ScriptTag", {"value": str(self.scriptTag) }))
         scriptRecord.append(self.script.toTTX())
 
         return scriptRecord
+
+
+    def toBinary(self):
+        # need to input the offset from ScriptList building.
+        return struct.pack( '>I'
+                          , int(self.scriptTag) # Tag (UInt32)
+                          , # TODO: Offset16 to script table from the beginning of scriptList
+                          )
 
 
 
@@ -59,6 +68,7 @@ class ScriptList:
     def __init__(self):
         self.scriptRecords = [ScriptRecord()] # array of script tables.
 
+
     def toTTX(self):
         scriptList = Element("ScriptList")
 
@@ -66,3 +76,10 @@ class ScriptList:
             scriptList.append(sr.toTTX(index))
 
         return scriptList
+
+
+    def toBinary(self):
+        return struct.pack( '>H'
+                          , len(self.scriptRecords) # UInt16
+                          # TODO: insert the scriptRecords themselves.
+                          )

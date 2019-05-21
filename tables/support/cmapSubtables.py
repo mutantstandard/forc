@@ -24,7 +24,7 @@ class cmapFormat0:
         # check if the glyphs are one-byte, reject them if they are not.
         for g in glyphs:
             if g.codepoints.seq[0] > int('ff', 16):
-                raise ValueError(f"Building cmap subtable format 0 failed. A glyph whose codepoint is greater than U+FF was given. cmap Subtable Format 0 must have codepoints less than or equal to U+FF.")
+                raise ValueError(f"Creating cmap subtable format 0 failed. A glyph whose codepoint is greater than U+FF was given. cmap Subtable Format 0 must have codepoints less than or equal to U+FF.")
 
         self.glyphs = glyphs
         self.platformID = platformID
@@ -53,7 +53,7 @@ class cmapFormat4:
         # check if the glyphs are two-byte, reject them if they are not.
         for g in glyphs:
             if g.codepoints.seq[0] > int('ffff', 16):
-                raise ValueError(f"Building cmap subtable format 4 failed. A glyph whose codepoint is greater than U+FFFF was given. cmap Subtable Format 4 must only have codepoints less than or equal to U+FFFF.")
+                raise ValueError(f"Creating cmap subtable format 4 failed. A glyph whose codepoint is greater than U+FFFF was given. cmap Subtable Format 4 must only have codepoints less than or equal to U+FFFF.")
 
         self.glyphs = glyphs
         self.platformID = platformID
@@ -82,7 +82,7 @@ class cmapFormat12:
         # check if the glyphs are four-byte, reject them if they are not.
         for g in glyphs:
             if g.codepoints.seq[0] > int('ffffff', 16):
-                raise ValueError(f"Building cmap subtable format 12 failed. A glyph whose codepoint is greater than U+FFFFFF was given. cmap Subtable Format 12 must only have codepoints less than or equal to U+FFFFFF.")
+                raise ValueError(f"Creating cmap subtable format 12 failed. A glyph whose codepoint is greater than U+FFFFFF was given. cmap Subtable Format 12 must only have codepoints less than or equal to U+FFFFFF.")
 
         self.glyphs = glyphs
         self.platformID = platformID
