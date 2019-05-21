@@ -16,7 +16,6 @@ class EBDTBitmapFormat17:
 
 
     def toTTX(self):
-        # format 18 for big metrics and PNG data.
         bitmapTable = Element("cbdt_bitmap_format_17", {"name": self.name })
 
         bitmapTable.append(self.metrics.toTTX())

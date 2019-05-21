@@ -1,7 +1,7 @@
 from data import tag
 from validate.data import validatePostScriptName
 
-
+checkDocMsg = "Check the documentation to make sure you're doing the manifest right'."
 
 
 def compileNameRecords(nameRecords, outputFormats):

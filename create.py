@@ -6,7 +6,7 @@ import shutil
 import files
 from font import font
 import compile.ttx
-import compile.ios
+import compile.ios.create
 from format import formats
 
 
