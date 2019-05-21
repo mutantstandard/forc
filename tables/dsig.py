@@ -1,6 +1,7 @@
 import struct
 from lxml.etree import Element
 
+from data import bFlags
 
 class dsig:
     """
@@ -9,9 +10,10 @@ class dsig:
 
     def __init__(self):
 
-        # all the data here is just formatted for TTX output atm.
-        self.version = '0x00000001' # TODO: make this a real int.
-        self.flag = '00000000' # TODO: make this a real binary flags thing.
+        self.version = 0x00000001
+        # Hardcoded. It is what it's supposed to be - a single UInt32.
+
+        self.flags = bFlags('00000000')
         self.numSigs = 0
 
 
@@ -22,8 +24,8 @@ class dsig:
 
         dsig = Element("DSIG")
 
-        dsig.append(Element("tableHeader", {'version': self.version
-                                           ,'flag': self.flag
+        dsig.append(Element("tableHeader", {'version': hex(self.version)
+                                           ,'flag': self.flags.toTTXStr()
                                            ,'numSigs': str(self.numSigs)
                                            }))
 
@@ -31,7 +33,7 @@ class dsig:
 
     def toBinary(self):
         return struct.pack( '>IHH'
-                          , self.version # UInt32
+                          , self.version # UInt32 (not fixed!)
                           , self.flag # UInt16
                           , self.numSigs # UInt16
                           )

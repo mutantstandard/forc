@@ -76,6 +76,9 @@ class bFlags:
             if c in ['1', '0']:
                 self.bits.append(int(c))
 
+        if len(self.bits) not in [8, 16, 32]:
+            raise ValueError(f"Making binaryFlags data type failed. The amount of bits given was not 8, 16 or 32. It has to be one of these.")
+
 
     def __str__(self):
         string = ""
@@ -112,3 +115,59 @@ class bFlags:
         TODO: actually make this work.
         """
         return '0'
+
+
+
+class hvFixed:
+    """
+    A representation of a 'Fixed' data type in a font, specifically for version numbers like those in head.fontRevision.
+    (A decimal number where the two numbers on either side of the decimal represent exactly 16 bits.)
+
+    - https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-version-numbers
+    - https://silnrsi.github.io/FDBP/en-US/Versioning.html
+    """
+    def __init__(self, string):
+
+        # creating an OpenType-compliant fontRevision number based on best practices.
+
+        versionComponents = string.split('.')
+
+        # normal decimal versions
+        self.majorVersionSimple = versionComponents[0]
+        self.minorVersionSimple = versionComponents[1]
+
+        try:
+            # The fancy hex stuff
+            # https://silnrsi.github.io/FDBP/en-US/Versioning.html
+            self.majorVersionCalc = int(versionComponents[0])
+            self.minorVersionCalc = int(( int(versionComponents[1]) / 1000 ) * 65536)
+        except:
+            raise Exception("Converting headVersion to it's proper data structure failed for some reason!" + str(e))
+
+
+    def __str__(self):
+        """
+        Friendly non-weird version of it.
+        """
+        return self.majorVersionSimple + '.' + self.minorVersionSimple
+
+
+    def toHex(self):
+        """
+        Returns a proper hexidecimal representation of the version number as a string.
+        """
+        return '0x' + f"{self.majorVersionCalc:04x}" + f"{self.minorVersionCalc:04x}"
+
+
+    def __int__():
+        """
+        returns the proper numerical representation of this value
+        ie.
+
+        1.040
+        000010a3d
+
+        1   . 040
+        0001  0a3d
+        """
+        return int(f"{self.majorVersionCalc:04x}" + f"{self.minorVersionCalc:04x}", 16)

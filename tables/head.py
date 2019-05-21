@@ -10,29 +10,12 @@ class head:
 
     def __init__(self, m):
 
-
-        # creating an OpenType-compliant fontRevision number based on best practices.
-        # https://silnrsi.github.io/FDBP/en-US/Versioning.html
-        versionComponents = m['metadata']['version'].split('.')
-
-        try:
-            majorVersion = int(versionComponents[0])
-            minorVersion = int(( int(versionComponents[1]) / 1000 ) * 65536)
-        except:
-            raise Exception("Converting headVersion to it's proper data structure failed for some reason!" + str(e))
-
-        headVersionHex = '0x{0:0{1}X}'.format(majorVersion, 4) + '{0:0{1}X}'.format(minorVersion, 4)
-
-
-
-
         self.majorVersion = 1 # hard-coded, is meant to be 1.
         self.minorVersion = 0 # hard-coded, is meant to be 0.
-        self.fontRevision = headVersionHex
-        self.fontRevisionTTXfriendly = m['metadata']['version'] # TTX is weird about font versioning, only accepts a basic string.
+        self.fontRevision = m['metadata']['version'] # vFixed format.
 
         self.checkSumAdjustment = 0 # this is only set at compilation.
-        self.magicNumber = "0x5f0f3cf5" # hard-coded
+        self.magicNumber = 0x5f0f3cf5 # hard-coded
 
         self.flags = bFlags('11010000 00000000') # hard-coded
 
@@ -64,10 +47,10 @@ class head:
         head = Element("head")
 
         head.append(Element("tableVersion", {'value': str(self.majorVersion) + '.' + str(self.minorVersion)  }))
-        head.append(Element("fontRevision", {'value': str(self.fontRevisionTTXfriendly)  })) # have to use the TTX-friendly version
+        head.append(Element("fontRevision", {'value': str(self.fontRevision) })) # TTX is weird about font versioning, only accepts a basic string, so use str.
 
         head.append(Element("checkSumAdjustment", {'value': str(self.checkSumAdjustment) })) # TTX changes this at compilation
-        head.append(Element("magicNumber", {'value': str(self.magicNumber) }))
+        head.append(Element("magicNumber", {'value': hex(self.magicNumber) }))
 
         head.append(Element("flags", {'value': self.flags.toTTXStr() }))
 
@@ -95,7 +78,7 @@ class head:
         return struct.pack( '>HHiIIHHqqhhhhHHhhh'
                             , self.majorVersion # UInt16
                             , self.minorVersion # UInt16
-                            , self.fontRevision # Fixed (Int32 but fixed-point)
+                            , int(self.fontRevision) # Fixed (Int32 but fixed-point)
 
                             , self.checksumAdjustment # UInt32
                             , self.magicNumber # UInt32
