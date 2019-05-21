@@ -56,7 +56,10 @@ class tag:
 class bFlags:
     """
     Class encapsulating binary flags in font tables.
+
+    Flags are inputted in big-endian order (ie. left-to-right).
     """
+
     def __init__(self, string):
         """
         Binary flags are stored in big-endian order. (ie. left-to-right)
@@ -74,20 +77,32 @@ class bFlags:
                 self.bits.append(int(c))
 
 
+    def __str__(self):
+        string = ""
+
+        for index, c in enumerate(self.bits): # big-endian
+            if index%8 == 0 and index != 0: # every 8 bits, add a space.
+                string += ' '
+            string += str(c) # append the bit as a string
+
+        return string
+
+    def __repr__(self):
+        return str(self)
 
 
     def toTTXStr(self):
         """
-        Returns a string that's little-endian formatted, for TTX use.
+        Returns a string that's little-endian (right-to-left) formatted, for TTX use.
         """
 
         ttxString = ""
 
-        for index, c in enumerate(self.bits[::-1]): # reverse order
+        for index, c in enumerate(self.bits[::-1]): # little-endian (reverse order)
             if index%8 == 0 and index != 0: # every 8 bits, add a space.
                 ttxString += ' '
             ttxString += str(c) # append the bit as a string
-            
+
         return ttxString
 
 
