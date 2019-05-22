@@ -197,7 +197,7 @@ class font:
 
     def toBytes(self):
         """
-        Compiles font to binary.
+        Compiles font to bytes.
         (Just a placeholder right now.)
         """
 

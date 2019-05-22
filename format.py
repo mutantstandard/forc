@@ -56,4 +56,4 @@ formats = {"SVGinOT":
          }
 
 
-compilers = ["ttx", "binary"]
+compilers = ["ttx", "forc"]

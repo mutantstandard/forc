@@ -55,7 +55,7 @@ def createFont(fontFormat, outputPath, manifest, glyphs, compiler, flags):
 
     if compiler == 'ttx':
         tempFontPath = compile.ttx.createFont(formatData, outPath, tempPath, filename, flags, emojiFont)
-    elif compiler == 'binary':
+    elif compiler == 'forc':
         tempFontPath = compile.binary.createFont(formatData, outPath, tempPath, filename, flags, emojiFont)
     else:
         raise ValueError("Something went wrong with the build process. I'm not able to run the font data through a compiler.")

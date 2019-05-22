@@ -78,7 +78,7 @@ HOW TO BUILD IT:
 
 -C      Compiler (default: {DEF_COMPILER})
         - ttx
-        - binary (*will* give broken results atm)
+        - forc (*will* give broken results atm)
 
 
 

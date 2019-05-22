@@ -12,7 +12,7 @@ from format import formats
 
 def createFont(formatData, outPath, tempPath, filename, flags, font):
     """
-    Calls the functions that assemble and create a font via forc's binary compiler method.
+    Calls the functions that assemble and create a font via forc's internal compiler method.
     """
 
 

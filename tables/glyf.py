@@ -4,7 +4,7 @@ from lxml.etree import Element, ElementTree
 class glyf:
     """
     Class representing a glyf table.
-    (this currently doesn't accurately represent a glyf table in binary)
+    (this currently doesn't accurately represent a glyf table in bytes)
     """
 
     def __init__(self, m, glyphs):

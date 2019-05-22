@@ -117,7 +117,7 @@ class os2:
         os2.append(Element("usWeightClass", {'value': str(self.usWeightClass) }))
         os2.append(Element("usWidthClass", {'value': str(self.usWidthClass) }))
 
-        os2.append(Element("fsType", {'value': self.fsType.toTTXStr() })) # convert to binary string
+        os2.append(Element("fsType", {'value': self.fsType.toTTXStr() }))
 
         os2.append(Element("ySubscriptXSize", {'value': str(self.ySubscriptXSize) }))
         os2.append(Element("ySubscriptYSize", {'value': str(self.ySubscriptYSize) }))
@@ -179,7 +179,7 @@ class os2:
 
     def toBytes(self):
         """
-        Outputs table to binary, formatted for sfnt.
+        Outputs table to bytes, formatted for sfnt.
         """
 
         return struct.pack( ">hhHH2bhhhhhhhhhhh10b4b4b4b4bI2bHHhhhHH4b4bhhHHHHH"
