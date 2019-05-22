@@ -1,4 +1,6 @@
 import re
+from math import floor
+from datetime import datetime, tzinfo, timedelta, timezone
 
 class tag:
     """
@@ -202,3 +204,61 @@ class vFixed:
 
     def toDecimalStr(self):
         return str(self.majorVersion) + '.' + str(self.minorVersion)
+
+
+
+class longDateTime:
+    """
+    Class representing the LONGDATETIME data format in fonts.
+
+    LONGDATETIME is an Int64 representing the amount of seconds since 1st January 1904 at 00:00 UTC.
+    - https://docs.microsoft.com/en-us/typography/opentype/spec/otff#data-types
+
+    LONGDATETIME is done at UTC; there are no time zones.
+    """
+
+    def __init__(self, string=None):
+        """
+        Either takes in a formatted string representing a datetime, or nothing.
+        If nothing is inputted, forc will just use now.
+
+        forc's datetime format:
+        (UTC timezone is assumed, microseconds assumed to be 0.)
+
+        2019-05-22 09:59 +0000
+        %d-%m-%d   %H:%M %z
+        """
+
+        if string and string != "":
+            try:
+                self.datetime = datetime.strptime(string, "%Y-%m-%d %H:%M %z")
+            except:
+                raise ValueError(f"Creating longDateTime data type failed. The string given ('{string}') is formatted wrong.")
+        else:
+            self.datetime = datetime.now(timezone.utc)
+
+
+    def __int__(self):
+        """
+        Returns an int representation of this datetime, designed for font binary compilation.
+        (Returns a time delta in seconds from 1st January 1904 at 00:00 UTC to this datetime at UTC.)
+        """
+        firstDate = datetime(1904, 1, 1, 0, 0, 0, 0, timezone.utc)
+        delta = self.datetime - firstDate
+
+        return floor(delta.total_seconds()) # return a rounded-down integer of the total seconds in that delta.
+
+
+
+    def toTTXStr(self):
+        """
+        Returns a string representation of this datetime, designed for TTX compilation.
+        (returns a datetime string formatted in the following way:)
+
+        %a  %b  %d %X       %Y
+        Wed May 22 13:45:00 2018
+                   (24h UTC)
+
+        (Giving TTX compiler anything else will result in a TTX build error)
+        """
+        return self.datetime.strftime("%a %b %d %X %Y")

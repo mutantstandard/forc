@@ -1,4 +1,4 @@
-from data import tag, fixed
+from data import tag, fixed, longDateTime
 from validate.data import validatePostScriptName
 
 
@@ -53,6 +53,19 @@ def checkTransformMetadata(metadata, outputFormats):
     """
     Checks and transforms manifest metadata, ready for font assembly.
     """
+
+    # Created
+    # --------------------------------------------------
+    if not "created" in metadata:
+        raise ValueError(f"You don't have a metadata.created in your manifest. It has to have this, even if it's a blank string.")
+
+
+    try:
+        # try to convert this to a longDateTime format.
+        metadata['created'] = longDateTime(metadata['created'])
+    except ValueError as e:
+        raise ValueError(f"Something is wrong with the formatting of metadata.created in your manifest. -> {e}")
+
 
     # Font Version
     # ---------------------------------------------------

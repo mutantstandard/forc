@@ -108,7 +108,7 @@ forc assumes you want to create a font that can work in both vertical AND horizo
 
 | name | type | req? | description |
 |:--|:--|:--|:--|
-| created | string | ✔️
+| created | string | ✔️ | The date your font was created. Formatted as YYYY-MM-DD MM:SS +(timezone) (""%Y-%m-%d %H:%M %z" in Python). You can leave it empty and forc will interpret it as 'now'.
 | version | string (representing a 3-decimal number that's 1.000 or greater) | ✔️
 | OS2VendorID | string (a 4-character string of a limited set of ASCII characters) | | [Microsoft's 4-letter identifier for registered font vendors](https://docs.microsoft.com/en-us/typography/opentype/spec/os2#achvendid). |
 | nameRecords | object | ✔️ | A structure represnting all of the records of the `name` table. (Described in more detail later.) |
@@ -127,7 +127,7 @@ forc assumes you want to create a font that can work in both vertical AND horizo
 	, "sbixOTiOS": "MutantStandardEmoji-sbixOT-iOS"
 	, "CBx": "MutantStandardEmoji-CBx"
 }
-        
+
 ```
 
 What filenames your output is going to have.
@@ -148,7 +148,7 @@ As you can see in the JSON example though, I personally decided to not have Regu
 
 ### Name Records
 
-Name records consists of a series of objects named after the font formats that forc can export (or 'default'), 
+Name records consists of a series of objects named after the font formats that forc can export (or 'default'),
 
 ````
 "nameRecords":
@@ -195,14 +195,14 @@ What kinds of characters you can put in these will be determined by the encoding
 | 0 |   | **Copyright** | Copyright © 2017-2019 Dzuk (https://noct.zone) | Identifies the copyright holder of the font. This isn't where the license goes - use name records 13 and 14 for license information. This isn't necessarily the same as the designer (name record 9) or the vendor (name record 8). |
 | 1 | ✔️ | **Family** | Mutant Standard emoji (SVGinOT) | [3]
 | 2 | ✔️ | **Subfamily** | Regular | [3]
-| 3 | ✔️  | **Unique font identifier** | Mutant Standard emoji SVGinOT | It's a string that distinguishes your font from others. Include version information here. macOS will consider the structure of this table invalid if this is not present. | 
+| 3 | ✔️  | **Unique font identifier** | Mutant Standard emoji SVGinOT | It's a string that distinguishes your font from others. Include version information here. macOS will consider the structure of this table invalid if this is not present. |
 | 4 | ✔️ | **Full font name** | Mutant Standard emoji (SVGinOT) | A combination of 1 + 2, or 16 + 17.
 | 5 | | **Version supplementary information** | (0.4.0 - 2019-03-15) | **This is a special case that doesn't fully represent what this field normally is.** [4] |
 | 6 | ✔️ | **PostScript name** | MutantStandard-SVGinOT | Has to be restricted to 'printable' ASCII characters. (U+0021 through U+007E, and not '[', ']', '(', ')', '{', '}', '<', '>', '/', and '%'.)|
 | 7 |   | Trademark |  |
 | 8 |   | **Manufacturer name** | Mutant Standard | Who publised the font. |
 | 9 |   | **Designer name** | Dzuk | Who designed the font.
-| 10 |   | Description | When using the special emoji within this font that aren't supported by Unicode, make sure you are not using them in situations where other people or devices may not have this font installed, or those who are visually impaired. See [URL] for more information. | 
+| 10 |   | Description | When using the special emoji within this font that aren't supported by Unicode, make sure you are not using them in situations where other people or devices may not have this font installed, or those who are visually impaired. See [URL] for more information. |
 | 11 |   | **Vendor URL** | https://mutant.tech | [1]
 | 12 |   | **Designer URL** | https://noct.zone | [1]
 | 13 |   | **License** | Mutant Standard emoji is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. | [2]
@@ -210,14 +210,14 @@ What kinds of characters you can put in these will be determined by the encoding
 | 15 |   | | |
 | 16 | ✔️ | **Typographic/Preferred Family** | Mutant Standard emoji | [3]
 | 17 | ✔️ | **Typographic/Preferred Subfamily** | SVGinOT | [3]
-| 18 |   | Compatible Full |  | 
+| 18 |   | Compatible Full |  |
 | 19 |   | Sample Text |  | Sample text for your font. The encoding you choose above limits what characters you can put in here, so you may have limited or no ability to create emoji sample text.
-| 20 |   | PostScript CID findfont name | | 
-| 21 |   | WWS Family Name | | 
-| 22 |   | WWS Subfamily name | | 
-| 23 |   | Light Background Palette | | 
-| 24 |   | Dark Background Palette | | 
-| 25 |   | Variations PostScript Name Prefix | | 
+| 20 |   | PostScript CID findfont name | |
+| 21 |   | WWS Family Name | |
+| 22 |   | WWS Subfamily name | |
+| 23 |   | Light Background Palette | |
+| 24 |   | Dark Background Palette | |
+| 25 |   | Variations PostScript Name Prefix | |
 
 1. URLs have to contain the protocol (ie. http://, ftp://, mailto:).
 2. 'License' should just have a brief summary of the license, not legalese. Use 'License URL' to direct people to the legalese.

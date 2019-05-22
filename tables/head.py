@@ -1,7 +1,7 @@
 import struct
 from lxml.etree import Element
 
-from data import bFlags
+from data import bFlags, longDateTime
 
 class head:
     """
@@ -18,10 +18,10 @@ class head:
         self.magicNumber = 0x5f0f3cf5 # hard-coded
 
         self.flags = bFlags('11010000 00000000') # hard-coded
-
         self.unitsPerEm = m['metrics']['unitsPerEm']
-        self.created = m['metadata']['created'] #TODO: Work on a more accurate format for internal use.
-        self.modified = 'Mon Dec 11 13:45:00 2018' #TODO: Work on a more accurate format for internal use.
+
+        self.created = m['metadata']['created'] # (is a longDateTime)
+        self.modified = longDateTime() # is set to 'now'
 
         self.xMin = m['metrics']['xMin']
         self.yMin = m['metrics']['yMin']
@@ -32,7 +32,7 @@ class head:
         self.lowestRecPPEM = m['metrics']['lowestRecPPEM']
 
         self.fontDirectionHint = 2 # depreciated; is meant to be 2.
-        self.indexToLocFormat = 0 # not important, hard-coded
+        self.indexToLocFormat = 0 # This determines the format of the loca table.
         self.glyphDataFormat = 0 # not important, hard-coded
 
 
@@ -53,10 +53,10 @@ class head:
         head.append(Element("magicNumber", {'value': hex(self.magicNumber) }))
 
         head.append(Element("flags", {'value': self.flags.toTTXStr() }))
-
         head.append(Element("unitsPerEm", {'value': str( self.unitsPerEm )}))
-        head.append(Element("created", {'value':  self.created }))
-        head.append(Element("modified", {'value': self.modified })) # TTX changes this at compilation *shrugs*
+
+        head.append(Element("created", {'value':  self.created.toTTXStr() }))
+        head.append(Element("modified", {'value': self.modified.toTTXStr() })) # TTX eats the value given and creates it's own date at compilation *shrugs*
 
         head.append(Element("xMin", {'value': str(self.xMin) }))
         head.append(Element("yMin", {'value': str(self.yMin) }))
@@ -67,7 +67,7 @@ class head:
         head.append(Element("lowestRecPPEM", {'value': str(self.lowestRecPPEM) }))
 
         head.append(Element("fontDirectionHint", {'value': str(self.fontDirectionHint) }))
-        head.append(Element("indexToLocFormat", {'value': str(self.indexToLocFormat) })) # This determines the format of the loca table.
+        head.append(Element("indexToLocFormat", {'value': str(self.indexToLocFormat) }))
         head.append(Element("glyphDataFormat", {'value': str(self.glyphDataFormat) }))
 
         return head
@@ -85,10 +85,10 @@ class head:
                             , self.magicNumber # UInt32
 
                             , self.flags.toBinary() # UInt16
-
                             , self.unitsPerEm # UInt16
-                            , self.created # LONGDATETIME (Int64) # TODO: get the date stuff to actually pack into this.
-                            , self.modified # LONGDATETIME (Int64) # TODO: get the date stuff to actually pack into this.
+                            
+                            , int(self.created) # LONGDATETIME (Int64)
+                            , int(self.modified) # LONGDATETIME (Int64)
 
                             , self.xMin # Int16
                             , self.yMin # Int16
