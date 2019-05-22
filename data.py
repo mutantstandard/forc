@@ -1,4 +1,5 @@
 import re
+import struct
 from math import floor
 from datetime import datetime, tzinfo, timedelta, timezone
 
@@ -61,13 +62,12 @@ class tag:
 class bFlags:
     """
     Class encapsulating binary flags in font tables.
-
-    Flags are inputted in big-endian order (ie. left-to-right).
     """
 
     def __init__(self, string):
         """
-        Binary flags are stored in big-endian order. (ie. left-to-right)
+        Binary flags are entered and stored in big-endian order. (ie. left-to-right).
+        Input can be formatted with spaces (ie. '00100000 00001010').
         """
 
         self.bits = []
@@ -101,7 +101,7 @@ class bFlags:
 
     def toTTXStr(self):
         """
-        Returns a string that's little-endian (right-to-left) formatted, for TTX use.
+        Returns a string that's little-endian formatted, for TTX use.
         """
 
         ttxString = ""
@@ -116,11 +116,17 @@ class bFlags:
 
     def toBinary(self):
         """
-        returns binary output that's big-endian formatted, for binary compiler use.
-        TODO: actually make this work.
+        Returns bytes in big-endian format.
         """
-        return '0'
+        # convert each 8-bit block into bytes and then pack them
+        # c1 c2 c3 c4
 
+        # - iterate over every bit
+        # - put each bit into a byte every 8 bits.
+        # - pack the bytes together.
+
+
+        return 0
 
 
 
@@ -181,6 +187,7 @@ class fixed:
 
 
 
+
 class vFixed:
     """
     A specific, non-normal representation of a fixed number, used only in certain forms of version numbers.
@@ -204,6 +211,8 @@ class vFixed:
 
     def toDecimalStr(self):
         return str(self.majorVersion) + '.' + str(self.minorVersion)
+
+
 
 
 

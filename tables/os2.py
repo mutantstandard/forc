@@ -181,14 +181,14 @@ class os2:
         Outputs table to binary, formatted for sfnt.
         """
 
-        return struct.pack( ">hhHHHhhhhhhhhhhhbIIIIIHHHhhhHHHHhhHHHHH"
+        return struct.pack( ">hhHH2bhhhhhhhhhhh10b4b4b4b4bI2bHHhhhHH4b4bhhHHHHH"
                           , self.version # UInt16
 
                           , self.xAvgCharWidth # Int16
                           , self.usWeightClass # UInt16
                           , self.usWidthClass # UInt16
 
-                          , self.fsType.toBinary() # UInt16
+                          , self.fsType.toBinary() # 2 bytes/UInt16
 
                           , self.ySubscriptXSize # Int16
                           , self.ySubscriptYSize # Int16
@@ -205,16 +205,16 @@ class os2:
 
                           , self.sFamilyClass # Int16
 
-                          , self.panose.toBinary() # 10 UInt16s.
+                          , self.panose.toBinary() # 10 byte/10 UInt16s.
 
-                          , self.ulUnicodeRange1.toBinary() # UInt32
-                          , self.ulUnicodeRange2.toBinary() # UInt32
-                          , self.ulUnicodeRange3.toBinary() # UInt32
-                          , self.ulUnicodeRange4.toBinary() # UInt32
+                          , self.ulUnicodeRange1.toBinary() # 4 bytes/UInt32
+                          , self.ulUnicodeRange2.toBinary() # 4 bytes/UInt32
+                          , self.ulUnicodeRange3.toBinary() # 4 bytes/UInt32
+                          , self.ulUnicodeRange4.toBinary() # 4 bytes/UInt32
 
                           , int(self.achVendID) # Tag (UInt32)
 
-                          , self.fsSelection.toBinary() # UInt16
+                          , self.fsSelection.toBinary() # 2 bytes/UInt16
 
                           , self.usFirstCharIndex # UInt16
                           , self.usLastCharIndex # UInt16
@@ -225,8 +225,8 @@ class os2:
                           , self.usWinAscent # UInt16
                           , self.usWinDescent # UInt16
 
-                          , self.ulCodePageRange1.toBinary() # UInt32
-                          , self.ulCodePageRange2.toBinary() # UInt32
+                          , self.ulCodePageRange1.toBinary() # 4 bytes/UInt32
+                          , self.ulCodePageRange2.toBinary() # 4 bytes/UInt32
 
                           , self.sxHeight # Int16
                           , self.sCapHeight # Int16

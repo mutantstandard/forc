@@ -32,8 +32,8 @@ class dsig:
         return dsig
 
     def toBinary(self):
-        return struct.pack( '>IHH'
-                          , self.version # UInt32 (not fixed!)
-                          , self.flag # UInt16
+        return struct.pack( '>I2bH'
+                          , self.version # UInt32 (not fixed type!)
+                          , self.flags.toBinary() # 2 bytes/UInt16
                           , self.numSigs # UInt16
                           )
