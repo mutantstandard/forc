@@ -1,4 +1,4 @@
-from data import tag, hvFixed
+from data import tag, fixed
 from validate.data import validatePostScriptName
 
 
@@ -77,7 +77,7 @@ def checkTransformMetadata(metadata, outputFormats):
     if versionComponents[0] == "0":
         raise ValueError(f"metadata.version is not correct. The Major Version (the number before the decimal place) is 0. It should be 1 or higher. Certain environments act weird if you don't. If you need to mark it as a beta, consider marking at such in the version notes in the manifest.")
 
-    metadata['version'] = hvFixed(metadata['version'])
+    metadata['version'] = fixed(metadata['version'])
 
 
 

@@ -18,8 +18,8 @@ class gasp:
 
         gasp = Element("gasp")
 
-        gasp.append(Element("gaspRange", {'rangeMaxPPEM': str(self.rangeMaxPPEM)
-                                         ,'rangeGaspBehavior': hex(self.rangeGaspBehavior)
+        gasp.append(Element("gaspRange", {'rangeMaxPPEM': str(self.rangeMaxPPEM) # Decimal string
+                                         ,'rangeGaspBehavior': hex(self.rangeGaspBehavior) # Hex string
                                          }))
 
         return gasp

@@ -12,7 +12,7 @@ class head:
 
         self.majorVersion = 1 # hard-coded, is meant to be 1.
         self.minorVersion = 0 # hard-coded, is meant to be 0.
-        self.fontRevision = m['metadata']['version'] # vFixed format.
+        self.fontRevision = m['metadata']['version'] # fixed format.
 
         self.checkSumAdjustment = 0 # this is only set at compilation.
         self.magicNumber = 0x5f0f3cf5 # hard-coded
@@ -49,7 +49,7 @@ class head:
         head.append(Element("tableVersion", {'value': str(self.majorVersion) + '.' + str(self.minorVersion)  }))
         head.append(Element("fontRevision", {'value': str(self.fontRevision) })) # TTX is weird about font versioning, only accepts a basic string, so use str.
 
-        head.append(Element("checkSumAdjustment", {'value': str(self.checkSumAdjustment) })) # TTX changes this at compilation
+        head.append(Element("checkSumAdjustment", {'value': str(self.checkSumAdjustment) })) # TTX changes this at compilation, so we don't need to bother with this for this compiler.
         head.append(Element("magicNumber", {'value': hex(self.magicNumber) }))
 
         head.append(Element("flags", {'value': self.flags.toTTXStr() }))
@@ -67,7 +67,7 @@ class head:
         head.append(Element("lowestRecPPEM", {'value': str(self.lowestRecPPEM) }))
 
         head.append(Element("fontDirectionHint", {'value': str(self.fontDirectionHint) }))
-        head.append(Element("indexToLocFormat", {'value': str(self.indexToLocFormat) }))
+        head.append(Element("indexToLocFormat", {'value': str(self.indexToLocFormat) })) # This determines the format of the loca table.
         head.append(Element("glyphDataFormat", {'value': str(self.glyphDataFormat) }))
 
         return head
@@ -76,6 +76,7 @@ class head:
 
     def toBinary(self):
         return struct.pack( '>HHiIIHHqqhhhhHHhhh'
+
                             , self.majorVersion # UInt16
                             , self.minorVersion # UInt16
                             , int(self.fontRevision) # Fixed (Int32 but fixed-point)

@@ -53,6 +53,9 @@ class tag:
 
 
 
+
+
+
 class bFlags:
     """
     Class encapsulating binary flags in font tables.
@@ -118,17 +121,18 @@ class bFlags:
 
 
 
-class hvFixed:
+
+
+
+class fixed:
     """
-    A representation of a 'Fixed' data type in a font, specifically for version numbers like those in head.fontRevision.
+    A representation of a 'Fixed' data type in a font. This is used in normal fixed values, as well as by head.fontRevision.
     (A decimal number where the two numbers on either side of the decimal represent exactly 16 bits.)
 
     - https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-version-numbers
     - https://silnrsi.github.io/FDBP/en-US/Versioning.html
     """
     def __init__(self, string):
-
-        # creating an OpenType-compliant fontRevision number based on best practices.
 
         versionComponents = string.split('.')
 
@@ -137,7 +141,7 @@ class hvFixed:
         self.minorVersionSimple = versionComponents[1]
 
         try:
-            # The fancy hex stuff
+            # creating an OpenType-compliant fontRevision number based on best practices.
             # https://silnrsi.github.io/FDBP/en-US/Versioning.html
             self.majorVersionCalc = int(versionComponents[0])
             self.minorVersionCalc = int(( int(versionComponents[1]) / 1000 ) * 65536)
@@ -171,3 +175,30 @@ class hvFixed:
         0001  0a3d
         """
         return int(f"{self.majorVersionCalc:04x}" + f"{self.minorVersionCalc:04x}", 16)
+
+
+
+
+class vFixed:
+    """
+    A specific, non-normal representation of a fixed number, used only in certain forms of version numbers.
+
+    - https://docs.microsoft.com/en-us/typography/opentype/spec/otff#table-version-numbers
+    """
+
+    def __init__(self, string):
+
+        versionComponents = string.split('.')
+
+        # normal decimal versions
+        self.majorVersion = int(versionComponents[0])
+        self.minorVersion = int(versionComponents[1])
+
+    def __int__(self):
+        return (f'{self.majorVersion:04x}' + f"{self.minorVersion}" + "000", 16)
+
+    def toHexStr(self):
+        return "0x" + f'{self.majorVersion:04x}' + str(self.minorVersion) + "000"
+
+    def toDecimalStr(self):
+        return str(self.majorVersion) + '.' + str(self.minorVersion)

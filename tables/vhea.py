@@ -1,6 +1,7 @@
 import struct
 from lxml.etree import Element
 
+from data import vFixed
 
 class vhea:
     """
@@ -11,7 +12,7 @@ class vhea:
 
         metrics = m['metrics']
 
-        self.version = 0x00010000 # hard-coded # TODO: convert to fixed.
+        self.version = vFixed('1.0')
 
         self.ascent = metrics['vertAscent']
         self.descent = metrics['vertDescent']
@@ -46,7 +47,7 @@ class vhea:
 
         vhea = Element("vhea")
 
-        vhea.append(Element("tableVersion", {'value': hex(self.version) }))
+        vhea.append(Element("tableVersion", {'value': self.version.toHexStr() }))
 
         vhea.append(Element("ascent", {'value': str(self.ascent) }))
         vhea.append(Element("descent", {'value': str(self.descent) }))
@@ -76,7 +77,7 @@ class vhea:
 
     def toBinary(self):
         return struct.pack(">ihhhhhhhhhhhhhhhH"
-                          , self.version # Fixed (Int32, fixed-point)
+                          , int(self.version) # Fixed (Int32)
 
                           , self.ascent # Int16
                           , self.descent # Int16

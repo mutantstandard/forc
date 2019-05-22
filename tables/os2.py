@@ -110,7 +110,7 @@ class os2:
 
         os2 = Element("OS_2")
 
-        os2.append(Element("version", {'value': '5'})) # hard-coded
+        os2.append(Element("version", {'value': str(self.version) })) # hard-coded
 
         os2.append(Element("xAvgCharWidth", {'value': str(self.xAvgCharWidth) }))
         os2.append(Element("usWeightClass", {'value': str(self.usWeightClass) }))

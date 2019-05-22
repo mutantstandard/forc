@@ -1,6 +1,7 @@
 import struct
 from lxml.etree import Element
 
+from data import vFixed
 
 class hhea:
     """
@@ -13,7 +14,6 @@ class hhea:
 
         self.majorVersion = 1
         self.minorVersion = 0
-        self.tableVersionTTX = '0x00010000' # hard-coded    TODO: merge with the normal version
 
         self.ascent = metrics['horiAscent']
         self.descent = metrics['horiDescent']
@@ -47,7 +47,7 @@ class hhea:
 
         hhea = Element("hhea")
 
-        hhea.append(Element("tableVersion", {'value': self.tableVersionTTX }))
+        hhea.append(Element("tableVersion", {'value': vFixed(f"{self.majorVersion}.{self.minorVersion}").toHexStr() })) # TTX wants the version in this format.
 
         hhea.append(Element("ascent", {'value': str(self.ascent) }))
         hhea.append(Element("descent", {'value': str(self.descent) }))

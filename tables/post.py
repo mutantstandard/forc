@@ -1,5 +1,5 @@
 from lxml.etree import Element
-
+from data import fixed, vFixed
 
 
 class post:
@@ -8,11 +8,12 @@ class post:
     """
 
     def __init__(self, glyphs):
-        self.version = 0x0002000 # binary version
-        self.versionTTX = '2.0' # TODO: merge with normal version. Probably by converting it to some kind of fixed.
-        # Apple suggests against using formats 2.5, 3 and 4.
 
-        self.italicAngle = 0.0
+        self.version = vFixed('2.0')
+        # Apple suggests against using formats 2.5, 3 and 4.
+        # Microsoft says that version 2.5 is depreciated.
+
+        self.italicAngle = fixed('0.0')
 
         self.underlinePosition = 0
         self.underlineThickness = 0
@@ -34,7 +35,7 @@ class post:
     def toTTX(self):
         post = Element("post")
 
-        post.append(Element("formatType", {'value': self.versionTTX })) # hard-coded,
+        post.append(Element("formatType", {'value': self.version.toDecimalStr() })) # TTX wants a decimal string version of this.
         post.append(Element("italicAngle", {'value': str(self.italicAngle) })) # hard-coded
 
         post.append(Element("underlinePosition", {'value': str(self.underlinePosition) }))
@@ -58,3 +59,21 @@ class post:
         post.append(extraNames)
 
         return post
+
+
+    def toBinary(self):
+        return struct.pack( ">iihhIIIII"
+                          , int(self.version) # Fixed, version no. type (Int32)
+                          , int(self.italicAngle) # Fixed (Int32)
+
+                          , self.underlinePosition # FWORD (Int16)
+                          , self.underlineThickness # FWORD (Int16)
+
+                          , self.isFixedPitch # UInt32
+                          , self.minMemType42 # UInt32
+                          , self.maxMemType42 # UInt32
+                          , self.minMemType1 # UInt32
+                          , self.maxMemType1 # UInt32
+
+                          # self.extraNames # TODO: where the glyphs at???
+                          )

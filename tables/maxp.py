@@ -1,9 +1,10 @@
 from lxml.etree import Element
 
+from data import vFixed
 
 class maxp:
     def __init__(self, glyphs):
-        self.version = 0x00010000 # TODO: make fixed type.
+        self.version = vFixed('1.0') # hard-coded
 
         self.numGlyphs = len(glyphs["all"])
 
@@ -35,7 +36,7 @@ class maxp:
 
         maxp = Element("maxp")
 
-        maxp.append(Element("tableVersion", {'value': hex(self.version) })) # hard-coded
+        maxp.append(Element("tableVersion", {'value': self.version.toHexStr() })) # TTX wants the version in this format.
 
         maxp.append(Element("numGlyphs", {'value': str(self.numGlyphs) })) # TTX re-calculates this anyway but I'm making it manually.
 
@@ -62,7 +63,7 @@ class maxp:
 
     def toBinary(self):
         return struct.pack( ">iHHHHHHHHHHHHHH"
-                          , self.version # Fixed (Int32)
+                          , int(self.version) # Fixed (Int32)
 
                           , self.numGlyphs # UInt16
 
