@@ -29,7 +29,7 @@ def createFont(formatData, outPath, tempPath, filename, flags, font):
 
     # ASSEMBLER -> TTX
     # ------------------------------------------------------
-    log.out(f"[binary compiler]", 90)
+    log.out(f"[forc compiler]", 90)
 
     # save TTX
     log.out(f"- Saving forc's assembled (initial) TTX to file...", 90)

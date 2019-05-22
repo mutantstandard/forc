@@ -173,6 +173,9 @@ class font:
         self.tables.append(tables.name.name(chosenFormat, m))
 
 
+
+
+
     def toTTX(self, asString=False):
         """
         Compiles font to TTX.
@@ -195,6 +198,20 @@ class font:
             return root
 
 
+    def bytesPass(self):
+        """
+        Represents a single compile pass to bytes.
+        (Just a WIP/placeholder right now.)
+        """
+
+        bytesPass = bytesarray(b"")
+
+        for t in self.tables:
+            bytesPass.append(t.toBytes())
+
+        return bytesPass
+
+
     def toBytes(self):
         """
         Compiles font to bytes.
@@ -202,13 +219,15 @@ class font:
         """
 
         ## create a valid font header
+        # (resulting in some sort of bytes array)
 
         ## build first time + put together
+        # header.append(bytesPass(self))
 
         ## make a checksum for it
+        # self.head.checkSumAdjustment = ???
 
-        ## edit head.checkSumAdjustment to have this checksum
-
-        ## build + put together one last time and return that.
+        ## one last conversion to bytes.
+        # return bytesPass(self)
 
         return "0"
