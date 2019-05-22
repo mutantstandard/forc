@@ -71,7 +71,8 @@ class os2:
 
         self.ulUnicodeRange1 = bFlags('00000000 00000000 00000000 00000000')
         self.ulUnicodeRange2 = bFlags('00000000 00000000 00000000 00000000')
-        self.ulUnicodeRange2.bits[57-32] = int(supplementaryPlane)
+        self.ulUnicodeRange2.set(57-32, int(supplementaryPlane))
+
         self.ulUnicodeRange3 = bFlags('00000000 00000000 00000000 00000000')
         self.ulUnicodeRange4 = bFlags('00000000 00000000 00000000 00000000')
 
@@ -176,7 +177,7 @@ class os2:
 
 
 
-    def toBinary(self):
+    def toBytes(self):
         """
         Outputs table to binary, formatted for sfnt.
         """
@@ -188,7 +189,7 @@ class os2:
                           , self.usWeightClass # UInt16
                           , self.usWidthClass # UInt16
 
-                          , self.fsType.toBinary() # 2 bytes/UInt16
+                          , self.fsType.toBytes() # 2 bytes/UInt16
 
                           , self.ySubscriptXSize # Int16
                           , self.ySubscriptYSize # Int16
@@ -205,16 +206,16 @@ class os2:
 
                           , self.sFamilyClass # Int16
 
-                          , self.panose.toBinary() # 10 byte/10 UInt16s.
+                          , self.panose.toBytes() # 10 byte/10 UInt16s.
 
-                          , self.ulUnicodeRange1.toBinary() # 4 bytes/UInt32
-                          , self.ulUnicodeRange2.toBinary() # 4 bytes/UInt32
-                          , self.ulUnicodeRange3.toBinary() # 4 bytes/UInt32
-                          , self.ulUnicodeRange4.toBinary() # 4 bytes/UInt32
+                          , self.ulUnicodeRange1.toBytes() # 4 bytes/UInt32
+                          , self.ulUnicodeRange2.toBytes() # 4 bytes/UInt32
+                          , self.ulUnicodeRange3.toBytes() # 4 bytes/UInt32
+                          , self.ulUnicodeRange4.toBytes() # 4 bytes/UInt32
 
                           , int(self.achVendID) # Tag (UInt32)
 
-                          , self.fsSelection.toBinary() # 2 bytes/UInt16
+                          , self.fsSelection.toBytes() # 2 bytes/UInt16
 
                           , self.usFirstCharIndex # UInt16
                           , self.usLastCharIndex # UInt16
@@ -225,8 +226,8 @@ class os2:
                           , self.usWinAscent # UInt16
                           , self.usWinDescent # UInt16
 
-                          , self.ulCodePageRange1.toBinary() # 4 bytes/UInt32
-                          , self.ulCodePageRange2.toBinary() # 4 bytes/UInt32
+                          , self.ulCodePageRange1.toBytes() # 4 bytes/UInt32
+                          , self.ulCodePageRange2.toBytes() # 4 bytes/UInt32
 
                           , self.sxHeight # Int16
                           , self.sCapHeight # Int16

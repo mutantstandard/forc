@@ -195,7 +195,7 @@ class font:
             return root
 
 
-    def toBinary(self):
+    def toBytes(self):
         """
         Compiles font to binary.
         (Just a placeholder right now.)

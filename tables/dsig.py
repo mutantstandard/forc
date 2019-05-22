@@ -31,9 +31,9 @@ class dsig:
 
         return dsig
 
-    def toBinary(self):
+    def toBytes(self):
         return struct.pack( '>I2bH'
                           , self.version # UInt32 (not fixed type!)
-                          , self.flags.toBinary() # 2 bytes/UInt16
+                          , self.flags.toBytes() # 2 bytes/UInt16
                           , self.numSigs # UInt16
                           )

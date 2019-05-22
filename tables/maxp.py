@@ -61,7 +61,7 @@ class maxp:
 
 
 
-    def toBinary(self):
+    def toBytes(self):
         return struct.pack( ">iHHHHHHHHHHHHHH"
                           , int(self.version) # Fixed (Int32)
 

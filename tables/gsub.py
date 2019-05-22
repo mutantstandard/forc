@@ -32,7 +32,7 @@ class gsub:
 
         return gsub
 
-    def toBinary(self):
+    def toBytes(self):
         return struct.pack( ">HH"
                           , self.majorVersion # UInt16
                           , self.minorVersion # UInt16

@@ -73,7 +73,6 @@ class sbix:
 
         self.version = 1 # hard-coded
         self.flags = bFlags("00000000 00000001") # hard-coded
-        print(self.flags.toBinary())
 
         self.strikes = []
 
@@ -94,10 +93,10 @@ class sbix:
 
         return sbix
 
-    def toBinary(self):
+    def toBytes(self):
         return struct.pack( ">H2bI"
                           , self.version # UInt16
-                          , self.flags.toBinary() # 2 bytes/UInt16
+                          , self.flags.toBytes() # 2 bytes/UInt16
                           , len(self.strikes) # UInt32
                           # TODO: Offsets to each sbix strike.
                           )

@@ -1,7 +1,9 @@
 import re
 import struct
+import sys
 from math import floor
 from datetime import datetime, tzinfo, timedelta, timezone
+
 
 class tag:
     """
@@ -59,6 +61,8 @@ class tag:
 
 
 
+
+
 class bFlags:
     """
     Class encapsulating binary flags in font tables.
@@ -66,67 +70,74 @@ class bFlags:
 
     def __init__(self, string):
         """
-        Binary flags are entered and stored in big-endian order. (ie. left-to-right).
+        Binary flags are entered in big-endian order. (ie. left-to-right).
         Input can be formatted with spaces (ie. '00100000 00001010').
         """
-
-        self.bits = []
 
         if type(string) is not str:
             raise ValueError("Making binaryFlags data type failed. Input data is not a string.")
 
-        for c in string:
-            if c not in ['1', '0', ' ']:
-                raise ValueError(f"Making binaryFlags data type failed. The string that was entered contained characters other than '1', '0' or space. You gave '{c}'.")
-            if c in ['1', '0']:
-                self.bits.append(int(c))
+        string = string.translate({ord(' '):None}) # strip spaces
 
-        if len(self.bits) not in [8, 16, 32]:
+        if len(string) not in [8, 16, 32]:
             raise ValueError(f"Making binaryFlags data type failed. The amount of bits given was not 8, 16 or 32. It has to be one of these.")
+
+        self.len = floor(len(string)/8)
+
+        if sys.byteorder == 'little':
+            string = string[::-1] # reverse the byte order if little endian.
+
+        try:
+            self.bits = int(string, 2)
+        except ValueError as e:
+            raise ValueError(f"Making binaryFlags data type failed. -> {e}")
+
 
 
     def __str__(self):
+        """
+        Returns a string-formatted list of bits, with spacing every 8 bits.
+        In big-endian byte order.
+        """
         string = ""
+        bitString = f"{self.bits:0{self.len*8}b}"
 
-        for index, c in enumerate(self.bits): # big-endian
+        if sys.byteorder == 'little': # ensure what we're working with is big-endian.
+            bitString = bitString[::-1]
+
+        for index, c in enumerate(bitString): # big-endian
             if index%8 == 0 and index != 0: # every 8 bits, add a space.
                 string += ' '
             string += str(c) # append the bit as a string
 
         return string
 
+
     def __repr__(self):
         return str(self)
+
+
+    def set(self, bitNumber, value):
+        """
+        Sets a bit to a specific binary value.
+        """
+        self.bits = self.bits & ~(1 << bitNumber) | (value << bitNumber)
 
 
     def toTTXStr(self):
         """
         Returns a string that's little-endian formatted, for TTX use.
         """
-
-        ttxString = ""
-
-        for index, c in enumerate(self.bits[::-1]): # little-endian (reverse order)
-            if index%8 == 0 and index != 0: # every 8 bits, add a space.
-                ttxString += ' '
-            ttxString += str(c) # append the bit as a string
-
-        return ttxString
+        return str(self)[::-1] # just get reverse str(), since str() guarantees big-endian.
 
 
-    def toBinary(self):
+    def toBytes(self):
         """
         Returns bytes in big-endian format.
         """
-        # convert each 8-bit block into bytes and then pack them
-        # c1 c2 c3 c4
-
-        # - iterate over every bit
-        # - put each bit into a byte every 8 bits.
-        # - pack the bytes together.
+        return self.bits.to_bytes(self.len, 'big')
 
 
-        return 0
 
 
 
@@ -188,6 +199,8 @@ class fixed:
 
 
 
+
+
 class vFixed:
     """
     A specific, non-normal representation of a fixed number, used only in certain forms of version numbers.
@@ -211,6 +224,8 @@ class vFixed:
 
     def toDecimalStr(self):
         return str(self.majorVersion) + '.' + str(self.minorVersion)
+
+
 
 
 

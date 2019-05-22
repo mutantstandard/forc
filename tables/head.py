@@ -74,7 +74,7 @@ class head:
 
 
 
-    def toBinary(self):
+    def toBytes(self):
         return struct.pack( '>HHiII2bHqqhhhh2bHhhh'
 
                             , self.majorVersion # UInt16
@@ -84,7 +84,7 @@ class head:
                             , self.checksumAdjustment # UInt32
                             , self.magicNumber # UInt32
 
-                            , self.flags.toBinary() # 2 bytes/UInt16
+                            , self.flags.toBytes() # 2 bytes/UInt16
                             , self.unitsPerEm # UInt16
 
                             , int(self.created) # LONGDATETIME (Int64)
@@ -95,7 +95,7 @@ class head:
                             , self.xMax # Int16
                             , self.yMax # Int16
 
-                            , self.macStyle.toBinary() # 2 bytes/UInt16
+                            , self.macStyle.toBytes() # 2 bytes/UInt16
                             , self.lowerstRecPPEM # UInt16
 
                             , self.fontDirectionHint # Int16

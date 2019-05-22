@@ -50,7 +50,7 @@ class panose:
 
 
         
-    def toBinary(self):
+    def toBytes(self):
         return struct.pack(">HHHHHHHHHH"
                           , self.bFamilyType
                           , self.bSerifStyle

@@ -61,7 +61,7 @@ class post:
         return post
 
 
-    def toBinary(self):
+    def toBytes(self):
         return struct.pack( ">iihhIIIII"
                           , int(self.version) # Fixed, version no. type (Int32)
                           , int(self.italicAngle) # Fixed (Int32)

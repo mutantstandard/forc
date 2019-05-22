@@ -34,7 +34,7 @@ def createFont(formatData, outPath, tempPath, filename, flags, font):
     # save TTX
     log.out(f"- Saving forc's assembled (initial) TTX to file...", 90)
 
-    files.writeFile(outFontPath, font.toBinary(), 'Could not write binary font to file')
+    files.writeFile(outFontPath, font.toBytes(), 'Could not write binary font to file')
 
     log.out(f'- Testing font by running it through TTX..', 90)
     files.compileTTX(outFontPath, testTTX)

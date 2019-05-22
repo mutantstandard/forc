@@ -75,7 +75,7 @@ class vhea:
 
 
 
-    def toBinary(self):
+    def toBytes(self):
         return struct.pack(">ihhhhhhhhhhhhhhhH"
                           , int(self.version) # Fixed (Int32)
 

@@ -52,7 +52,7 @@ class ScriptRecord:
         return scriptRecord
 
 
-    def toBinary(self):
+    def toBytes(self):
         # need to input the offset from ScriptList building.
         return struct.pack( '>I'
                           , int(self.scriptTag) # Tag (UInt32)
@@ -78,7 +78,7 @@ class ScriptList:
         return scriptList
 
 
-    def toBinary(self):
+    def toBytes(self):
         return struct.pack( '>H'
                           , len(self.scriptRecords) # UInt16
                           # TODO: insert the scriptRecords themselves.

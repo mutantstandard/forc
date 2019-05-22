@@ -74,7 +74,7 @@ class hhea:
         return hhea
 
 
-    def toBinary(self):
+    def toBytes(self):
         return struct.pack('>HHhhhHhhhhhhhhhhhH'
                           , self.majorVersion # UInt16
                           , self.minorVersion # UInt16
