@@ -217,10 +217,10 @@ class vFixed:
         self.minorVersion = int(versionComponents[1])
 
     def __int__(self):
-        return (f'{self.majorVersion:04x}' + f"{self.minorVersion}" + "000", 16)
+        return (f'{self.majorVersion:>04x}' + f"{self.minorVersion:<04d}", 16)
 
     def toHexStr(self):
-        return "0x" + f'{self.majorVersion:04x}' + str(self.minorVersion) + "000"
+        return "0x" + f'{self.majorVersion:>04x}' +  f"{self.minorVersion:<04d}"
 
     def toDecimalStr(self):
         return str(self.majorVersion) + '.' + str(self.minorVersion)
