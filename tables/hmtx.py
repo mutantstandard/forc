@@ -37,3 +37,5 @@ class hmtx:
             hmtx.append(m.toTTX())
 
         return hmtx
+
+    # TODO: figure out how to convert hmtx to bytes.

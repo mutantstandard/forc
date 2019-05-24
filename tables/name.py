@@ -72,3 +72,5 @@ class name:
             name.append(r.toTTX())
 
         return name
+
+    # TODO: figure out how to compile name to bytes.

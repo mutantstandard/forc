@@ -1,6 +1,10 @@
 from lxml.etree import Element, ElementTree, fromstring
 
 
+################################
+# CURRENTLY DISCONTINUED TABLE #
+################################
+
 
 def toTTX():
     """

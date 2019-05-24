@@ -30,22 +30,19 @@ class cbdt:
     """
 
     def __init__(self, m, glyphs):
-        self.headerVersion = 3.0 # hard-coded. the only version available right now.
+        self.majorVersion = 3
+        self.minorVersion = 0
+        # hard-coded. the only version available right now.
+        # presumably needs to agree with CBLC's version.
+
+
         self.strikes = []
 
-
-        # get basic strike information by poking for a glyph
-        # that has strikes.
-
-        for g in glyphs["img_empty"]:
-            if g.imgDict:
-                firstGlyphWithStrikes = g
-                break
 
         # iterate over each strike.
         strikeIndex = 0
 
-        for imageFormat, image in firstGlyphWithStrikes.imgDict.items():
+        for imageFormat, image in glyphs["img"][0].imgDict.items():
             if imageFormat.split('-')[0] == "png":
                 strikeRes = imageFormat.split('-')[1]
                 self.strikes.append(cbdtStrike(glyphs, m["metrics"], strikeRes))
@@ -55,7 +52,7 @@ class cbdt:
 
     def toTTX(self):
         cbdt = Element("CBDT")
-        cbdt.append(Element("header", {"version": str(self.headerVersion)})) # hard-coded
+        cbdt.append(Element("header", {"version": f"{self.majorVersion}.{self.minorVersion}"}))
 
         strikeIndex = 0
         for strike in self.strikes:
@@ -63,3 +60,11 @@ class cbdt:
             strikeIndex += 1
 
         return cbdt
+
+    def toBytes(self):
+        cbdt = struct.pack( ">HH"
+                          , self.majorVersion # UInt16
+                          , self.minorVersion # UInt16
+                          )
+
+        # TODO: pack all of the image data immediately after~

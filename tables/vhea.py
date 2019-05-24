@@ -68,7 +68,6 @@ class vhea:
         vhea.append(Element("reserved4", {'value': str(self.reserved4) }))
 
         vhea.append(Element("metricDataFormat", {'value': str(self.metricDataFormat) }))
-        # I think it's supposed to be called this way. *shrugs*
         vhea.append(Element("numberOfHMetrics", {'value': str(self.numOfLongVerMetrics) }))
 
         return vhea

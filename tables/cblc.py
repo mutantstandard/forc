@@ -1,3 +1,4 @@
+import struct
 from lxml.etree import Element
 from tables.support.ebxMetrics import SbitLineMetrics
 from tables.support.ebxIndexes import IndexSubTable1
@@ -68,6 +69,8 @@ class cblcBitmapSize:
 
         return strike
 
+
+
     def toBytes(self):
         """
         Returns a bytes version of this table element.
@@ -90,7 +93,7 @@ class cblc:
 
         self.majorVersion = 3
         self.minorVersion = 0
-        # the only CBLC version that exists.
+        # hardcoded; the only CBLC version that exists.
 
         self.bitmapSizeTables = []
 
@@ -105,7 +108,7 @@ class cblc:
 
     def toTTX(self):
         cblc = Element("CBLC")
-        cblc.append(Element("header", {"version": f"{self.majorVersion}.{self.minorVersion}" })) # hard-coded
+        cblc.append(Element("header", {"version": f"{self.majorVersion}.{self.minorVersion}" }))
 
         strikeIndex = 0
 
@@ -119,6 +122,6 @@ class cblc:
         return struct.pack( ">HHI"
                           , self.majorVersion # UInt16
                           , self.minorVersion  # UInt16
-                          , len(self.bitmapSizeTables) # UInt32
+                          , len(self.bitmapSizeTables) # UInt32 (numSizes)
                           # pack all of the BitmapSize tables immediately after.
                           )

@@ -1,3 +1,4 @@
+import struct
 import lxml.etree as etree
 
 from io import BytesIO
@@ -37,19 +38,31 @@ class svg:
     """
 
     def __init__(self, m, glyphs):
-
-        self.graphics = []
+        self.version = 0 # hardcoded; the only version.
+        self.SVGDocumentList = []
+        self.reserved = 0 # reserved; set to 0.
 
         for ID, g in enumerate(glyphs["img_empty"]):  # it has to be img_empty because we need those glyph indexes.
             if g.imgDict:
-                self.graphics.append(svgDoc(ID, g))
+                self.SVGDocumentList.append(svgDoc(ID, g))
 
 
     def toTTX(self):
-
         svgTable = etree.Element("SVG")
-
-        for svgDoc in self.graphics:
+        # - TTX doesnt have version for SVG table.
+        for svgDoc in self.SVGDocumentList:
             svgTable.append(svgDoc.toTTX())
 
         return svgTable
+
+
+    def toBytes(self):
+        # TODO: compile and attach SVGDocumentList.
+        # - compile and calculate Offset32 to SVGDocumentList here
+        svg = struct.pack( ">HI"
+                         , self.version # UInt16
+                         # - offsetToSVGDocumentList # Offset32/UInt32
+                         , self.reserved # UInt32
+                         )
+
+        # Attach SVGDocumentList afterwards.

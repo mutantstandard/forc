@@ -11,7 +11,7 @@ class dsig:
     def __init__(self):
 
         self.version = 0x00000001
-        # Hardcoded. It is what it's supposed to be - a single UInt32.
+        # Hardcoded. It is what it's supposed to be - a single UInt32 formatted as hex.
 
         self.flags = bFlags('00000000')
         self.numSigs = 0

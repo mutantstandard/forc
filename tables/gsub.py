@@ -33,9 +33,20 @@ class gsub:
         return gsub
 
     def toBytes(self):
-        return struct.pack( ">HH"
+
+        # TODO: make toBytes functions for OTL scripts, features and lookups.
+        # TODO: learn how to generate offsets for OTL scripts, features and lookups.
+        
+        # - generate the scriptList, featureList, and lookup list, generate offsets.
+
+        gsub = struct.pack( ">HH"
                           , self.majorVersion # UInt16
                           , self.minorVersion # UInt16
 
-                          # TODO: The scriptlists and lookups and stuff???
+                          # offset to scriptList # Offset16
+                          # offset to featureList # Offset16
+                          # offset to lookupList # Offset16
                           )
+
+        # - dump the lists immediately after this information
+        # - return the table.

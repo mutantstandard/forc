@@ -54,9 +54,9 @@ class ScriptRecord:
 
     def toBytes(self):
         # need to input the offset from ScriptList building.
-        return struct.pack( '>I'
-                          , int(self.scriptTag) # Tag (UInt32)
-                          , # TODO: Offset16 to script table from the beginning of scriptList
+        return struct.pack( '>4b'
+                          , self.scriptTag.toBytes() # Tag (4 bytes/UInt32)
+                          # TODO: Offset16 to script table from the beginning of scriptList
                           )
 
 

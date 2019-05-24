@@ -12,6 +12,7 @@ class loca:
         self.whatever = 0
 
         # This table's type is determined by head.indexToLocFormat.
+        # TODO: make a version of loca that can be used in bytes compilation.
 
     def toTTX(self):
         return Element("loca")

@@ -39,3 +39,5 @@ class vmtx:
             vmtx.append(m.toTTX())
 
         return vmtx
+
+    # TODO: figure out how to compile vmtx in bytes.

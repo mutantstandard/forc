@@ -15,7 +15,7 @@ class os2:
 
     def __init__(self, m, glyphs):
 
-        # PREPARE DATA
+        # PREPARE SOME OF THE DATA
         # --------------------------
 
         metrics = m['metrics']
@@ -111,7 +111,7 @@ class os2:
 
         os2 = Element("OS_2")
 
-        os2.append(Element("version", {'value': str(self.version) })) # hard-coded
+        os2.append(Element("version", {'value': str(self.version) }))
 
         os2.append(Element("xAvgCharWidth", {'value': str(self.xAvgCharWidth) }))
         os2.append(Element("usWeightClass", {'value': str(self.usWeightClass) }))
@@ -149,7 +149,7 @@ class os2:
 
         os2.append(Element("fsSelection", {'value': self.fsSelection.toTTXStr() }))
 
-        # TTX actually cannibalises this input, but it's going to input them anyway.
+        # TTX actually cannibalises these two, but forc is going to input them anyway.
         os2.append(Element("usFirstCharIndex", {'value': str(self.usFirstCharIndex) }))
         os2.append(Element("usLastCharIndex", {'value': str(self.usLastCharIndex) }))
 
@@ -182,7 +182,7 @@ class os2:
         Outputs table to bytes, formatted for sfnt.
         """
 
-        return struct.pack( ">hhHH2bhhhhhhhhhhh10b4b4b4b4bI2bHHhhhHH4b4bhhHHHHH"
+        return struct.pack( ">hhHH2bhhhhhhhhhhh10b4b4b4b4b4b2bHHhhhHH4b4bhhHHHHH"
                           , self.version # UInt16
 
                           , self.xAvgCharWidth # Int16
@@ -213,7 +213,7 @@ class os2:
                           , self.ulUnicodeRange3.toBytes() # 4 bytes/UInt32
                           , self.ulUnicodeRange4.toBytes() # 4 bytes/UInt32
 
-                          , int(self.achVendID) # Tag (UInt32)
+                          , self.achVendID.toBytes() # Tag (4 bytes/UInt32)
 
                           , self.fsSelection.toBytes() # 2 bytes/UInt16
 

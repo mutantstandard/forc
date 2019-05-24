@@ -56,8 +56,11 @@ class tag:
 
         return int(intList[0] + intList[1] + intList[2] + intList[3], 16)
 
-
-
+    def toBytes():
+        """
+        Returns the tag's int representation as bytes in big-endian format.
+        """
+        return int(self).to_bytes(self.len, 'big')
 
 
 

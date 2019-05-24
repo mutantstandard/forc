@@ -1,3 +1,4 @@
+import struct
 from lxml.etree import Element
 from tables.support.cmapSubtables import cmapFormat0, cmapFormat4, cmapFormat12, cmapFormat14
 
@@ -9,6 +10,8 @@ class cmap:
     """
 
     def __init__(self, glyphs, no_vs16):
+
+        self.version = 0 # hardcoded. no other version.
 
         # check what's what in this set to determine what subtables to toTTX.
         # ---------------------------------------------------------
@@ -59,9 +62,19 @@ class cmap:
 
     def toTTX(self):
         cmap = Element("cmap")
-        cmap.append(Element("tableVersion", {"version": "0"}))
+
+        # - TTX doesnt have version for cmap table.
+        cmap.append(Element("tableVersion", {"version": str(self.version)}))
 
         for sub in self.subtables:
             cmap.append(sub.toTTX())
 
         return cmap
+
+    def toBytes(self):
+        header = struct.pack( ">HH"
+                          , self.version # UInt16
+                          , len(self.subtables) # UInt16
+                          )
+
+        # TODO: add the cmap tables afterwards.

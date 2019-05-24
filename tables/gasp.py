@@ -1,25 +1,55 @@
+import struct
 from lxml.etree import Element
 
 
-class gasp:
+class GaspRange:
     """
-    Class representing a placeholder gasp table.
+    Class representing a placeholder GaspRange record.
     """
 
     def __init__(self):
-
         self.rangeMaxPPEM = 65535
         self.rangeGaspBehavior = 0x0f
 
     def toTTX(self):
-        """
-        Create a really basic gasp table.
-        """
+        return Element("gaspRange", {'rangeMaxPPEM': str(self.rangeMaxPPEM) # Decimal string
+                                     ,'rangeGaspBehavior': hex(self.rangeGaspBehavior) # Hex string
+                                     })
+    def toBytes(self):
+        return struct.pack( ">HH"
+                          , self.rangeMaxPPEM # UInt16
+                          , self.rangeGaspBehavior # UInt16
+                          )
 
+class gasp:
+    """
+    Class representing a really basic gasp table.
+    """
+
+    def __init__(self):
+        self.version = 1
+        self.gaspRanges = []
+        self.gaspRanges.append(GaspRange())
+
+
+    def toTTX(self):
         gasp = Element("gasp")
 
-        gasp.append(Element("gaspRange", {'rangeMaxPPEM': str(self.rangeMaxPPEM) # Decimal string
-                                         ,'rangeGaspBehavior': hex(self.rangeGaspBehavior) # Hex string
-                                         }))
+        # - TTX doesnt have version for gasp table.
+
+        for gr in self.gaspRanges:
+            gasp.append(gr.toTTX())
+
+        return gasp
+
+
+    def toBytes(self):
+        gasp = struct.pack( ">HH"
+                          , self.version # UInt16
+                          , len(self.gaspRanges) # UInt16 (numRanges)
+                          )
+
+        for gr in self.gaspRanges:
+            gasp.append(gr.toBytes())
 
         return gasp

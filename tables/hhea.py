@@ -1,7 +1,7 @@
 import struct
 from lxml.etree import Element
-
 from data import vFixed
+
 
 class hhea:
     """
@@ -47,7 +47,7 @@ class hhea:
 
         hhea = Element("hhea")
 
-        hhea.append(Element("tableVersion", {'value': vFixed(f"{self.majorVersion}.{self.minorVersion}").toHexStr() })) # TTX wants the version in this format.
+        hhea.append(Element("tableVersion", {'value': vFixed(f"{self.majorVersion}.{self.minorVersion}").toHexStr() })) # TTX wants the version in this particular format.
 
         hhea.append(Element("ascent", {'value': str(self.ascent) }))
         hhea.append(Element("descent", {'value': str(self.descent) }))

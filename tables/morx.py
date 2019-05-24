@@ -1,6 +1,11 @@
 from lxml.etree import Element, ElementTree, fromstring
 
 
+################################
+# CURRENTLY DISCONTINUED TABLE #
+################################
+
+
 def morphSubtable(index):
     morph = Element("MorphSubstable", {"index": index})
 

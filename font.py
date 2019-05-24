@@ -48,130 +48,132 @@ class font:
         # 90 (gray):        a standard table that gets compiled no matter what.
         # 36 (dark cyan):   a table that is only compiled based on the font format.
 
+        try:
+            # headers and other weird crap
+            # ---------------------------------------------
+            log.out('[glyphOrder] ', 90, newline=False)
+            self.tables.append(tables.glyphOrder.glyphOrder(glyphs))
 
-        # headers and other weird crap
-        # ---------------------------------------------
-        log.out('[glyphOrder] ', 90, newline=False)
-        self.tables.append(tables.glyphOrder.glyphOrder(glyphs))
+            log.out('[head] ', 90, newline=False)
+            self.tables.append(tables.head.head(m))
 
-        log.out('[head] ', 90, newline=False)
-        self.tables.append(tables.head.head(m))
+            log.out('[OS/2] ', 90, newline=False)
+            self.tables.append(tables.os2.os2(m, glyphs))
 
-        log.out('[OS/2] ', 90, newline=False)
-        self.tables.append(tables.os2.os2(m, glyphs))
+            log.out('[post] ', 90, newline=False)
+            self.tables.append(tables.post.post(glyphs))
 
-        log.out('[post] ', 90, newline=False)
-        self.tables.append(tables.post.post(glyphs))
+            # maxp is a semi-placeholder table.
+            log.out('[maxp] ', 90, newline=False)
+            self.tables.append(tables.maxp.maxp(glyphs))
 
-        # maxp is a semi-placeholder table.
-        log.out('[maxp] ', 90, newline=False)
-        self.tables.append(tables.maxp.maxp(glyphs))
-
-        log.out('[gasp] ', 90, newline=False)
-        self.tables.append(tables.gasp.gasp())
-
-
-
-
-        # loca is a placeholder to make macOS happy.
-        #
-        # CBDT/CBLC either doesn't use loca or TTX doesn't want
-        # an empty loca table if there's no gly table (CBDT/CBLC
-        # fonts shouldnt have glyf tables.)
-
-        if glyphFormat is not "CBx":
-            log.out('[loca] ', 36, newline=False)
-            self.tables.append(tables.loca.loca())
-
-        # placeholder table that makes Google's font validation happy.
-        log.out('[DSIG]', 90)
-        self.tables.append(tables.dsig.dsig())
+            log.out('[gasp] ', 90, newline=False)
+            self.tables.append(tables.gasp.gasp())
 
 
 
 
+            # loca is a placeholder to make macOS happy.
+            #
+            # CBDT/CBLC either doesn't use loca or TTX doesn't want
+            # an empty loca table if there's no gly table (CBDT/CBLC
+            # fonts shouldnt have glyf tables.)
 
+            if glyphFormat is not "CBx":
+                log.out('[loca] ', 36, newline=False)
+                self.tables.append(tables.loca.loca())
 
-        # horizontal and vertical metrics tables
-        # ---------------------------------------------
-        log.out('[hhea] ', 90, newline=False)
-        self.tables.append(tables.hhea.hhea(m))
-
-        log.out('[hmtx] ', 90, newline=False)
-        self.tables.append(tables.hmtx.hmtx(m, glyphs))
-
-        log.out('[vhea] ', 90, newline=False)
-        self.tables.append(tables.vhea.vhea(m))
-
-        log.out('[vmtx]', 90)
-        self.tables.append(tables.vmtx.vmtx(m, glyphs))
-
-
-
-
-        # glyph-code mappings
-        # ---------------------------------------------
-
-        # single glyphs
-        log.out('[cmap] ', 90, newline=False)
-        self.tables.append(tables.cmap.cmap(glyphs, flags["no_vs16"]))
-
-
-
-        # ligatures
-        ligatures = False
-
-        # check for presence of ligatures
-        for g in glyphs:
-            if len(g) > 1:
-                ligatures = True
-
-        if ligatures:
-
-            if formats[chosenFormat]["ligatureFormat"] == "OpenType":
-                log.out('[GSUB] ', 36, newline=False)
-                self.tables.append(tables.gsub.gsub(glyphs))
-
-
-
-        # glyf
-        # ---------------------------------------------
-
-        # glyf is used as a placeholde to please font validation,
-        # table dependencies and the TTX compiler.
-        #
-        # CBDT/CBLC doesn't use glyf at all
-        if glyphFormat is not "CBx":
-            log.out('[glyf] ', 36, newline=False)
-            self.tables.append(tables.glyf.glyf(m, glyphs))
-
-
-        # actual glyph picture data
-        # ---------------------------------------------
-
-        if glyphFormat == "SVG":
-            log.out('[SVG ]', 36)
-            self.tables.append(tables.svg.svg(m, glyphs))
-
-        elif glyphFormat == "sbix":
-            log.out('[sbix]', 36)
-            self.tables.append(tables.sbix.sbix(glyphs))
-
-        elif glyphFormat == "CBx":
-            log.out('[CBLC] ', 36, newline=False)
-            self.tables.append(tables.cblc.cblc(m, glyphs))
-
-            log.out('[CBDT]', 36)
-            self.tables.append(tables.cbdt.cbdt(m, glyphs))
+            # placeholder table that makes Google's font validation happy.
+            log.out('[DSIG]', 90)
+            self.tables.append(tables.dsig.dsig())
 
 
 
 
-        # human-readable metadata
-        # ---------------------------------------------
-        log.out('[name]', 90)
-        self.tables.append(tables.name.name(chosenFormat, m))
 
+
+            # horizontal and vertical metrics tables
+            # ---------------------------------------------
+            log.out('[hhea] ', 90, newline=False)
+            self.tables.append(tables.hhea.hhea(m))
+
+            log.out('[hmtx] ', 90, newline=False)
+            self.tables.append(tables.hmtx.hmtx(m, glyphs))
+
+            log.out('[vhea] ', 90, newline=False)
+            self.tables.append(tables.vhea.vhea(m))
+
+            log.out('[vmtx]', 90)
+            self.tables.append(tables.vmtx.vmtx(m, glyphs))
+
+
+
+
+            # glyph-code mappings
+            # ---------------------------------------------
+
+            # single glyphs
+            log.out('[cmap] ', 90, newline=False)
+            self.tables.append(tables.cmap.cmap(glyphs, flags["no_vs16"]))
+
+
+
+            # ligatures
+            ligatures = False
+
+            # check for presence of ligatures
+            for g in glyphs:
+                if len(g) > 1:
+                    ligatures = True
+
+            if ligatures:
+
+                if formats[chosenFormat]["ligatureFormat"] == "OpenType":
+                    log.out('[GSUB] ', 36, newline=False)
+                    self.tables.append(tables.gsub.gsub(glyphs))
+
+
+
+            # glyf
+            # ---------------------------------------------
+
+            # glyf is used as a placeholde to please font validation,
+            # table dependencies and the TTX compiler.
+            #
+            # CBDT/CBLC doesn't use glyf at all
+            if glyphFormat is not "CBx":
+                log.out('[glyf] ', 36, newline=False)
+                self.tables.append(tables.glyf.glyf(m, glyphs))
+
+
+            # actual glyph picture data
+            # ---------------------------------------------
+
+            if glyphFormat == "SVG":
+                log.out('[SVG ]', 36)
+                self.tables.append(tables.svg.svg(m, glyphs))
+
+            elif glyphFormat == "sbix":
+                log.out('[sbix]', 36)
+                self.tables.append(tables.sbix.sbix(glyphs))
+
+            elif glyphFormat == "CBx":
+                log.out('[CBLC] ', 36, newline=False)
+                self.tables.append(tables.cblc.cblc(m, glyphs))
+
+                log.out('[CBDT]', 36)
+                self.tables.append(tables.cbdt.cbdt(m, glyphs))
+
+
+
+
+            # human-readable metadata
+            # ---------------------------------------------
+            log.out('[name]', 90)
+            self.tables.append(tables.name.name(chosenFormat, m))
+
+        except ValueError as e:
+            ValueError(f"Something went wrong with building the font class. -> {e}")
 
 
 
@@ -198,6 +200,8 @@ class font:
             return root
 
 
+
+
     def bytesPass(self):
         """
         Represents a single compile pass to bytes.
@@ -205,6 +209,8 @@ class font:
         """
 
         bytesPass = bytesarray(b"")
+
+        # make font header
 
         for t in self.tables:
             bytesPass.append(t.toBytes())
@@ -217,9 +223,6 @@ class font:
         Compiles font to bytes.
         (Just a placeholder right now.)
         """
-
-        ## create a valid font header
-        # (resulting in some sort of bytes array)
 
         ## build first time + put together
         # header.append(bytesPass(self))

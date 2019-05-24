@@ -62,3 +62,5 @@ class glyf:
                 glyf.append(dummyData)
 
         return glyf
+
+    # TODO: learn how to convert glyf to bytes.

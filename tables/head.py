@@ -1,7 +1,7 @@
 import struct
 from lxml.etree import Element
-
 from data import bFlags, longDateTime
+
 
 class head:
     """
@@ -14,7 +14,7 @@ class head:
         self.minorVersion = 0 # hard-coded, is meant to be 0.
         self.fontRevision = m['metadata']['version'] # fixed format.
 
-        self.checkSumAdjustment = 0 # this is only set at compilation.
+        self.checkSumAdjustment = 0 # TTX sets this automatically at compilation; the internal compiler needs to do this manually.
         self.magicNumber = 0x5f0f3cf5 # hard-coded
 
         self.flags = bFlags('11010000 00000000') # hard-coded

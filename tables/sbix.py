@@ -1,6 +1,8 @@
+import struct
 from lxml.etree import Element
+from data import tag, bFlags
 
-from data import bFlags
+
 
 class sbixBitmap:
     """
@@ -8,9 +10,9 @@ class sbixBitmap:
     """
     def __init__(self, glyph, ppem):
         self.name = glyph.name()
-        self.graphicType = "png " # hard-coded for now
         self.originOffsetX = 0 # hard-coded for now
         self.originOffsetY = 0 # hard-coded for now
+        self.graphicType = tag("png ") # hard-coded for now
 
         # forc img class or None
         if glyph.imgDict:
@@ -24,7 +26,7 @@ class sbixBitmap:
             return Element("glyph", {"name": self.name })
         else:
             sbixBitmap = Element("glyph",   {"name": self.name
-                                            ,"graphicType": self.graphicType
+                                            ,"graphicType": str(self.graphicType)
                                             ,"originOffsetX": str(self.originOffsetX)
                                             ,"originOffsetY": str(self.originOffsetY)
                                             })
@@ -34,6 +36,17 @@ class sbixBitmap:
             sbixBitmap.append(hexdata)
 
             return sbixBitmap
+
+    def toBytes(self):
+        bitmap = struct.pack( ">hh4b"
+                            , self.originOffsetX # Int16
+                            , self.originOffsetY # Int16
+                            , self.graphicType.toBytes() # Tag (4 bytes/UInt32)
+                            )
+        # TODO: Add bitmap data:
+        # https://docs.microsoft.com/en-gb/typography/opentype/spec/sbix#glyph-data
+
+
 
 
 
@@ -61,6 +74,16 @@ class sbixStrike:
             strike.append(bitmap.toTTX())
 
         return strike
+
+
+    def toBytes(self):
+        strike = struct.pack ( ">HH"
+                             , self.ppem # UInt16
+                             , self.ppi # UInt16
+                             )
+
+        # TODO: add glyphDataOffsets:
+        # https://docs.microsoft.com/en-gb/typography/opentype/spec/sbix#strikes
 
 
 

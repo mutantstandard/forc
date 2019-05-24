@@ -38,7 +38,7 @@ class maxp:
 
         maxp.append(Element("tableVersion", {'value': self.version.toHexStr() })) # TTX wants the version in this format.
 
-        maxp.append(Element("numGlyphs", {'value': str(self.numGlyphs) })) # TTX re-calculates this anyway but I'm making it manually.
+        maxp.append(Element("numGlyphs", {'value': str(self.numGlyphs) })) # TTX re-calculates this anyway but I'm giving it the right value anyway.
 
         maxp.append(Element("maxPoints", {'value': str(self.maxPoints) }))
         maxp.append(Element("maxContours", {'value': str(self.maxContours) }))
