@@ -1,4 +1,4 @@
-from data import tag, fixed, longDateTime
+from data import Tag, Fixed, LongDateTime
 from validate.data import validatePostScriptName
 
 
@@ -61,8 +61,8 @@ def checkTransformMetadata(metadata, outputFormats):
 
 
     try:
-        # try to convert this to a longDateTime format.
-        metadata['created'] = longDateTime(metadata['created'])
+        # try to convert this to a LongDateTime format.
+        metadata['created'] = LongDateTime(metadata['created'])
     except ValueError as e:
         raise ValueError(f"Something is wrong with the formatting of metadata.created in your manifest. -> {e}")
 
@@ -90,7 +90,7 @@ def checkTransformMetadata(metadata, outputFormats):
     if versionComponents[0] == "0":
         raise ValueError(f"metadata.version is not correct. The Major Version (the number before the decimal place) is 0. It should be 1 or higher. Certain environments act weird if you don't. If you need to mark it as a beta, consider marking at such in the version notes in the manifest.")
 
-    metadata['version'] = fixed(metadata['version'])
+    metadata['version'] = Fixed(metadata['version'])
 
 
 
@@ -99,7 +99,7 @@ def checkTransformMetadata(metadata, outputFormats):
     if 'OS2VendorID' in metadata:
         try:
             # try to overwrite the string version with a tag data type version.
-            metadata['OS2VendorID'] = tag(metadata['OS2VendorID'])
+            metadata['OS2VendorID'] = Tag(metadata['OS2VendorID'])
         except ValueError as e:
             raise ValueError(f"metadata.OS2VendorID doesn't conform to it's data type correctly. → {e}")
 

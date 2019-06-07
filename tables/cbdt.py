@@ -2,7 +2,7 @@ from lxml.etree import Element
 from tables.support.ebxBitmaps import EBDTBitmapFormat17
 
 
-class cbdtStrike:
+class CBDTStrike:
     """
     A class representing a CBDT strike in a CBDT strike.
     """
@@ -24,7 +24,7 @@ class cbdtStrike:
         return strikedata
 
 
-class cbdt:
+class CBDT:
     """
     A class representing a CBDT table.
     """
@@ -45,7 +45,7 @@ class cbdt:
         for imageFormat, image in glyphs["img"][0].imgDict.items():
             if imageFormat.split('-')[0] == "png":
                 strikeRes = imageFormat.split('-')[1]
-                self.strikes.append(cbdtStrike(glyphs, m["metrics"], strikeRes))
+                self.strikes.append(CBDTStrike(glyphs, m["metrics"], strikeRes))
 
                 strikeIndex += 1
 

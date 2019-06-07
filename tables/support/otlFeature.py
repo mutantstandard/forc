@@ -1,5 +1,5 @@
 from lxml.etree import Element
-from data import tag
+from data import Tag
 
 
 # OTLFeature
@@ -29,7 +29,7 @@ class FeatureRecord:
     Currently not editable atm - it's just designed to have the right data for forc's particular context.
     """
     def __init__(self):
-        self.tag = tag("liga")
+        self.tag = Tag("liga")
         self.feature = Feature() # placeholder feature
 
     def toTTX(self, index):

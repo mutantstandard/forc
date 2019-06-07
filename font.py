@@ -33,7 +33,7 @@ import tables.cblc
 
 
 
-class font:
+class TTFont:
     """
     Class representing a TrueType/OpenType font.
     """
@@ -57,13 +57,13 @@ class font:
             # headers and other weird crap
             # ---------------------------------------------
             log.out('[glyphOrder] ', 90, newline=False)
-            self.tables.append(tables.glyphOrder.glyphOrder(glyphs))
+            self.tables.append(tables.glyphOrder.GlyphOrder(glyphs))
 
             log.out('[head] ', 90, newline=False)
             self.tables.append(tables.head.head(m))
 
             log.out('[OS/2] ', 90, newline=False)
-            self.tables.append(tables.os2.os2(m, glyphs))
+            self.tables.append(tables.os2.OS2(m, glyphs))
 
             log.out('[post] ', 90, newline=False)
             self.tables.append(tables.post.post(glyphs))
@@ -90,7 +90,7 @@ class font:
 
             # placeholder table that makes Google's font validation happy.
             log.out('[DSIG]', 90)
-            self.tables.append(tables.dsig.dsig())
+            self.tables.append(tables.dsig.DSIG())
 
 
 
@@ -135,7 +135,7 @@ class font:
 
                 if formats[chosenFormat]["ligatureFormat"] == "OpenType":
                     log.out('[GSUB] ', 36, newline=False)
-                    self.tables.append(tables.gsub.gsub(glyphs))
+                    self.tables.append(tables.gsub.GSUB(glyphs))
 
 
 
@@ -156,7 +156,7 @@ class font:
 
             if glyphFormat == "SVG":
                 log.out('[SVG ]', 36)
-                self.tables.append(tables.svg.svg(m, glyphs))
+                self.tables.append(tables.svg.SVG(m, glyphs))
 
             elif glyphFormat == "sbix":
                 log.out('[sbix]', 36)
@@ -164,10 +164,10 @@ class font:
 
             elif glyphFormat == "CBx":
                 log.out('[CBLC] ', 36, newline=False)
-                self.tables.append(tables.cblc.cblc(m, glyphs))
+                self.tables.append(tables.cblc.CBLC(m, glyphs))
 
                 log.out('[CBDT]', 36)
-                self.tables.append(tables.cbdt.cbdt(m, glyphs))
+                self.tables.append(tables.cbdt.CBDT(m, glyphs))
 
 
 
@@ -225,7 +225,7 @@ class font:
 
     def toBytes(self):
         """
-        Compiles font class to bytes.
+        Compiles font class to bytes, including checksum.
         (Just a placeholder right now.)
         """
 

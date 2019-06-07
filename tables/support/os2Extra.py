@@ -1,7 +1,7 @@
 import struct
 from lxml.etree import Element
 
-class panose:
+class PANOSE:
     """
     Class representing the PANOSE segment of an OS/2 table.
     """
@@ -49,7 +49,7 @@ class panose:
         return panose
 
 
-        
+
     def toBytes(self):
         return struct.pack(">HHHHHHHHHH"
                           , self.bFamilyType

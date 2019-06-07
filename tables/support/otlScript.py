@@ -1,5 +1,5 @@
 from lxml.etree import Element
-from data import tag
+from data import Tag
 
 
 # OTLScript
@@ -38,7 +38,7 @@ class ScriptRecord:
     """
     def __init__(self):
 
-        self.scriptTag = tag("DFLT") # script tag identifier.
+        self.scriptTag = Tag("DFLT") # script tag identifier.
         # DFLT means 'no script in particular'
 
         self.script = Script() # placeholder script table.

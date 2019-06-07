@@ -5,7 +5,7 @@ from math import floor
 from datetime import datetime, tzinfo, timedelta, timezone
 
 
-class tag:
+class Tag:
     """
     Class encapsulating an TrueType/OpenType tag data type.
     - https://docs.microsoft.com/en-us/typography/opentype/spec/otff#data-types
@@ -66,7 +66,7 @@ class tag:
 
 
 
-class bFlags:
+class BFlags:
     """
     Class encapsulating binary flags in font tables.
     """
@@ -147,7 +147,7 @@ class bFlags:
 
 
 
-class fixed:
+class Fixed:
     """
     A representation of a 'Fixed' data type in a font. This is used in normal fixed values, as well as by head.fontRevision.
     (A decimal number where the two numbers on either side of the decimal represent exactly 16 bits.)
@@ -205,7 +205,7 @@ class fixed:
 
 
 
-class vFixed:
+class VFixed:
     """
     A specific, non-normal representation of a fixed number, used only in certain forms of version numbers.
 
@@ -235,7 +235,7 @@ class vFixed:
 
 
 
-class longDateTime:
+class LongDateTime:
     """
     Class representing the LONGDATETIME data format in fonts.
 
@@ -261,7 +261,7 @@ class longDateTime:
             try:
                 self.datetime = datetime.strptime(string, "%Y-%m-%d %H:%M %z")
             except:
-                raise ValueError(f"Creating longDateTime data type failed. The string given ('{string}') is formatted wrong.")
+                raise ValueError(f"Creating LongDateTime data type failed. The string given ('{string}') is formatted wrong.")
         else:
             self.datetime = datetime.now(timezone.utc)
 

@@ -1,7 +1,7 @@
 import struct
 import sys
 from lxml.etree import Element
-from data import tag, bFlags
+from data import Tag, BFlags
 from transform.bytes import generateOffsets
 
 
@@ -14,7 +14,7 @@ class sbixBitmap:
         self.name = glyph.name()
         self.originOffsetX = 0 # hard-coded for now
         self.originOffsetY = 0 # hard-coded for now
-        self.graphicType = tag("png ") # hard-coded for now
+        self.graphicType = Tag("png ") # hard-coded for now
 
         # image data (if any)
         # sbix does have bitmap entries with no bitmap data, for non-pr
@@ -108,7 +108,7 @@ class sbix:
     def __init__(self, glyphs):
 
         self.version = 1 # hard-coded
-        self.flags = bFlags("10000000 00000000") # hard-coded
+        self.flags = BFlags("10000000 00000000") # hard-coded
 
         self.strikes = []
 

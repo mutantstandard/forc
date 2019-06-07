@@ -1,14 +1,14 @@
 import struct
 from lxml.etree import Element, ElementTree, fromstring
 
-from data import vFixed
+from data import VFixed
 from tables.support.otlScript import ScriptList, ScriptRecord, Script
 from tables.support.otlFeature import FeatureList, FeatureRecord, Feature
 from tables.support.otlLookup import LookupList, LookupType4
 
 
 
-class gsub:
+class GSUB:
 
     def __init__(self, glyphs):
 
@@ -24,7 +24,7 @@ class gsub:
 
     def toTTX(self):
         gsub = Element("GSUB")
-        gsub.append(Element("Version", {"value": vFixed(f"{self.majorVersion}.{self.minorVersion}").toHexStr() })) # TTX wants the version in this format.
+        gsub.append(Element("Version", {"value": VFixed(f"{self.majorVersion}.{self.minorVersion}").toHexStr() })) # TTX wants the version in this format.
 
         gsub.append(self.scriptList.toTTX())
         gsub.append(self.featureList.toTTX())
@@ -36,7 +36,7 @@ class gsub:
 
         # TODO: make toBytes functions for OTL scripts, features and lookups.
         # TODO: learn how to generate offsets for OTL scripts, features and lookups.
-        
+
         # - generate the scriptList, featureList, and lookup list, generate offsets.
 
         gsub = struct.pack( ">HH"

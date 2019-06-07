@@ -1,14 +1,14 @@
 import struct
 from lxml.etree import Element
 
-from data import bFlags
-from tables.support.os2Extra import panose
+from data import BFlags
+from tables.support.os2Extra import PANOSE
 
 
 
 
 
-class os2:
+class OS2:
     """
     Class representing an OS/2 table.
     """
@@ -50,7 +50,7 @@ class os2:
         self.usWeightClass = 500 # hard-coded for now. This is ideal for emoji.
         self.usWidthClass = 5 # hard-coded for now. This is ideal for emoji.
 
-        self.fsType = bFlags('00000000 00000000') # hard-coded. must agree with head.macStyle
+        self.fsType = BFlags('00000000 00000000') # hard-coded. must agree with head.macStyle
 
         self.ySubscriptXSize = metrics['OS2ySubscriptXSize']
         self.ySubscriptYSize = metrics['OS2ySubscriptYSize']
@@ -67,18 +67,18 @@ class os2:
 
         self.sFamilyClass = 5 # hard-coded for now. This is ideal for emoji.
 
-        self.panose = panose(2, 0, 6, 9, 0, 0, 0, 0, 0, 0)
+        self.panose = PANOSE(2, 0, 6, 9, 0, 0, 0, 0, 0, 0)
 
-        self.ulUnicodeRange1 = bFlags('00000000 00000000 00000000 00000000')
-        self.ulUnicodeRange2 = bFlags('00000000 00000000 00000000 00000000')
+        self.ulUnicodeRange1 = BFlags('00000000 00000000 00000000 00000000')
+        self.ulUnicodeRange2 = BFlags('00000000 00000000 00000000 00000000')
         self.ulUnicodeRange2.set(57-32, int(supplementaryPlane))
 
-        self.ulUnicodeRange3 = bFlags('00000000 00000000 00000000 00000000')
-        self.ulUnicodeRange4 = bFlags('00000000 00000000 00000000 00000000')
+        self.ulUnicodeRange3 = BFlags('00000000 00000000 00000000 00000000')
+        self.ulUnicodeRange4 = BFlags('00000000 00000000 00000000 00000000')
 
         self.achVendID = m['metadata']['OS2VendorID']
 
-        self.fsSelection = bFlags('00000000 00000000') # hard-coded
+        self.fsSelection = BFlags('00000000 00000000') # hard-coded
 
         self.usFirstCharIndex = usFirstCharIndex
         self.usLastCharIndex = usLastCharIndex
@@ -89,8 +89,8 @@ class os2:
         self.usWinAscent = metrics['yMax']
         self.usWinDescent = (- metrics['yMin']) # this should be the way it is (-yMin): https://docs.microsoft.com/en-us/typography/opentype/spec/os2#uswindescent
 
-        self.ulCodePageRange1 = bFlags('00000000 00000000 00000000 00000000')
-        self.ulCodePageRange2 = bFlags('00000000 00000000 00000000 00000000')
+        self.ulCodePageRange1 = BFlags('00000000 00000000 00000000 00000000')
+        self.ulCodePageRange2 = BFlags('00000000 00000000 00000000 00000000')
 
         self.sxHeight = 0 # leaving it hard-coded at 0 for now.
         self.sCapHeight = metrics['yMax']

@@ -25,7 +25,7 @@ def simpleHex(int):
 
 
 
-class img:
+class Img:
     """
     Class representing a single glyph image.
     """
@@ -98,7 +98,7 @@ class img:
 
 
 
-class codepointSeq:
+class CodepointSeq:
     """
     Class representing a sequence of Unicode codepoints.
     """
@@ -190,14 +190,14 @@ class codepointSeq:
 
 
 
-class glyph:
+class Glyph:
     """
     Class representing a font glyph.
     """
     def __init__(self, codepoints, imgDict=None, alias=None, delim="-", userInput=True):
 
         try:
-            self.codepoints = codepointSeq(codepoints, delim, userInput=userInput)
+            self.codepoints = CodepointSeq(codepoints, delim, userInput=userInput)
         except ValueError as e:
             raise ValueError(f"A codepoint sequence object for ('{codepoints}') couldn't be created. → {e}")
 
@@ -209,7 +209,7 @@ class glyph:
                 raise ValueError(f"Tried to make glyph object '{name}' but it has both an alias AND an image. It can't have both.")
             else:
                 try:
-                    self.alias = codepointSeq(alias, delim)
+                    self.alias = CodepointSeq(alias, delim)
                     self.glyphType = "alias"
                 except ValueError as e:
                     raise Exception(f"The alias destination ('{alias}') for {self.codepoints} is not named correctly. → {e}")
@@ -269,7 +269,7 @@ def compileImageGlyphs(dir, m, delim, nusc, afsc, imageFormats):
         imgCollection['svg'] = dict()
 
         for path in list((dir / 'svg').glob("*.svg")):
-            imgCollection['svg'][path.stem] = img("svg", 0, m, path.absolute(), afsc)
+            imgCollection['svg'][path.stem] = Img("svg", 0, m, path.absolute(), afsc)
 
 
 
@@ -293,7 +293,7 @@ def compileImageGlyphs(dir, m, delim, nusc, afsc, imageFormats):
                 imgCollection[pngFolder.name] = dict()
 
                 for path in list(pngFolder.glob("*.png")):
-                    imgCollection[pngFolder.name][path.stem] = img("png", strikeSize, m, path.absolute())
+                    imgCollection[pngFolder.name][path.stem] = Img("png", strikeSize, m, path.absolute())
 
 
     ## check size
@@ -323,7 +323,7 @@ def compileImageGlyphs(dir, m, delim, nusc, afsc, imageFormats):
                 imgDict[folderName] = folder[c]
 
         try:
-            imgGlyphs.append(glyph(c, imgDict=imgDict, delim=delim))
+            imgGlyphs.append(Glyph(c, imgDict=imgDict, delim=delim))
         except ValueError as e:
             raise Exception(f"There was a problem when trying to create a glyph object for {c}. → {e}")
 
@@ -342,7 +342,7 @@ def compileAliasGlyphs(glyphs, aliases, delim):
     for target, destination in aliases.items():
 
         try:
-            aliasGlyph = glyph(target, alias=destination, delim=delim)
+            aliasGlyph = Glyph(target, alias=destination, delim=delim)
         except ValueError as e:
             raise Exception(f"Some part of an alias glyph isn't named correctly. → {e}")
 
@@ -394,10 +394,10 @@ def addServiceGlyphs(glyphs, no_vs16):
 
     # add particular service glyphs.
 
-    glyphs.append(glyph(["20"], userInput=False)) # breaking space
-    glyphs.append(glyph(["a0"], userInput=False)) # non-breaking space
-    if vs16Presence: glyphs.append(glyph(["fe0f"], userInput=False))
-    if zwjPresence: glyphs.append(glyph(["200d"], userInput=False))
+    glyphs.append(Glyph(["20"], userInput=False)) # breaking space
+    glyphs.append(Glyph(["a0"], userInput=False)) # non-breaking space
+    if vs16Presence: glyphs.append(Glyph(["fe0f"], userInput=False))
+    if zwjPresence: glyphs.append(Glyph(["200d"], userInput=False))
 
 
     return glyphs

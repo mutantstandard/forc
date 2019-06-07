@@ -6,7 +6,7 @@ from transform.svg import stripStyles, affinityDesignerCompensate, viewboxCompen
 
 
 
-class svgDoc:
+class SVGDoc:
     """
     Class representing an SVG document in an SVG table.
     """
@@ -32,7 +32,7 @@ class svgDoc:
         return svgDoc
 
 
-class svg:
+class SVG:
     """
     Class representing an SVG table.
     """
@@ -44,7 +44,7 @@ class svg:
 
         for ID, g in enumerate(glyphs["img_empty"]):  # it has to be img_empty because we need those glyph indexes.
             if g.imgDict:
-                self.SVGDocumentList.append(svgDoc(ID, g))
+                self.SVGDocumentList.append(SVGDoc(ID, g))
 
 
     def toTTX(self):

@@ -1,5 +1,5 @@
 from lxml.etree import Element
-from data import tag
+from data import Tag
 
 
 # OTLFeature

@@ -1,10 +1,10 @@
 from lxml.etree import Element
 
-from data import vFixed
+from data import VFixed
 
 class maxp:
     def __init__(self, glyphs):
-        self.version = vFixed('1.0') # hard-coded
+        self.version = VFixed('1.0') # hard-coded
 
         self.numGlyphs = len(glyphs["all"])
         # sbix determines the number of glyphs from this data point.

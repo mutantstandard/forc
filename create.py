@@ -4,7 +4,7 @@ import log
 import shutil
 
 import files
-from font import font
+from font import TTFont
 import compile.ttx
 import compile.ios.create
 from format import formats
@@ -44,7 +44,7 @@ def createFont(fontFormat, outputPath, manifest, glyphs, compiler, flags):
     # create the font!
     # --------------------------------------------------------------
     log.out(f'🛠  Assembling font...')
-    emojiFont = font(formatData["name"], manifest, glyphs, flags)
+    emojiFont = TTFont(formatData["name"], manifest, glyphs, flags)
     log.out(f'✅ Font successfully assembled.\n', 32)
 
 

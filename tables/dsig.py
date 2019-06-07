@@ -1,9 +1,9 @@
 import struct
 from lxml.etree import Element
 
-from data import bFlags
+from data import BFlags
 
-class dsig:
+class DSIG:
     """
     Class representing a placeholder DSIG table.
     """
@@ -13,7 +13,7 @@ class dsig:
         self.version = 0x00000001
         # Hardcoded. It is what it's supposed to be - a single UInt32 formatted as hex.
 
-        self.flags = bFlags('00000000')
+        self.flags = BFlags('00000000')
         self.numSigs = 0
 
 

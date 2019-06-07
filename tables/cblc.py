@@ -4,7 +4,7 @@ from tables.support.ebxMetrics import SbitLineMetrics
 from tables.support.ebxIndexes import IndexSubTable1
 
 
-class cblcBitmapSize:
+class CBLCBitmapSize:
     """
     A class representation of an CBLC BitmapSize subtable.
 
@@ -87,7 +87,7 @@ class cblcBitmapSize:
 
 
 
-class cblc:
+class CBLC:
 
     def __init__(self, m, glyphs):
 
@@ -102,7 +102,7 @@ class cblc:
 
         for imageFormat, image in glyphs["img"][0].imgDict.items():
             if imageFormat.split('-')[0] == "png":
-                self.bitmapSizeTables.append(cblcBitmapSize(m["metrics"], image.strike, glyphs))
+                self.bitmapSizeTables.append(CBLCBitmapSize(m["metrics"], image.strike, glyphs))
 
 
 

@@ -1,6 +1,6 @@
 import struct
 from lxml.etree import Element
-from data import bFlags, longDateTime
+from data import BFlags, LongDateTime
 
 
 class head:
@@ -17,18 +17,18 @@ class head:
         self.checkSumAdjustment = 0 # TTX sets this automatically at compilation; the internal compiler needs to do this manually.
         self.magicNumber = 0x5f0f3cf5 # hard-coded
 
-        self.flags = bFlags('11010000 00000000') # hard-coded
+        self.flags = BFlags('11010000 00000000') # hard-coded
         self.unitsPerEm = m['metrics']['unitsPerEm']
 
-        self.created = m['metadata']['created'] # (is a longDateTime)
-        self.modified = longDateTime() # is set to 'now'
+        self.created = m['metadata']['created'] # (is a LongDateTime)
+        self.modified = LongDateTime() # is set to 'now'
 
         self.xMin = m['metrics']['xMin']
         self.yMin = m['metrics']['yMin']
         self.xMax = m['metrics']['xMax']
         self.yMax = m['metrics']['yMax']
 
-        self.macStyle = bFlags('00000000 00000000') # hard-coded. Must agree with OS/2's fsType.
+        self.macStyle = BFlags('00000000 00000000') # hard-coded. Must agree with OS/2's fsType.
         self.lowestRecPPEM = m['metrics']['lowestRecPPEM']
 
         self.fontDirectionHint = 2 # depreciated; is meant to be 2.

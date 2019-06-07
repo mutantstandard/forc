@@ -1,6 +1,6 @@
 import struct
 from lxml.etree import Element
-from data import fixed, vFixed
+from data import Fixed, VFixed
 
 
 class post:
@@ -10,11 +10,11 @@ class post:
 
     def __init__(self, glyphs):
 
-        self.version = vFixed('2.0')
+        self.version = VFixed('2.0')
         # Apple suggests against using formats 2.5, 3 and 4.
         # Microsoft says that version 2.5 is depreciated.
 
-        self.italicAngle = fixed('0.0') # hard-coded (this is an emoji font; no italics here.)
+        self.italicAngle = Fixed('0.0') # hard-coded (this is an emoji font; no italics here.)
 
         self.underlinePosition = 0
         self.underlineThickness = 0

@@ -1,7 +1,7 @@
 import struct
 from lxml.etree import Element
 
-from data import vFixed
+from data import VFixed
 
 class vhea:
     """
@@ -12,7 +12,7 @@ class vhea:
 
         metrics = m['metrics']
 
-        self.version = vFixed('1.0')
+        self.version = VFixed('1.0')
 
         self.ascent = metrics['vertAscent']
         self.descent = metrics['vertDescent']
