@@ -57,8 +57,7 @@ unenforcedElems = [ "animateTransform"
 
 
 unenforcedAttrs =   [ "cursor"
-                    #, "style"
-                    # -- style is compensated for in forc, so it's currently left out.
+                    #, "style" # style is compensated for in forc, so it's currently commented out.
                     , "zoomAndPan"
 
                     # SVG event attributes
@@ -158,7 +157,7 @@ def isSVGValid(svgImage, ignoreUnenforcedContents=False):
     - rgba() colors
     - CSS2 color values in styles
 
-    'unenforced' (not explicitly forbidden but not explicitly compatible wither) contents:
+    'unenforced' (not explicitly forbidden but not explicitly compatible either) contents:
     - XML entities
 
     """
@@ -243,17 +242,19 @@ def isSVGValid(svgImage, ignoreUnenforcedContents=False):
     # These are not enforced in the spec and are
     # not guaranteed to work.
 
+    nuscMsg = "If you don't want forc to make an error when it detects this, use the --nusc build flag."
+
     if not ignoreUnenforcedContents:
 
         # elements
         for elem in unenforcedElems:
             if svgImage.find('//' + xmlns + elem) is not None:
-                raise ValueError(f"This SVG image has a '{elem}' element. Compatibility with this is not mandatory in SVGinOT fonts so it is not recommended.")
+                raise ValueError(f"This SVG image has a '{elem}' element. Compatibility with this is not mandatory in SVGinOT fonts so it is not recommended. {nuscMsg}")
 
         # attributes
         for attr in unenforcedAttrs:
             if svgImage.find(f"//*[@{attr}]") is not None:
-                raise ValueError(f"This SVG image has a '{attr}' attribute. Compatibility with this is not mandatory in SVGinOT fonts so it is not recommended.")
+                raise ValueError(f"This SVG image has a '{attr}' attribute. Compatibility with this is not mandatory in SVGinOT fonts so it is not recommended. {nuscMsg}")
 
 
         # image elements that don't contain JPEGs or PNGs
@@ -271,12 +272,12 @@ def isSVGValid(svgImage, ignoreUnenforcedContents=False):
                             count += 1
 
                     if count == len(acceptedImageExtensions):
-                        raise ValueError(f"This SVG image has an image attribute that links to a file that is not a JPEG or PNG image. Compatibility with any image type other than PNG or JPEG is not mandatory in SVGinOT fonts so it is not recommended.")
+                        raise ValueError(f"This SVG image has one or more image attribute(s) that links to a file that is not a JPEG or PNG image. Compatibility with any image type other than PNG or JPEG is not mandatory in SVGinOT fonts so it is not recommended. {nuscMsg}")
 
 
         # there should be no SVG child elements.
         if svgImage.find("//{*}svg") is not None:
-            raise ValueError(f"This SVG image has a child svg attribute. Compatibility with this is not mandatory in SVGinOT fonts so it is not recommended.")
+            raise ValueError(f"This SVG image has a child svg attribute. Compatibility with this is not mandatory in SVGinOT fonts so it is not recommended. {nuscMsg}")
 
 
 

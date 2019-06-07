@@ -28,12 +28,13 @@ def affinityDesignerCompensate(svgImage):
     Compensates for shortcomings in Affinity's SVG exporter, whereby certain shapes
     (that are supposed to be filled black) are not given explicit fills or strokes.
 
-    This causes certain shapes, when put in an SVG font, to take on the colour of the
-    text around it.
+    This is fine in an image context, but in a font context, these shapes take on
+    the set colour of the text because they have no explicit color values.
 
-    This function looks for paths and rects that have no fill and stroke, and gives
-    them a black fill and stroke.
+    This function looks for paths and rects that have no explicit fill and no
+    explicit stroke, and gives them a black fill.
     """
+
     xmlns = "{http://www.w3.org/2000/svg}"
 
     pathXP = "//" + xmlns + "path"
@@ -117,7 +118,13 @@ def viewboxCompensate(metrics, svgImage):
     return svgcdatatree
 
 
+
+
 def compensateSVG(svgImage, m, afsc):
+    """
+    A function that determines what edits need to be made to an SVG before
+    being loaded into an img class.
+    """
 
     metrics = m['metrics']
 

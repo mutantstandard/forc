@@ -3,8 +3,6 @@
 # Functions that validate codepoint sequences according to specific criteria.
 # All of them will return ValueErrors when they fail.
 
-
-
 def testZWJSanity(c):
     """
     Function that tests the sanity of ZWJ placement in a codepoint sequence.

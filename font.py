@@ -34,9 +34,14 @@ import tables.cblc
 
 
 class font:
+    """
+    Class representing a TrueType/OpenType font.
+    """
+
+
     def __init__(self, chosenFormat, m, glyphs, flags):
         """
-        Covers the entire routine for assembling a TTX file.
+        Covers the entire routine for assembling a TrueType/OpenType font with forc input data.
         """
 
         glyphFormat = formats[chosenFormat]["imageTables"]
@@ -180,7 +185,7 @@ class font:
 
     def toTTX(self, asString=False):
         """
-        Compiles font to TTX.
+        Compiles font class to a TTX-formatted string.
         """
 
         # start the TTX file
@@ -220,7 +225,7 @@ class font:
 
     def toBytes(self):
         """
-        Compiles font to bytes.
+        Compiles font class to bytes.
         (Just a placeholder right now.)
         """
 

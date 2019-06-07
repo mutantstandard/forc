@@ -78,6 +78,9 @@ def writeFile(path, contents, exceptionString):
 def compileTTX(input, output):
     """
     Invokes the TTX compiler and attempts to compile a font with it.
+    
+    (this can be for multiple purposes, either compiling a font by TTX or
+    just for using the TTX compiler as an extra testing mechanism.)
     """
 
     # feed the assembled TTX as input to the ttx command line tool.

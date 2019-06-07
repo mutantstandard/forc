@@ -7,15 +7,15 @@ from datetime import datetime, tzinfo, timedelta, timezone
 
 class tag:
     """
-    Class encapsulating an TrueType/OpenType tag.
+    Class encapsulating an TrueType/OpenType tag data type.
+    - https://docs.microsoft.com/en-us/typography/opentype/spec/otff#data-types
     """
 
     def __init__(self, string):
         """
         Initialises a tag based on a string.
-        Ensures that a string is compliant with OpenType's tag data type before successful instantiation.
+        Ensures that a string is compliant with OpenType's tag data type.
 
-        (https://docs.microsoft.com/en-us/typography/opentype/spec/otff#data-types)
         (Must have exactly 4 characters, each character being between U+20-U+7e.)
         """
 
@@ -39,7 +39,7 @@ class tag:
 
     def __int__(self):
         """
-        Converts tag to it's data representation in an OpenType font.
+        Converts tag to it's expected representation in an OpenType font.
 
         (Array of 4 UInt8s, each UInt8 representing each character's Unicode codepoint.)
 
@@ -75,6 +75,7 @@ class bFlags:
         """
         Binary flags are entered in big-endian order. (ie. left-to-right).
         Input can be formatted with spaces (ie. '00100000 00001010').
+        Binary flags can only be 8, 16 or 32 bits long.
         """
 
         if type(string) is not str:
@@ -88,7 +89,7 @@ class bFlags:
         self.len = floor(len(string)/8)
 
         if sys.byteorder == 'little':
-            string = string[::-1] # reverse the byte order if little endian.
+            string = string[::-1] # reverse the byte order if system is little endian.
 
         try:
             self.bits = int(string, 2)
@@ -100,7 +101,7 @@ class bFlags:
     def __str__(self):
         """
         Returns a string-formatted list of bits, with spacing every 8 bits.
-        In big-endian byte order.
+        In big-endian byte order (first to last).
         """
         string = ""
         bitString = f"{self.bits:0{self.len*8}b}"
@@ -173,7 +174,7 @@ class fixed:
 
     def __str__(self):
         """
-        Friendly non-weird version of it.
+        Returns a friendly, non-weird version of it.
         """
         return self.majorVersionSimple + '.' + self.minorVersionSimple
 
@@ -187,7 +188,7 @@ class fixed:
 
     def __int__():
         """
-        returns the proper numerical representation of this value
+        Returns the proper hexadecimal representation of this value.
         ie.
 
         1.040
@@ -250,7 +251,7 @@ class longDateTime:
         If nothing is inputted, forc will just use now.
 
         forc's datetime format:
-        (UTC timezone is assumed, microseconds assumed to be 0.)
+        (Microseconds assumed to be 0.)
 
         2019-05-22 09:59 +0000
         %d-%m-%d   %H:%M %z

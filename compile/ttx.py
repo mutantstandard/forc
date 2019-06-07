@@ -5,14 +5,6 @@ import shutil
 import files
 from format import formats
 
-# create.py
-# -------------------------------
-#
-# The routines and outline processes responsible for one single font compilation cycle.
-
-
-
-
 
 def createFont(formatData, outPath, tempPath, filename, flags, font):
     """

@@ -29,6 +29,17 @@ For when you want to map multiple codepoint sequences onto the same glyph.
 
 What emoji font formats to export to.
 
+
+### Compiler `(-C)`
+
+What compiler to use.
+
+This is optional - the default at the moment is `ttx`.
+
+- `ttx` (default): Compiles a TTX representation of the font to hand over to `ttx`/`fonttools`. Some of your values will be overridden by the compiler, and often doesn't work as expected.
+
+- `forc` : forc's built-in binary compiler intended to replace ttx. Currently not working and under development.
+
 ---
 
 
@@ -50,7 +61,7 @@ Keeps the initial ttx that forc compiles for each format before passing it to `f
 This is slightly different to `--ttx`, which is a full representation of the font file in it's compiled state.
 
 Mainly useful for forc development, but you also might want to use this option to look deeper at what forc is doing.
-            
+
 
 #### `--no-vs16`
 

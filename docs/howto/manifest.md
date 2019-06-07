@@ -98,7 +98,7 @@ forc assumes you want to create a font that can work in both vertical AND horizo
 
 ````
 ,"metadata":
-	{"created": "Mon Jan 03 13:45:00 2019"
+	{"created": "2019-06-07 01:02 +0100"
     ,"version": "1.040"
     ,"OS2VendorID": "MTNT"
     ,"filenames": {...}
@@ -108,7 +108,7 @@ forc assumes you want to create a font that can work in both vertical AND horizo
 
 | name | type | req? | description |
 |:--|:--|:--|:--|
-| created | string | ✔️ | The date your font was created. Formatted as YYYY-MM-DD MM:SS +(timezone) (""%Y-%m-%d %H:%M %z" in Python). You can leave it empty and forc will interpret it as 'now'.
+| created | string |  | The date your font was created. Formatted as YYYY-MM-DD MM:SS +(timezone) (""%Y-%m-%d %H:%M %z" in Python). If you don't want to specify a date, you can leave it empty and forc will just use your compilation time as the created time.
 | version | string (representing a 3-decimal number that's 1.000 or greater) | ✔️
 | OS2VendorID | string (a 4-character string of a limited set of ASCII characters) | | [Microsoft's 4-letter identifier for registered font vendors](https://docs.microsoft.com/en-us/typography/opentype/spec/os2#achvendid). |
 | nameRecords | object | ✔️ | A structure represnting all of the records of the `name` table. (Described in more detail later.) |
@@ -139,10 +139,14 @@ If you're using these, you must have a filename for each of the formats you're e
 [Font Development Best Practices](https://silnrsi.github.io/FDBP/en-US/Font_Naming.html) recommends that filenames are done something like this:
 
 ```
-FontFamilyName-StyleName.otf
+FontFamilyName-StyleName
 ```
 
-As you can see in the JSON example though, I personally decided to not have Regular because 'MutantStandardEmoji' plus the emoji format is long enough.
+As you can see in the JSON example though, I personally decided to not have Regular because 'MutantStandardEmoji-Regular' plus the emoji format is long enough. Emoji fonts don't have regular/bold/etc, So I would personally recommend the following convention:
+
+````
+FontFamilyName-EmojiFormat
+````
 
 
 
