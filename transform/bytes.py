@@ -37,7 +37,7 @@ def generateOffsets(list, length, offsetStart):
             offsetNum = sys.getsizeof(x[-1].toBytes) + sum(glyphDataOffsetsNum) + offsetStart
 
         if length == "short":
-            offset = struct.pack( ">H", offsetNum) # Offset32 (UInt16)
+            offset = struct.pack( ">H", offsetNum) # Offset16 (UInt16)
         elif length == "long":
             offset = struct.pack( ">I", offsetNum) # Offset32 (UInt32)
 
