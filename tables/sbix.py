@@ -92,7 +92,7 @@ class sbixStrike:
                              , self.ppi # UInt16
                              )
 
-        bitmapBytes = generateOffsets(bitmaps, -4)
+        bitmapBytes = generateOffsets(bitmaps, "long", -4) # long offsets (UInt32)
         # TODO: there's meant to be an extra offset in glyphDataOffsets. it's unclear what that is.
         return strikeMetadata + bitmapBytes["offsets"] + bitmapBytes["bytes"]
 
@@ -136,5 +136,5 @@ class sbix:
                           , len(self.strikes) # UInt32
                           )
 
-        strikeBytes = generateOffsets(bitmaps, -8)
+        strikeBytes = generateOffsets(bitmaps, "long", -8) # long offsets (UInt32)
         return header + strikeBytes["offsets"] + strikeBytes["bytes"]
