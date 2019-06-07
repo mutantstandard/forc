@@ -76,6 +76,17 @@ class img:
             raise ValueError(f"Image object {self} couldn't be hexdumped. → {e}")
 
 
+    def getBytes(self):
+        """
+        Loads and returns a byte dump of the image object's file on-demand.
+        """
+
+        try:
+            with open(self.path, "rb") as read_file:
+                return read_file.read()
+        except ValueError as e:
+            raise ValueError(f"Bytes couldn't be retrieved from the file of image object {self}. → {e}")
+
 
     def __str__(self):
         return f"img: [{self.type}-{str(self.strike)}] {self.path.name}|"

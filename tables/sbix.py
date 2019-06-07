@@ -1,6 +1,8 @@
 import struct
+import sys
 from lxml.etree import Element
 from data import tag, bFlags
+from transform.bytes import generateOffsets
 
 
 
@@ -14,7 +16,8 @@ class sbixBitmap:
         self.originOffsetY = 0 # hard-coded for now
         self.graphicType = tag("png ") # hard-coded for now
 
-        # forc img class or None
+        # image data (if any)
+        # sbix does have bitmap entries with no bitmap data, for non-pr
         if glyph.imgDict:
             self.img = glyph.imgDict["png-" + str(ppem)]
         else:
@@ -38,14 +41,17 @@ class sbixBitmap:
             return sbixBitmap
 
     def toBytes(self):
-        bitmap = struct.pack( ">hh4b"
+        metadata = struct.pack( ">hh4b"
                             , self.originOffsetX # Int16
                             , self.originOffsetY # Int16
                             , self.graphicType.toBytes() # Tag (4 bytes/UInt32)
                             )
-        # TODO: Add bitmap data:
-        # https://docs.microsoft.com/en-gb/typography/opentype/spec/sbix#glyph-data
 
+        if self.img is None:
+            return metadata
+        else:
+            return metadata + self.img.getBytes()
+            # TODO: figure out if you need to make some sort of big-endian version of this.
 
 
 
@@ -54,12 +60,16 @@ class sbixBitmap:
 class sbixStrike:
     """
     Class representing a single strike within an sbix table.
+
+    - https://docs.microsoft.com/en-gb/typography/opentype/spec/sbix#strikes
+    - https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6sbix.html
     """
     def __init__(self, ppem, glyphs):
         self.ppem = ppem
         self.ppi = 72 # hard-coded for now
 
         self.bitmaps = []
+        # number of glyphs are determined from maxp table.
 
         for g in glyphs:
             self.bitmaps.append( sbixBitmap(g, ppem) )
@@ -82,8 +92,11 @@ class sbixStrike:
                              , self.ppi # UInt16
                              )
 
-        # TODO: add glyphDataOffsets:
-        # https://docs.microsoft.com/en-gb/typography/opentype/spec/sbix#strikes
+        bitmapBytes = generateOffsets(bitmaps, -4)
+        # TODO: there's meant to be an extra offset in glyphDataOffsets. it's unclear what that is.
+        return strikeMetadata + bitmapBytes["offsets"] + bitmapBytes["bytes"]
+
+
 
 
 
@@ -95,7 +108,7 @@ class sbix:
     def __init__(self, glyphs):
 
         self.version = 1 # hard-coded
-        self.flags = bFlags("00000000 00000001") # hard-coded
+        self.flags = bFlags("10000000 00000000") # hard-coded
 
         self.strikes = []
 
@@ -117,9 +130,11 @@ class sbix:
         return sbix
 
     def toBytes(self):
-        return struct.pack( ">H2bI"
+        header = struct.pack( ">H2bI"
                           , self.version # UInt16
                           , self.flags.toBytes() # 2 bytes/UInt16
                           , len(self.strikes) # UInt32
-                          # TODO: Offsets to each sbix strike.
                           )
+
+        strikeBytes = generateOffsets(bitmaps, -8)
+        return header + strikeBytes["offsets"] + strikeBytes["bytes"]
