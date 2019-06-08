@@ -51,7 +51,7 @@ class PANOSE:
 
 
     def toBytes(self):
-        return struct.pack(">HHHHHHHHHH"
+        return struct.pack(">HHHHHHHHHH" # All are UInt16s.
                           , self.bFamilyType
                           , self.bSerifStyle
                           , self.bWeight

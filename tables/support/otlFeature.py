@@ -23,6 +23,7 @@ class Feature:
 
         return feature
 
+
 class FeatureRecord:
     """
     Class representing a placeholder FeatureRecord table.

@@ -71,10 +71,17 @@ class cmap:
 
         return cmap
 
+
     def toBytes(self):
         header = struct.pack( ">HH"
                           , self.version # UInt16
-                          , len(self.subtables) # UInt16
+                          # number of encoding tables
                           )
 
-        # TODO: add the cmap tables afterwards.
+        # TODO:
+        # - create an array of encoding records (https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#encoding-records-and-encodings)
+        # - - platformID    Uint16
+        # - - encodingID    UInt16
+        # - -- offset       Offset32
+        #
+        #
