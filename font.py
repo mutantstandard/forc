@@ -238,4 +238,4 @@ class TTFont:
         ## one last conversion to bytes.
         # return bytesPass(self)
 
-        return "0"
+        return (1024).to_bytes(2, byteorder="big")
