@@ -17,8 +17,8 @@ def generateOffsets(list, length, offsetStart):
     - https://docs.microsoft.com/en-us/typography/opentype/spec/otff#data-types
     """
 
-    if length not in ["short", "long"]:
-        raise ValueError(f"generateOffsets requires a length of either 'short' or 'long'. You gave '{length}'.")
+    if length not in [16, 32]:
+        raise ValueError(f"generateOffsets requires a bit length of either '16' or '32'. You gave '{length}'.")
 
 
     offsetNumList = [] # used to calculate the offsets cumulatively.

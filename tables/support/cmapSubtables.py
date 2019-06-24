@@ -1,6 +1,6 @@
 import struct
 from lxml.etree import Element
-
+from math import floor, log2
 
 def makeTTXSubtable(tag, attrs, cmapGlyphSet):
     subtable = Element(tag, attrs)
@@ -12,7 +12,11 @@ def makeTTXSubtable(tag, attrs, cmapGlyphSet):
             subtable.append(Element("map", {"code": hex(g.codepoints.seq[0]), "name": g.alias.name() }))
     return subtable
 
-
+def makeGlyphIDArray(glyphs):
+    """
+    makes a glyph
+    """
+    pass
 
 class cmapFormat0:
     """
@@ -27,14 +31,13 @@ class cmapFormat0:
         # check if the glyphs are one-byte, reject them if they are not.
         for g in glyphs:
             if g.codepoints.seq[0] > int('ff', 16):
-                raise ValueError(f"Creating cmap subtable format 0 failed. A glyph whose codepoint is greater than U+FF was given. cmap Subtable Format 0 must have codepoints less than or equal to U+FF.")
+                raise ValueError(f"Creating cmap subtable format 0 has been rejected. A glyph whose codepoint is greater than U+FF was given. cmap Subtable Format 0 must have codepoints less than or equal to U+FF.")
 
         self.format = 0 # hardcoded
-        self.glyphs = glyphs
         self.platformID = platformID
         self.platEncID = platEncID
         self.language = language
-
+        self.glyphs = glyphs
 
     def toTTX(self):
         return makeTTXSubtable(  "cmap_format_0",
@@ -46,13 +49,29 @@ class cmapFormat0:
                                 )
 
     def toBytes(self):
-        return struct.pack( ">HH"
-                          , self.format
-                          # TODO: length (in bytes) of the subtable.
-                          , self.language
+        beginning = struct.pack( ">HHH"
+                          , self.format # UInt16
+
+                          # length (in bytes) of the subtable. (it's a static length!)
+                          , 262 #UInt16
+
+                          , self.language # UInt16
                           )
 
-        # glyphIDArray[256] - an array that maps character codes to glyph index
+        # initialise list with a fixed size
+        glyphIdArrayInt = [0x00] * 256 # MAYBE: I presume that no value is 0x00.
+
+        for id, glyph in self.glyphs:
+            glyphIdArray[id] = glyph.codepoints.sequence[0]
+
+
+        # TODO: store ints in this bytearray properly.
+        glyphIdArray = bytearray()
+
+        for int in glyphID:
+            glyphIdArray.append(int)
+
+        return beginning + glyphIdArray
 
 
 
@@ -70,7 +89,7 @@ class cmapFormat4:
         # check if the glyphs are two-byte, reject them if they are not.
         for g in glyphs:
             if g.codepoints.seq[0] > int('ffff', 16):
-                raise ValueError(f"Creating cmap subtable format 4 failed. A glyph whose codepoint is greater than U+FFFF was given. cmap Subtable Format 4 must only have codepoints less than or equal to U+FFFF.")
+                raise ValueError(f"Creating cmap subtable format 4 has been rejected. A glyph whose codepoint is greater than U+FFFF was given. cmap Subtable Format 4 must only have codepoints less than or equal to U+FFFF.")
 
         self.format = 4 # hard-coded.
         self.glyphs = glyphs
@@ -89,13 +108,60 @@ class cmapFormat4:
                                 )
 
     def toBytes(self):
-        return struct.pack( ">HH"
-                          , self.format
-                          # TODO: length in bytes of the subtable
-                          , self.language
-                          # other stuff.....
+
+        reservedPad = 0 # hardcoded
+
+        endCode = []
+        startCode = []
+        idDelta = []
+        idRangeOffset = []
+        segCount = 0
+
+        # generate segments
+        for id, glyph in self.glyphs.items():
+            thisGlyphCodepoint = glyph.codepoints.sequence[0]
+            lastGlyphCodepoint = glyphs[id-1].codepoints.sequence[0]
+
+            if id == 0:
+                segCount +=1
+                startCode.append(thisGlyphCodepoint)
+            else:
+                # check if it's continuous with the last glyph.
+                if thisGlyphCodepoint != (lastGlyphCodepoint + 1):
+                    endCode.append(lastGlyphCodepoint)
+                    startCode = thisGlyphCodepoint
+                    segCount += 1
+                else:
+                    pass
+
+        # TODO: learn how to calculate idDelta and idRangeOffset
+        # TODO: add terminating entries to these arrays.
+
+
+        # Generate a bunch of metadata. these calculations are what they are.
+        segCountX2 = segCount * 2
+        searchRange = 2 * (2 ** floor(log2(39)))
+        entrySelector = log2(searchRange / 2)
+        rangeShift = 2 * segCount - searchRange
+
+        beginning = struct.pack( ">HHHHHHHHHHhH"
+                          , self.format # UInt16
+                          # length # UInt16
+                          , self.language # UInt16
+                          , segCountX2 # UInt16
+                          , searchRange # UInt16
+                          , entrySelector # UInt16
+                          , rangeShift # UInt16
                           )
 
+        # TODO: create bytes representations of these and compile.
+
+                          # endCode[segCount] # UInt16. End character code for each segment. Last possible one = 0xFFFF
+                          # reservedPad = 0. UInt16
+                          # startCode[segCount] # UInt16. Start character code for each segment.
+                          # idDelta[segCount] # Int16. Delta for all character codes in the segment.
+                          # idRangeOffset[segCount] # UInt16. Offsets into glyphIdArray or 0.
+                          # glyphIdArray[] # Array of UInt16s.
 
 
 
@@ -112,7 +178,7 @@ class cmapFormat12:
         # check if the glyphs are four-byte, reject them if they are not.
         for g in glyphs:
             if g.codepoints.seq[0] > int('ffffff', 16):
-                raise ValueError(f"Creating cmap subtable format 12 failed. A glyph whose codepoint is greater than U+FFFFFF was given. cmap Subtable Format 12 must only have codepoints less than or equal to U+FFFFFF.")
+                raise ValueError(f"Creating cmap subtable format 12 has been rejected. A glyph whose codepoint is greater than U+FFFFFF was given. cmap Subtable Format 12 must only have codepoints less than or equal to U+FFFFFF.")
 
         self.glyphs = glyphs
         self.platformID = platformID

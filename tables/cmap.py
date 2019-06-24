@@ -1,7 +1,7 @@
 import struct
 from lxml.etree import Element
 from tables.support.cmapSubtables import cmapFormat0, cmapFormat4, cmapFormat12, cmapFormat14
-
+from transform.bytes import generateOffsets
 
 
 class cmap:
@@ -60,6 +60,7 @@ class cmap:
             self.subtables.append(cmapFormat14(vs, platformID=0, platEncID=5))
 
 
+
     def toTTX(self):
         cmap = Element("cmap")
 
@@ -72,16 +73,22 @@ class cmap:
         return cmap
 
 
+
     def toBytes(self):
         header = struct.pack( ">HH"
                           , self.version # UInt16
-                          # number of encoding tables
+                          , len(self.subtables) # UInt16
                           )
 
-        # TODO:
-        # - create an array of encoding records (https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#encoding-records-and-encodings)
-        # - - platformID    Uint16
-        # - - encodingID    UInt16
-        # - -- offset       Offset32
-        #
-        #
+        subtableOffsets = generateOffsets(self.subtables, 32, (-8 * len(self.subtables)))
+        encodingRecords = bytearray([])
+
+        for key, subtable in self.subtables.items():
+            encodingEntry = struct.pack( ">HHI"
+                       , subtable.platformID
+                       , subtable.platEncID
+                       , subtableOffsets["offsets"][key]
+                       )
+            encodingRecords.append(encodingEntry)
+
+        return header + encodingRecords + subtableOffsets["bytes"]
