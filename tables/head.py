@@ -10,6 +10,8 @@ class head:
 
     def __init__(self, m):
 
+        self.tableName = "head" # hard-coded. For font generation only.
+
         self.majorVersion = 1 # hard-coded, is meant to be 1.
         self.minorVersion = 0 # hard-coded, is meant to be 0.
         self.fontRevision = m['metadata']['version'] # fixed format.
@@ -75,13 +77,13 @@ class head:
 
 
     def toBytes(self):
-        return struct.pack( '>HHiII2bHqqhhhh2bHhhh'
+        return struct.pack( '>HHiII2sHqqhhhh2sHhhh'
 
                             , self.majorVersion # UInt16
                             , self.minorVersion # UInt16
                             , int(self.fontRevision) # Fixed (Int32 but fixed-point)
 
-                            , self.checksumAdjustment # UInt32
+                            , self.checkSumAdjustment # UInt32
                             , self.magicNumber # UInt32
 
                             , self.flags.toBytes() # 2 bytes/UInt16
@@ -96,7 +98,7 @@ class head:
                             , self.yMax # Int16
 
                             , self.macStyle.toBytes() # 2 bytes/UInt16
-                            , self.lowerstRecPPEM # UInt16
+                            , self.lowestRecPPEM # UInt16
 
                             , self.fontDirectionHint # Int16
                             , self.indexToLocFormat # Int16

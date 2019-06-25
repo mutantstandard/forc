@@ -1,9 +1,12 @@
 from lxml.etree import Element
+import struct
 
 from data import VFixed
 
 class maxp:
     def __init__(self, glyphs):
+
+        self.tableName = "maxp" # hard-coded. For font generation only.
         self.version = VFixed('1.0') # hard-coded
 
         self.numGlyphs = len(glyphs["all"])

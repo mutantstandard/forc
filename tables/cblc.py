@@ -91,6 +91,8 @@ class CBLC:
 
     def __init__(self, m, glyphs):
 
+        self.tableName = "CBLC" # hard-coded.  For font generation only.
+        
         self.majorVersion = 3
         self.minorVersion = 0
         # hardcoded; the only CBLC version that exists.

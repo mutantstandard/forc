@@ -10,6 +10,7 @@ class post:
 
     def __init__(self, glyphs):
 
+        self.tableName = "post" # hard-coded. For font generation only.
         self.version = VFixed('2.0')
         # Apple suggests against using formats 2.5, 3 and 4.
         # Microsoft says that version 2.5 is depreciated.
@@ -63,7 +64,7 @@ class post:
 
 
     def toBytes(self):
-        post = struct.pack( ">iihhIIIII"
+        return struct.pack( ">iihhIIIII"
                           , int(self.version) # Fixed, version no. type (Int32)
                           , int(self.italicAngle) # Fixed (Int32)
 

@@ -2,7 +2,7 @@ from lxml.etree import Element
 
 class GlyphOrder:
     """
-    Class representing a GlyphOrder table in TTX.
+    Class representing a GlyphOrder table.
 
     GlyphOrder is not a table (I think???), but sort of a helper for TTX.
     This does not appear in the tables of a finished font.

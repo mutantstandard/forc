@@ -1,4 +1,5 @@
 import struct
+import array
 from lxml.etree import Element
 from math import floor, log2
 
@@ -59,21 +60,12 @@ class cmapFormat0:
                           )
 
         # initialise list with a fixed size
-        glyphIdArrayInt = [0x00] * 256 # MAYBE: I presume that no value is 0x00.
+        glyphIdArray = [0x00] * 256 # MAYBE: I presume that no value is 0x00.
 
-        for id, glyph in self.glyphs:
-            glyphIdArray[id] = glyph.codepoints.sequence[0]
+        for id, glyph in enumerate(self.glyphs):
+            glyphIdArray[id] = glyph.codepoints.seq[0]
 
-
-        # TODO: store ints in this bytearray properly.
-        glyphIdArray = bytearray()
-
-        for int in glyphID:
-            glyphIdArray.append(int)
-
-        return beginning + glyphIdArray
-
-
+        return beginning + array.array('B', glyphIdArray)
 
 
 class cmapFormat4:
@@ -118,9 +110,9 @@ class cmapFormat4:
         segCount = 0
 
         # generate segments
-        for id, glyph in self.glyphs.items():
-            thisGlyphCodepoint = glyph.codepoints.sequence[0]
-            lastGlyphCodepoint = glyphs[id-1].codepoints.sequence[0]
+        for id, glyph in enumerate(self.glyphs):
+            thisGlyphCodepoint = glyph.codepoints.seq[0]
+            lastGlyphCodepoint = self.glyphs[id-1].codepoints.seq[0]
 
             if id == 0:
                 segCount +=1
@@ -141,10 +133,11 @@ class cmapFormat4:
         # Generate a bunch of metadata. these calculations are what they are.
         segCountX2 = segCount * 2
         searchRange = 2 * (2 ** floor(log2(39)))
-        entrySelector = log2(searchRange / 2)
+        entrySelector = floor(log2(searchRange / 2))
         rangeShift = 2 * segCount - searchRange
+        rangeShift = max(rangeShift, 0)
 
-        beginning = struct.pack( ">HHHHHHHHHHhH"
+        beginning = struct.pack( ">HHHHHH"
                           , self.format # UInt16
                           # length # UInt16
                           , self.language # UInt16
@@ -162,7 +155,7 @@ class cmapFormat4:
                           # idDelta[segCount] # Int16. Delta for all character codes in the segment.
                           # idRangeOffset[segCount] # UInt16. Offsets into glyphIdArray or 0.
                           # glyphIdArray[] # Array of UInt16s.
-
+        return bytes()#temp
 
 
 class cmapFormat12:
@@ -198,7 +191,8 @@ class cmapFormat12:
                                 }
                                 , self.glyphs
                                 )
-
+    def toBytes(self):
+        return bytes()#temp
 
 
 
@@ -233,3 +227,6 @@ class cmapFormat14:
                 cmap14.append(Element("map", {"uvs": "0xfe0f", "uv": hex(g.codepoints.seq[0]), "name": g.alias.name()}))
 
         return cmap14
+
+    def toBytes(self):
+        return bytes()#temp

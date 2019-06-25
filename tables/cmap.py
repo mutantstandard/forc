@@ -11,6 +11,8 @@ class cmap:
 
     def __init__(self, glyphs, no_vs16):
 
+        self.tableName = "cmap" # hard-coded.  For font generation only.
+
         self.version = 0 # hardcoded. no other version.
 
         # check what's what in this set to determine what subtables to toTTX.

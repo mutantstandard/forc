@@ -1,4 +1,7 @@
 from lxml.etree import Element, tostring
+from math import log2, floor
+from transform.bytes import calculateChecksum, generateOffsets
+import struct
 
 import log
 from format import formats
@@ -49,15 +52,13 @@ class TTFont:
 
         self.tables = []
 
-        # COLOR CODES:
-        # 90 (gray):        a standard table that gets compiled no matter what.
-        # 36 (dark cyan):   a table that is only compiled based on the font format.
 
         try:
             # headers and other weird crap
             # ---------------------------------------------
-            log.out('[glyphOrder] ', 90, newline=False)
-            self.tables.append(tables.glyphOrder.GlyphOrder(glyphs))
+            self.glyphOrder = tables.glyphOrder.GlyphOrder(glyphs)
+
+
 
             log.out('[head] ', 90, newline=False)
             self.tables.append(tables.head.head(m))
@@ -193,6 +194,8 @@ class TTFont:
         root = Element('ttFont', {'sfntVersion': '\\x00\\x01\\x00\\x00', 'ttLibVersion': '3.28'}) # hard-coded attrs.
 
         # get all of this font's tables' TTX representations and append them to the file.
+        root.append(self.glyphOrder.toTTX())
+
         for t in self.tables:
             root.append(t.toTTX())
 
@@ -206,21 +209,62 @@ class TTFont:
 
 
 
-
     def bytesPass(self):
         """
         Represents a single compile pass to bytes.
         (Just a WIP/placeholder right now.)
         """
 
-        bytesPass = bytesarray(b"")
+        # offset table (ie. the font header)
+        numTables = len(self.tables)
+        searchRange = (2 ** floor(log2(numTables))) * 16
+        entrySelector = int(log2(floor(log2(numTables))))
+        rangeShift = numTables * 16 - searchRange
 
-        # make font header
+        offsetTable = struct.pack( ">IHHHH"
+                                 , 0x00010000 # sfntVersion, UInt32
+                                 , numTables # UInt16
+                                 , searchRange # UInt16
+                                 , entrySelector # UInt16
+                                 , rangeShift # UInt16
+                                 )
+
+
+        # table record entries
+        # - sorted in ascending order by tag (first to last letters/numbers)
+        # - offsets are measured from the very beginning of the font file.
+        #   -12 bytes,
+
+        initialTables = []
+        checkSums = []
+        tags = []
 
         for t in self.tables:
-            bytesPass.append(t.toBytes())
+            data = t.toBytes()
+            print(t.tableName)
+            initialTables.append(data)
+            checkSums.append(calculateChecksum(data))
+            tags.append(t.tableName)
 
-        return bytesPass
+        offsetPos = (len(self.tables) * -16) - 12 # 16 = tableRecord, 12 = offset table.
+        tableOffsets = generateOffsets(initialTables, 32, offsetPos)
+
+        tableRecordsList = []
+
+        for n, t in initialtables.items():
+                tableRecords.append(tableRecord( tags[n]
+                                               , checkSums[n]
+                                               , tableOffsets["offsets"][n]
+                                               , checkSums[n]
+                                               , len(initialTables[n])
+                                               ))
+
+        tableRecordsList.sort()
+        tableRecords = bytes()
+        # TODO: convert tableRecords into bytes.
+
+        return offsetTable + tableRecords + tableOffsets["bytes"]
+
 
 
     def toBytes(self):
@@ -228,14 +272,18 @@ class TTFont:
         Compiles font class to bytes, including checksum.
         (Just a placeholder right now.)
         """
+        log.out('building the first time...', 90)
 
         ## build first time + put together
         # header.append(bytesPass(self))
 
+        log.out('calculating checksum...', 90)
+
         ## make a checksum for it
         # self.head.checkSumAdjustment = ???
 
+        log.out('final pass...', 90)
         ## one last conversion to bytes.
         # return bytesPass(self)
 
-        return (1024).to_bytes(2, byteorder="big")
+        return self.bytesPass()

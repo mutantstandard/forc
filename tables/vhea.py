@@ -12,6 +12,7 @@ class vhea:
 
         metrics = m['metrics']
 
+        self.tableName = "vhea" # hard-coded. For font generation only.
         self.version = VFixed('1.0')
 
         self.ascent = metrics['vertAscent']

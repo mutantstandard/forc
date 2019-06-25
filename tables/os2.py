@@ -36,13 +36,14 @@ class OS2:
                 if g.codepoints.seq[0] < int('ffff', 16):
                     twoByte.append(g.codepoints.seq[0])
 
-        usFirstCharIndex = hex(min(twoByte))
-        usLastCharIndex = hex(max(twoByte))
+        usFirstCharIndex = min(twoByte)
+        usLastCharIndex = max(twoByte)
 
 
 
         # STORE DATA
         # --------------------------
+        self.tableName = "OS/2" # hard-coded. For font generation only.
 
         self.version = 5 # hard-coded, the current (also the latest) version for this table generation is 5.
 
@@ -67,7 +68,7 @@ class OS2:
 
         self.sFamilyClass = 5 # hard-coded for now. This is ideal for emoji.
 
-        self.panose = PANOSE(2, 0, 6, 9, 0, 0, 0, 0, 0, 0)
+        self.panose = PANOSE(2, 0, 6, 9, 0, 0, 0, 0, 0, 0) # hardcoded for now.  This is ideal for emoji.
 
         self.ulUnicodeRange1 = BFlags('00000000 00000000 00000000 00000000')
         self.ulUnicodeRange2 = BFlags('00000000 00000000 00000000 00000000')
@@ -150,8 +151,8 @@ class OS2:
         os2.append(Element("fsSelection", {'value': self.fsSelection.toTTXStr() }))
 
         # TTX actually cannibalises these two, but forc is going to input them anyway.
-        os2.append(Element("usFirstCharIndex", {'value': str(self.usFirstCharIndex) }))
-        os2.append(Element("usLastCharIndex", {'value': str(self.usLastCharIndex) }))
+        os2.append(Element("usFirstCharIndex", {'value': hex(self.usFirstCharIndex) }))
+        os2.append(Element("usLastCharIndex", {'value': hex(self.usLastCharIndex) }))
 
         os2.append(Element("sTypoAscender", {'value': str(self.sTypoAscender) }))
         os2.append(Element("sTypoDescender", {'value': str(self.sTypoDescender) }))
@@ -182,7 +183,7 @@ class OS2:
         Outputs table to bytes, formatted for sfnt.
         """
 
-        return struct.pack( ">hhHH2bhhhhhhhhhhh10b4b4b4b4b4b2bHHhhhHH4b4bhhHHHHH"
+        return struct.pack( ">hhHH2shhhhhhhhhhh10s4s4s4s4s4s2sHHhhhHH4s4shhHHHHH"
                           , self.version # UInt16
 
                           , self.xAvgCharWidth # Int16

@@ -12,6 +12,8 @@ class GSUB:
 
     def __init__(self, glyphs):
 
+        self.tableName = "GSUB" # hard-coded.  For font generation only.
+        
         # we're using version 1.0 here, which doesn't have a
         # featureVariations table, because we don't need it.
         self.majorVersion = 1

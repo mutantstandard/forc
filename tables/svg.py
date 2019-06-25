@@ -38,6 +38,9 @@ class SVG:
     """
 
     def __init__(self, m, glyphs):
+
+        self.tableName = "SVG" # hard-coded. For font generation only.
+
         self.version = 0 # hardcoded; the only version.
         self.SVGDocumentList = []
         self.reserved = 0 # reserved; set to 0.

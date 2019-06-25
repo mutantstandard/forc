@@ -27,6 +27,8 @@ class gasp:
     """
 
     def __init__(self):
+        self.tableName = "gasp" # hard-coded.  For font generation only.
+
         self.version = 1
         self.gaspRanges = []
         self.gaspRanges.append(GaspRange())
@@ -50,6 +52,6 @@ class gasp:
                           )
 
         for gr in self.gaspRanges:
-            gasp.append(gr.toBytes())
+            gasp += gr.toBytes()
 
         return gasp

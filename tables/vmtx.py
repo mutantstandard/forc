@@ -27,6 +27,8 @@ class vmtx:
     # number of Vmetrics must equal the total number of glyphs in the font.
 
     def __init__(self, m, glyphs):
+
+        self.tableName = "vmtx" # hard-coded. For font generation only.
         self.metrics = []
 
         for g in glyphs["img_empty"]:
@@ -39,5 +41,8 @@ class vmtx:
             vmtx.append(m.toTTX())
 
         return vmtx
+
+    def toBytes(self):
+        return bytes() #temp
 
     # TODO: figure out how to compile vmtx in bytes.

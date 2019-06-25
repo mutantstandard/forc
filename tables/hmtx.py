@@ -25,6 +25,7 @@ class hmtx:
     """
     def __init__(self, m, glyphs):
 
+        self.tableName = "hmtx" # hard-coded. For font generation only.
         self.metrics = []
 
         for g in glyphs["img_empty"]:
@@ -37,5 +38,8 @@ class hmtx:
             hmtx.append(m.toTTX())
 
         return hmtx
+
+    def toBytes(self):
+        return bytes()#temp
 
     # TODO: figure out how to convert hmtx to bytes.

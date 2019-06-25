@@ -30,6 +30,9 @@ class CBDT:
     """
 
     def __init__(self, m, glyphs):
+
+        self.tableName = "CBDT" # hard-coded.  For font generation only.
+        
         self.majorVersion = 3
         self.minorVersion = 0
         # hard-coded. the only version available right now.

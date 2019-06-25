@@ -9,6 +9,8 @@ class loca:
     """
 
     def __init__(self):
+
+        self.tableName = "loca" # hard-coded. For font generation only.
         self.whatever = 0
 
         # This table's type is determined by head.indexToLocFormat.
@@ -16,3 +18,6 @@ class loca:
 
     def toTTX(self):
         return Element("loca")
+
+    def toBytes(self):
+        return bytes() # TODO: make a bytes representation

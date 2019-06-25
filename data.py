@@ -56,11 +56,12 @@ class Tag:
 
         return int(intList[0] + intList[1] + intList[2] + intList[3], 16)
 
-    def toBytes():
+
+    def toBytes(self):
         """
         Returns the tag's int representation as bytes in big-endian format.
         """
-        return int(self).to_bytes(self.len, 'big')
+        return int(self).to_bytes(4, 'big')
 
 
 
@@ -186,7 +187,7 @@ class Fixed:
         return '0x' + f"{self.majorVersionCalc:04x}" + f"{self.minorVersionCalc:04x}"
 
 
-    def __int__():
+    def __int__(self):
         """
         Returns the proper hexadecimal representation of this value.
         ie.
@@ -221,7 +222,7 @@ class VFixed:
         self.minorVersion = int(versionComponents[1])
 
     def __int__(self):
-        return (f'{self.majorVersion:>04x}' + f"{self.minorVersion:<04d}", 16)
+        return int(f'{self.majorVersion:>04x}' + f"{self.minorVersion:<04d}", 16)
 
     def toHexStr(self):
         return "0x" + f'{self.majorVersion:>04x}' +  f"{self.minorVersion:<04d}"

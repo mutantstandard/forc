@@ -107,6 +107,7 @@ class sbix:
     """
     def __init__(self, glyphs):
 
+        self.tableName = "sbix" # hard-coded. For font generation only.
         self.version = 1 # hard-coded
         self.flags = BFlags("10000000 00000000") # hard-coded
 

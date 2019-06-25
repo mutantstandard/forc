@@ -12,6 +12,8 @@ class hhea:
 
         metrics = m['metrics']
 
+        self.tableName = "hhea" # hard-coded. For font generation only.
+
         self.majorVersion = 1
         self.minorVersion = 0
 
