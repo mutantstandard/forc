@@ -2,14 +2,14 @@ import sys
 import struct
 from math import floor
 
-def generateOffsets(list, length, offsetStart):
+def generateOffsets(list, length, offsetStart, usingClasses=True):
     """
     Takes a list of classes that have a .toBytes() function, and then converts
     it to Bytes with that function and generates a matching list of offsets.
 
     inputs:
     - array: the array of classes that has a .toBytes() function.
-    - length: length of each offset: "long" (4 bytes/UInt32) or "short" (2 bytes/UInt16).
+    - length: length of each offset: 32 (4 bytes/UInt32) or 16 (2 bytes/UInt16).
     - offsetStart: the number of bytes you want the offsets to begin at. (normally a negative number)
 
     Returns an object with the compiled bytes of offsets (["offsets"]), then the compiled blob of bytes (["bytes"]).
@@ -17,38 +17,62 @@ def generateOffsets(list, length, offsetStart):
     - https://docs.microsoft.com/en-us/typography/opentype/spec/otff#data-types
     """
 
+    # check the input first
+
     if length not in [16, 32]:
         raise ValueError(f"generateOffsets requires a bit length of either '16' or '32'. You gave '{length}'.")
 
-    for num, x in enumerate(list):
-        try:
-            temp = x.toBytes()
-        except ValueError as e:
-            raise ValueError(f"The list given to generateOffsets must be classes that all have a toBytes() function. Item {num} in this list doesn't.")
+    if usingClasses:
+        for num, x in enumerate(list):
+            try:
+                temp = x.toBytes()
+            except ValueError as e:
+                raise ValueError(f"The list given to generateOffsets must be classes that all have a toBytes() function. Item {num} in this list doesn't.")
 
-    offsetList = [] # used to calculate the offsets cumulatively.
-    bytesBlob = bytes()
+    if offsetStart < 0:
+        raise ValueError(f"The offsetStart given was a negative number ({offsetStart}). It can't be a negative number.")
 
-    for num, x in enumerate(list):
-        bytesChunk = x.toBytes()
-        bytesBlob += bytesChunk
 
-        # get 0 + offsetStart for first
-        # subsequent ones are sizeof(list[n-1]) + sum(glyphDataOffsetsNum) + offsetStart
-        if num == 0:
-            offsetNum = 0
-        elif num > 0:
-            offsetNum = sys.getsizeof(x[-1].toBytes()) + sum(offsetList) + offsetStart
+    # now do the conversion
 
-        offset = bytes()
-        if length == "short":
-            offset = struct.pack( ">H", offsetNum) # Offset16 (UInt16)
-        elif length == "long":
-            offset = struct.pack( ">I", offsetNum) # Offset32 (UInt32)
+    offsetBytes = b'' # each offset number as bytes, cumulatively calculated
+    bytesBlob = b'' # the entire compacted blob of bytes
 
-        offsetList.append(offset)
+    offsetInts = [] # each offset as ints, to temporarily run totals on
 
-    return {"offsets": offsetList, "bytes": bytesBlob}
+    for x in range(0, len(list)):
+
+        # convert this object into bytes, add it to The Blob.
+        if usingClasses:
+            objectInBytes = list[x].toBytes()
+        else:
+            objectInBytes = list[x]
+
+        bytesBlob += objectInBytes
+
+
+        # cumulatively add the offset position for this particular section of The Blob.
+        if x == 0:
+            offsetInt = offsetStart
+        elif x > 0:
+            if usingClasses:
+                prevBytesOffset = sys.getsizeof(list[x-1].toBytes())
+            else:
+                prevBytesOffset = sys.getsizeof(list[x-1])
+            offsetInt = prevBytesOffset + sum(offsetInts) + offsetStart
+
+        offsetInts.append(offsetInt)
+
+        # represent the offset position as bytes, ready for output into a neat list
+        offset = b''
+        if length == 16:
+            offset = struct.pack( ">H", offsetInt) # Offset16 (UInt16)
+        elif length == 32:
+            offset = struct.pack( ">I", offsetInt) # Offset32 (UInt32)
+
+        offsetBytes += offset
+
+    return {"offsetBytes": offsetBytes, "offsetInts": offsetInts, "bytes": bytesBlob}
 
 
 
@@ -62,7 +86,9 @@ def calculateChecksum(data):
 
     - https://docs.microsoft.com/en-us/typography/opentype/spec/otff#calculating-checksums
     (code being used from fonttools - https://github.com/fonttools/fonttools/blob/master/Lib/fontTools/ttLib/sfnt.py)
+    (I don't have to credit fonttools, I just wanted to~)
     """
+
     remainder = len(data) % 4
 
     if remainder:

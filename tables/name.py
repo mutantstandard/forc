@@ -76,4 +76,7 @@ class name:
 
         return name
 
+    def toBytes(self):
+        return b'' # placeholder
+
     # TODO: figure out how to compile name to bytes.

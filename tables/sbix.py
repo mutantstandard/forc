@@ -41,7 +41,7 @@ class sbixBitmap:
             return sbixBitmap
 
     def toBytes(self):
-        metadata = struct.pack( ">hh4b"
+        metadata = struct.pack( ">hh4s"
                             , self.originOffsetX # Int16
                             , self.originOffsetY # Int16
                             , self.graphicType.toBytes() # Tag (4 bytes/UInt32)
@@ -87,14 +87,14 @@ class sbixStrike:
 
 
     def toBytes(self):
-        strike = struct.pack ( ">HH"
+        strikeMetadata = struct.pack ( ">HH"
                              , self.ppem # UInt16
                              , self.ppi # UInt16
                              )
 
-        bitmapBytes = generateOffsets(bitmaps, 32, -4) # long offsets (UInt32)
+        bitmapBytes = generateOffsets(self.bitmaps, 32, 4) # long offsets (UInt32)
         # TODO: there's meant to be an extra offset in glyphDataOffsets. it's unclear what that is.
-        return strikeMetadata + bitmapBytes["offsets"] + bitmapBytes["bytes"]
+        return strikeMetadata + bitmapBytes["offsetBytes"] + bitmapBytes["bytes"]
 
 
 
@@ -131,11 +131,11 @@ class sbix:
         return sbix
 
     def toBytes(self):
-        header = struct.pack( ">H2bI"
+        header = struct.pack( ">H2sI"
                           , self.version # UInt16
                           , self.flags.toBytes() # 2 bytes/UInt16
                           , len(self.strikes) # UInt32
                           )
 
-        strikeBytes = generateOffsets(bitmaps, 32, -8) # long offsets (UInt32)
-        return header + strikeBytes["offsets"] + strikeBytes["bytes"]
+        strikeBytes = generateOffsets(self.strikes, 32, 8) # long offsets (UInt32)
+        return header + strikeBytes["offsetBytes"] + strikeBytes["bytes"]

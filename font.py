@@ -6,6 +6,8 @@ import struct
 import log
 from format import formats
 
+import tables.tableRecord
+
 import tables.glyphOrder
 import tables.head
 import tables.os2
@@ -54,12 +56,14 @@ class TTFont:
 
 
         try:
-            # headers and other weird crap
+            # not actually tables
             # ---------------------------------------------
             self.glyphOrder = tables.glyphOrder.GlyphOrder(glyphs)
 
 
 
+            # headers and other weird crap
+            # ---------------------------------------------
             log.out('[head] ', 90, newline=False)
             self.tables.append(tables.head.head(m))
 
@@ -82,7 +86,7 @@ class TTFont:
             # loca is a placeholder to make macOS happy.
             #
             # CBDT/CBLC either doesn't use loca or TTX doesn't want
-            # an empty loca table if there's no gly table (CBDT/CBLC
+            # an empty loca table if there's no glyf table (CBDT/CBLC
             # fonts shouldnt have glyf tables.)
 
             if glyphFormat is not "CBx":
@@ -240,22 +244,29 @@ class TTFont:
         tags = []
 
         for t in self.tables:
-            data = t.toBytes()
-            print(t.tableName)
+            try:
+                data = t.toBytes()
+            except ValueError as e:
+                raise ValueError(f"Something has gone wrong with converting the {t.tableName} table to bytes. -> {e}")
+
             initialTables.append(data)
-            checkSums.append(calculateChecksum(data))
+
+            try:
+                checkSums.append(calculateChecksum(data))
+            except ValueError as e:
+                raise ValueError(f"Something has gone wrong with calculating the checksum for {t.tableName}. -> {e}")
             tags.append(t.tableName)
 
-        offsetPos = (len(self.tables) * -16) - 12 # 16 = tableRecord, 12 = offset table.
-        tableOffsets = generateOffsets(initialTables, 32, offsetPos)
+
+        offsetPos = (len(self.tables) * 16) - 12 # 16 = tableRecord, 12 = offset table.
+        tableOffsets = generateOffsets(initialTables, 32, offsetPos, usingClasses=False)
 
         tableRecordsList = []
 
-        for n, t in initialtables.items():
-                tableRecords.append(tableRecord( tags[n]
+        for n, t in enumerate(initialTables):
+                tableRecordsList.append(tables.tableRecord.TableRecord( tags[n]
                                                , checkSums[n]
-                                               , tableOffsets["offsets"][n]
-                                               , checkSums[n]
+                                               , tableOffsets["offsetInts"][n]
                                                , len(initialTables[n])
                                                ))
 
@@ -272,18 +283,19 @@ class TTFont:
         Compiles font class to bytes, including checksum.
         (Just a placeholder right now.)
         """
-        log.out('building the first time...', 90)
+        #log.out('building the first time...', 90)
 
         ## build first time + put together
         # header.append(bytesPass(self))
 
-        log.out('calculating checksum...', 90)
+        #log.out('calculating checksum...', 90)
 
         ## make a checksum for it
         # self.head.checkSumAdjustment = ???
 
-        log.out('final pass...', 90)
+        #log.out('final pass...', 90)
         ## one last conversion to bytes.
         # return bytesPass(self)
 
+        log.out('making a placeholder pass...', 90)
         return self.bytesPass()

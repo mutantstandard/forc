@@ -10,7 +10,7 @@ class glyf:
     def __init__(self, m, glyphs):
 
         self.tableName = "glyf" # hard-coded.  For font generation only.
-        
+
         self.glyphs = []
         self.xMin = m['metrics']['xMin']
         self.yMin = m['metrics']['yMin']
@@ -64,5 +64,8 @@ class glyf:
                 glyf.append(dummyData)
 
         return glyf
+
+    def toBytes(self):
+        return b'' # placeholder
 
     # TODO: learn how to convert glyf to bytes.

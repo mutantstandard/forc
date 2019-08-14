@@ -82,15 +82,15 @@ class cmap:
                           , len(self.subtables) # UInt16
                           )
 
-        subtableOffsets = generateOffsets(self.subtables, 32, (-8 * len(self.subtables)))
-        encodingRecords = bytearray([])
+        subtableOffsets = generateOffsets(self.subtables, 32, (8 * len(self.subtables)))
+        encodingRecords = b''
 
-        for key, subtable in self.subtables.items():
+        for num, subtable in enumerate(self.subtables):
             encodingEntry = struct.pack( ">HHI"
                        , subtable.platformID
                        , subtable.platEncID
-                       , subtableOffsets["offsets"][key]
+                       , subtableOffsets["offsetInts"][num]
                        )
-            encodingRecords.append(encodingEntry)
+            encodingRecords += encodingEntry
 
         return header + encodingRecords + subtableOffsets["bytes"]
