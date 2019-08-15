@@ -33,7 +33,6 @@ class post:
             self.extraNames.append(g)
 
 
-
     def toTTX(self):
         post = Element("post")
 

@@ -39,7 +39,7 @@ class ScriptRecord:
     def __init__(self):
 
         self.scriptTag = Tag("DFLT") # script tag identifier.
-        # DFLT means 'no script in particular'
+        # DFLT means 'default', ie. 'no script in particular'
 
         self.script = Script() # placeholder script table.
 
@@ -53,7 +53,7 @@ class ScriptRecord:
 
 
     def toBytes(self):
-        # need to input the offset from ScriptList building.
+        # TODO: need to input the offset from ScriptList building.
         return struct.pack( '>4b'
                           , self.scriptTag.toBytes() # Tag (4 bytes/UInt32)
                           # TODO: Offset16 to script table from the beginning of scriptList

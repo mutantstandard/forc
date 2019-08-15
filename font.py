@@ -220,6 +220,9 @@ class TTFont:
         """
 
         # offset table (ie. the font header)
+        # --------------------------------------------------------------
+        # (this should be fine and complete)
+
         numTables = len(self.tables)
         searchRange = (2 ** floor(log2(numTables))) * 16
         entrySelector = int(log2(floor(log2(numTables))))
@@ -235,16 +238,17 @@ class TTFont:
 
 
         # table record entries
-        # - sorted in ascending order by tag (first to last letters/numbers)
-        # - offsets are measured from the very beginning of the font file.
-        #   -12 bytes,
+        # -------------------------------------------------------------
 
         initialTables = []
         checkSums = []
         tags = []
 
+        # get all of the table data
         for t in self.tables:
-            #print(f"converting {t.tableName} to bytes...")
+            print(f"converting {t.tableName} to bytes...")
+
+            # convert to bytes
             try:
                 data = t.toBytes()
             except ValueError as e:
@@ -252,15 +256,20 @@ class TTFont:
 
             initialTables.append(data)
 
+            # get a checksum on that data
             try:
                 checkSums.append(calculateChecksum(data))
             except ValueError as e:
                 raise ValueError(f"Something has gone wrong with calculating the checksum for {t.tableName}. -> {e}")
+
+            # also add a tag.
             tags.append(t.tableName)
 
 
-        offsetPos = (len(self.tables) * 16) - 12 # 16 = tableRecord, 12 = offset table.
-        tableOffsets = generateOffsets(initialTables, 32, offsetPos, usingClasses=False)
+
+        # calculate offsets for each table
+        initialOffset = (len(self.tables) * 16) + 12 # 16 = tableRecord length, 12 = offset table length.
+        tableOffsets = generateOffsets(initialTables, 32, initialOffset, usingClasses=False)
 
         tableRecordsList = []
 
@@ -270,10 +279,13 @@ class TTFont:
                                                , tableOffsets["offsetInts"][n]
                                                , len(initialTables[n])
                                                ))
-
+        print(tableRecordsList)
+        
         tableRecordsList.sort()
-        tableRecords = bytes()
-        # TODO: convert tableRecords into bytes.
+        tableRecords = b''
+
+        for t in tableRecordsList:
+            tableRecords += t.toBytes()
 
         return offsetTable + tableRecords + tableOffsets["bytes"]
 

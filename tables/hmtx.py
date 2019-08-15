@@ -1,3 +1,4 @@
+import struct
 from lxml.etree import Element
 
 
@@ -6,16 +7,22 @@ class hmtxMetric:
     Class representing a single metric in an hmtx table.
     """
 
-    def __init__(self, name, width, lsb):
+    def __init__(self, name, advanceWidth, lsb):
         self.name = name
-        self.width = width
-        self.LSB = lsb
+        self.advanceWidth = advanceWidth
+        self.lsb = lsb
 
     def toTTX(self):
         return Element("mtx", {"name": self.name
-                                ,"width": str(self.width)
-                                ,"lsb": str(self.LSB)
+                                ,"width": str(self.advanceWidth)
+                                ,"lsb": str(self.lsb)
                                 })
+
+    def toBytes(self):
+        return struct.pack(">Hh"
+                          , self.advanceWidth
+                          , self.lsb
+                          )
 
 
 
@@ -40,6 +47,11 @@ class hmtx:
         return hmtx
 
     def toBytes(self):
-        return bytes()#temp
+        longHorMetric = b''
+        for m in self.metrics:
+            longHorMetric += m.toBytes()
 
-    # TODO: figure out how to convert hmtx to bytes.
+        return longHorMetric
+
+        # TODO: work out how to calcuilate leftSideBearings[numGlyphs - numberOfHMetrics]
+        # https://docs.microsoft.com/en-us/typography/opentype/spec/hmtx

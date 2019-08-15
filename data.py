@@ -255,7 +255,7 @@ class LongDateTime:
         (Microseconds assumed to be 0.)
 
         2019-05-22 09:59 +0000
-        %d-%m-%d   %H:%M %z
+        %d-%m-%d %H:%M %z
         """
 
         if string and string != "":
