@@ -26,7 +26,7 @@ def createFont(formatData, outPath, tempPath, filename, flags, font):
     outFontPath = tempPath / (filename + extension)
 
 
-    # ASSEMBLER -> TTX
+    # COMPILER
     # ------------------------------------------------------
     log.out(f"[ttx compiler]", 90)
 
@@ -40,23 +40,27 @@ def createFont(formatData, outPath, tempPath, filename, flags, font):
         shutil.copy(str(originalTTXPath), str(outPath / (filename + "_dev.ttx")))
 
 
-    # TTX -> FONT
-    # ------------------------------------------------------
     log.out(f'- Compiling font...', 90)
     files.compileTTX(originalTTXPath, outFontPath)
 
 
 
 
-    # FONT -> TTX
+    # TESTING
     # ------------------------------------------------------
-    # This is because TTX doesn't catch all font errors on the first pass.
-    log.out(f'- Testing font by compiling it back to TTX...', 90)
-    files.compileTTX(outFontPath, afterExportTTX)
+    # We use TTX again because TTX actually doesn't catch all font errors on the first pass.
 
-    # -ttx flag
-    if flags["ttx_output"]:
+    if not flags['no_test'] and flags["ttx_output"]:
+        log.out(f'- Testing font by compiling it back to TTX...', 90)
+        files.compileTTX(outFontPath, afterExportTTX)
+
+        # -ttx flag
         shutil.copy(str(afterExportTTX), str(outPath / (filename + ".ttx")))
+
+
+    elif not flags['no_test']:
+        log.out(f'- Testing font by compiling it back to TTX...', 90)
+        files.compileTTX(outFontPath, afterExportTTX)
 
 
     return outFontPath

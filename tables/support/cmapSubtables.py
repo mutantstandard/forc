@@ -68,6 +68,7 @@ class cmapFormat0:
         return beginning + array.array('B', glyphIdArray)
 
 
+
 class cmapFormat4:
     """
     Class representing cmap subtable format 4.
@@ -155,7 +156,8 @@ class cmapFormat4:
                           # idDelta[segCount] # Int16. Delta for all character codes in the segment.
                           # idRangeOffset[segCount] # UInt16. Offsets into glyphIdArray or 0.
                           # glyphIdArray[] # Array of UInt16s.
-        return bytes()#temp
+
+        return b'' # placeholder
 
 
 class cmapFormat12:
@@ -192,7 +194,7 @@ class cmapFormat12:
                                 , self.glyphs
                                 )
     def toBytes(self):
-        return bytes()#temp
+        return b'' # placeholder
 
 
 
@@ -229,4 +231,4 @@ class cmapFormat14:
         return cmap14
 
     def toBytes(self):
-        return bytes()#temp
+        return b'' # placeholder

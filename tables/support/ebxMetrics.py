@@ -1,3 +1,6 @@
+
+import struct
+
 from lxml.etree import Element
 
 
@@ -24,22 +27,30 @@ class SmallGlyphMetrics:
         self.height =      round( (metrics['height'] / localScale) * bitScale )
         self.width =       round( (metrics['width'] / localScale) * bitScale )
 
-        self.BearingX =    round( (metrics['xMin'] / localScale) * bitScale )
-        self.BearingY =    bitScale+(round( (metrics['yMin'] / localScale) * bitScale ))
-        self.Advance =     self.width
+        self.bearingX =    round( (metrics['xMin'] / localScale) * bitScale )
+        self.bearingY =    bitScale+(round( (metrics['yMin'] / localScale) * bitScale ))
+        self.advance =     self.width
 
 
     def toTTX(self):
         glyphMetrics = Element("SmallGlyphMetrics")
         glyphMetrics.append(Element("height",          {"value": str(self.height) }))
         glyphMetrics.append(Element("width",           {"value": str(self.width) }))
-        glyphMetrics.append(Element("BearingX",    {"value": str(self.BearingX) }))
-        glyphMetrics.append(Element("BearingY",    {"value": str(self.BearingY) }))
-        glyphMetrics.append(Element("Advance",     {"value": str(self.Advance) }))
+        glyphMetrics.append(Element("BearingX",    {"value": str(self.bearingX) }))
+        glyphMetrics.append(Element("BearingY",    {"value": str(self.bearingY) }))
+        glyphMetrics.append(Element("Advance",     {"value": str(self.advance) }))
 
         return glyphMetrics
 
 
+    def toBytes(self):
+        return struct.pack('>BBbbB'
+                          , self.height # UInt8
+                          , self.width # UInt8
+                          , self.bearingX # Int8
+                          , self.bearingY # Int8
+                          , self.advance # UInt8
+                          )
 
 
 class BigGlyphMetrics:
@@ -75,6 +86,18 @@ class BigGlyphMetrics:
 
         return glyphMetrics
 
+
+    def toBytes(self):
+        return struct.pack('>BBbbBbbB'
+                          , self.height # UInt8
+                          , self.width # UInt8
+                          , self.horiBearingX # Int8
+                          , self.horiBearingY # Int8
+                          , self.horiAdvance # UInt8
+                          , self.vertBearingX # Int8
+                          , self.vertBearingY # Int8
+                          , self.vertAdvance # UInt8
+                          )
 
 
 class SbitLineMetrics:
@@ -130,3 +153,22 @@ class SbitLineMetrics:
         metrics.append(Element("pad2", {"value": str(self.pad2) }))
 
         return metrics
+
+
+    def toBytes(self):
+        return struct.pack('>bbBbbbbbbbbb'
+                          , self.ascender # Int8
+                          , self.descender # Int8
+                          , self.widthMax # UInt8
+
+                          , self.caretSlopeNumerator # Int8
+                          , self.caretSlopeDenominator # Int8
+                          , self.caretOffset # Int8
+
+                          , self.minOriginSB # Int8
+                          , self.minAdvanceSB # Int8
+                          , self.maxBeforeBL # Int8
+                          , self.minAfterBL # Int8
+                          , self.pad1 # Int8
+                          , self.pad1 # Int8
+                          )

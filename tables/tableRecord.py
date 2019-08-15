@@ -27,3 +27,5 @@ class TableRecord:
     def __lt__(self, other):
         if int(self.tag) < int(other.tag):
             return True
+        else:
+            return False

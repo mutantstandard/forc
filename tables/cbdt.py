@@ -1,3 +1,5 @@
+import struct
+
 from lxml.etree import Element
 from tables.support.ebxBitmaps import EBDTBitmapFormat17
 
@@ -32,7 +34,7 @@ class CBDT:
     def __init__(self, m, glyphs):
 
         self.tableName = "CBDT" # hard-coded.  For font generation only.
-        
+
         self.majorVersion = 3
         self.minorVersion = 0
         # hard-coded. the only version available right now.
@@ -69,5 +71,5 @@ class CBDT:
                           , self.majorVersion # UInt16
                           , self.minorVersion # UInt16
                           )
-
+        return cbdt # placeholder
         # TODO: pack all of the image data immediately after~

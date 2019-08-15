@@ -27,7 +27,7 @@ def createFont(formatData, outPath, tempPath, filename, flags, font):
     testTTX = tempPath / (filename + "_test.ttx")
 
 
-    # ASSEMBLER -> TTX
+    # COMPILER
     # ------------------------------------------------------
     log.out(f"[forc compiler]", 90)
 
@@ -36,7 +36,12 @@ def createFont(formatData, outPath, tempPath, filename, flags, font):
 
     files.writeFile(outFontPath, font.toBytes(), 'Could not write binary font to file')
 
-    log.out(f'- Testing font by attempting to decompile as TTX..', 90)
-    files.compileTTX(outFontPath, testTTX)
+
+    # TESTING
+    # ------------------------------------------------------
+    if not flags['no_test']:
+        log.out(f'- Testing font by attempting to decompile as TTX..', 90)
+        files.compileTTX(outFontPath, testTTX)
+
 
     return outFontPath

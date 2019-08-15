@@ -21,16 +21,18 @@ DEF_DELIM_CODEPOINT = "-"
 DEF_OUTPUT_FORMATS = ['SVGinOT']
 DEF_COMPILER = 'ttx'
 
-DEF_TTX_OUTPUT = False
-DEF_DEV_TTX = False
+
 
 DEF_NO_VS16 = False
+DEF_NO_LIG = False
+
 DEF_NUSC = False
 DEF_AFSC = False
 
-DEF_NO_LIG = False
+DEF_NO_TEST = False
 
-
+DEF_TTX_OUTPUT = False
+DEF_DEV_TTX = False
 
 
 HELP = f'''forc {VERSION}
@@ -103,6 +105,14 @@ FOR SVGs
             a font with SVGs that come from Affinity software.
 
 
+
+FOR ALL COMPILERS
+
+--no-test   (DEVELOPMENT OPTION) Disables the font validation phase of
+            font compilation.
+
+
+
 FOR TTX COMPILER
 Will be ignored if you are using a different compiler.
 
@@ -129,20 +139,22 @@ def main():
     output_formats = DEF_OUTPUT_FORMATS
     compiler = DEF_COMPILER
 
-    ttx_output = DEF_TTX_OUTPUT
-    dev_ttx_output = DEF_DEV_TTX
-
     no_vs16 = DEF_NO_VS16
+    no_lig = DEF_NO_LIG
+
     nusc = DEF_NUSC
     afsc = DEF_AFSC
 
-    no_lig = DEF_NO_LIG
+    no_test = DEF_NO_TEST
+
+    ttx_output = DEF_TTX_OUTPUT
+    dev_ttx_output = DEF_DEV_TTX
 
 
     try:
         opts, _ = getopt.getopt(sys.argv[1:],
                                 'hi:o:m:a:d:F:C:',
-                                ['help', 'ttx', 'dev-ttx', 'no-vs16', 'nusc', 'afsc', 'no-lig'])
+                                ['help', 'no-vs16', 'no-lig', 'nusc', 'afsc', 'no-test', 'ttx', 'dev-ttx'])
         for opt, arg in opts:
             if opt in ['-h', '--help']:
                 print(HELP)
@@ -164,20 +176,27 @@ def main():
             elif opt == '-C':
                 compiler = arg
 
-            elif opt =='--ttx':
-                ttx_output = True
-            elif opt =='--dev-ttx':
-                dev_ttx_output = True
-
 
             elif opt =='--no-vs16':
                 no_vs16 = True
+            elif opt =='--no-lig':
+                no_lig = True
+
+
             elif opt =='--nusc':
                 nusc = True
             elif opt =='--afsc':
                 afsc = True
-            elif opt =='--no-lig':
-                no_lig = True
+
+
+            elif opt =='--no-test':
+                no_test = True
+
+
+            elif opt =='--ttx':
+                ttx_output = True
+            elif opt =='--dev-ttx':
+                dev_ttx_output = True
 
     except Exception:
         print(HELP)
@@ -188,6 +207,8 @@ def main():
 
                 , "nusc": nusc
                 , "afsc": afsc
+
+                , "no_test": no_test
 
                 , "ttx_output": ttx_output
                 , "dev_ttx_output": dev_ttx_output

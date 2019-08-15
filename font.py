@@ -244,6 +244,7 @@ class TTFont:
         tags = []
 
         for t in self.tables:
+            #print(f"converting {t.tableName} to bytes...")
             try:
                 data = t.toBytes()
             except ValueError as e:

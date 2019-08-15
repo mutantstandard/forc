@@ -40,6 +40,7 @@ class sbixBitmap:
 
             return sbixBitmap
 
+
     def toBytes(self):
         metadata = struct.pack( ">hh4s"
                             , self.originOffsetX # Int16

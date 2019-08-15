@@ -72,7 +72,7 @@ class OS2:
 
         self.ulUnicodeRange1 = BFlags('00000000 00000000 00000000 00000000')
         self.ulUnicodeRange2 = BFlags('00000000 00000000 00000000 00000000')
-        self.ulUnicodeRange2.set(57-32, int(supplementaryPlane))
+        self.ulUnicodeRange2.set(57-32, int(supplementaryPlane)) # set bit 57 based on whether there are codepoints in SPUA or not.
 
         self.ulUnicodeRange3 = BFlags('00000000 00000000 00000000 00000000')
         self.ulUnicodeRange4 = BFlags('00000000 00000000 00000000 00000000')

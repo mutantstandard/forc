@@ -39,7 +39,7 @@ class SVG:
 
     def __init__(self, m, glyphs):
 
-        self.tableName = "SVG" # hard-coded. For font generation only.
+        self.tableName = "SVG " # hard-coded. For font generation only. The space is intentional.
 
         self.version = 0 # hardcoded; the only version.
         self.SVGDocumentList = []
@@ -67,5 +67,5 @@ class SVG:
                          # - offsetToSVGDocumentList # Offset32/UInt32
                          , self.reserved # UInt32
                          )
-
+        return svg # placeholder
         # Attach SVGDocumentList afterwards.
