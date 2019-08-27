@@ -22,7 +22,7 @@ class Tag:
         openTypeTagRegex = "[^\u0020-\u007e]"
 
         if len(string) != 4:
-            raise ValueError(f"Your tag must contain no more than 4 characters. You gave {len(string)} ('{string}').")
+            raise ValueError(f"Your tag must contain exactly 4 characters. You gave {len(string)}. ('{string}')")
 
         find = re.findall(openTypeTagRegex, string)
 
