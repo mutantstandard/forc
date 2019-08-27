@@ -3,7 +3,7 @@ from lxml.etree import Element
 
 from data import BFlags
 from tables.support.os2Extra import PANOSE
-
+from transform.bytes import padTableBytes
 
 
 
@@ -106,10 +106,6 @@ class OS2:
 
 
     def toTTX(self):
-        """
-        Outputs table to TTX format.
-        """
-
         os2 = Element("OS_2")
 
         os2.append(Element("version", {'value': str(self.version) }))
@@ -179,11 +175,7 @@ class OS2:
 
 
     def toBytes(self):
-        """
-        Outputs table to bytes, formatted for sfnt.
-        """
-
-        return struct.pack( ">hhHH2shhhhhhhhhhh10s4s4s4s4s4s2sHHhhhHH4s4shhHHHHH"
+        os2 = struct.pack( ">hhHH2shhhhhhhhhhh10s4s4s4s4s4s2sHHhhhHH4s4shhHHHHH"
                           , self.version # UInt16
 
                           , self.xAvgCharWidth # Int16
@@ -240,3 +232,5 @@ class OS2:
                           , self.usLowerOpticalPointSize # UInt16
                           , self.usUpperOpticalPointSize # UInt16
                           )
+                          
+        return padTableBytes(os2)

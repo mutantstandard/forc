@@ -1,6 +1,6 @@
 from lxml.etree import Element
 
-
+from transform.bytes import padTableBytes
 
 
 
@@ -77,6 +77,6 @@ class name:
         return name
 
     def toBytes(self):
-        return b'' # placeholder
+        return padTableBytes(b'') # placeholder
 
     # TODO: figure out how to compile name to bytes.

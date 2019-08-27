@@ -1,6 +1,7 @@
 import struct
 from lxml.etree import Element
 from data import BFlags, LongDateTime
+from transform.bytes import padTableBytes
 
 
 class head:
@@ -77,7 +78,7 @@ class head:
 
 
     def toBytes(self):
-        return struct.pack( '>HHiII2sHqqhhhh2sHhhh'
+        head = struct.pack( '>HHiII2sHqqhhhh2sHhhh'
 
                             , self.majorVersion # UInt16
                             , self.minorVersion # UInt16
@@ -104,3 +105,5 @@ class head:
                             , self.indexToLocFormat # Int16
                             , self.glyphDataFormat # Int16
                             )
+
+        return padTableBytes(head)

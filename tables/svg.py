@@ -1,9 +1,10 @@
 import struct
 import lxml.etree as etree
-
 from io import BytesIO
-from transform.svg import stripStyles, affinityDesignerCompensate, viewboxCompensate
 
+
+from transform.svg import stripStyles, affinityDesignerCompensate, viewboxCompensate
+from transform.bytes import padTableBytes
 
 
 class SVGDoc:
@@ -67,5 +68,5 @@ class SVG:
                          # - offsetToSVGDocumentList # Offset32/UInt32
                          , self.reserved # UInt32
                          )
-        return svg # placeholder
+        return padTableBytes(svg) # placeholder
         # Attach SVGDocumentList afterwards.

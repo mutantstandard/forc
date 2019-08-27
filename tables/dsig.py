@@ -2,6 +2,7 @@ import struct
 from lxml.etree import Element
 
 from data import BFlags
+from transform.bytes import padTableBytes
 
 class DSIG:
     """
@@ -34,8 +35,10 @@ class DSIG:
         return dsig
 
     def toBytes(self):
-        return struct.pack( '>I2sH'
+        dsig = struct.pack( '>I2sH'
                           , self.version # UInt32 (not fixed type!)
                           , self.flags.toBytes() # 2 bytes/UInt16
                           , self.numSigs # UInt16
                           )
+
+        return padTableBytes(dsig)

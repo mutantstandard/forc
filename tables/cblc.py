@@ -2,6 +2,7 @@ import struct
 from lxml.etree import Element
 from tables.support.ebxMetrics import SbitLineMetrics
 from tables.support.ebxIndexes import IndexSubTable1
+from transform.bytes import padTableBytes
 
 
 class CBLCBitmapSize:
@@ -92,7 +93,7 @@ class CBLC:
     def __init__(self, m, glyphs):
 
         self.tableName = "CBLC" # hard-coded.  For font generation only.
-        
+
         self.majorVersion = 3
         self.minorVersion = 0
         # hardcoded; the only CBLC version that exists.
@@ -121,9 +122,11 @@ class CBLC:
         return cblc
 
     def toBytes(self):
-        return struct.pack( ">HHI"
+        cblc = struct.pack( ">HHI"
                           , self.majorVersion # UInt16
                           , self.minorVersion  # UInt16
                           , len(self.bitmapSizeTables) # UInt32 (numSizes)
                           # pack all of the BitmapSize tables immediately after.
                           )
+
+        return padTableBytes(cblc)

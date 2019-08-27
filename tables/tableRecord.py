@@ -26,6 +26,8 @@ class TableRecord:
                            , self.length # UInt32
                            )
 
+        # this is not a normal table, and thus should not be padded.
+
     def __lt__(self, other):
         """
         Required because TableRecords need to be sorted from lowest

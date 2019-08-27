@@ -1,6 +1,7 @@
 import struct
 from lxml.etree import Element
 from data import Fixed, VFixed
+from transform.bytes import padTableBytes
 
 
 class post:
@@ -63,7 +64,7 @@ class post:
 
 
     def toBytes(self):
-        return struct.pack( ">iihhIIIII"
+        post = struct.pack( ">iihhIIIII"
                           , int(self.version) # Fixed, version no. type (Int32)
                           , int(self.italicAngle) # Fixed (Int32)
 
@@ -77,5 +78,7 @@ class post:
                           , self.maxMemType1 # UInt32
                           )
 
+        return padTableBytes(post)
+        
         # TODO: append self.extraNames
         # details about extraNames (names) - https://docs.microsoft.com/en-gb/typography/opentype/spec/post#version-20

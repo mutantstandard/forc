@@ -1,7 +1,7 @@
 import struct
 from lxml.etree import Element
 from data import VFixed
-
+from transform.bytes import padTableBytes
 
 class hhea:
     """
@@ -77,7 +77,7 @@ class hhea:
 
 
     def toBytes(self):
-        return struct.pack('>HHhhhHhhhhhhhhhhhH'
+        hhea = struct.pack('>HHhhhHhhhhhhhhhhhH'
                           , self.majorVersion # UInt16
                           , self.minorVersion # UInt16
 
@@ -102,3 +102,5 @@ class hhea:
                           , self.metricDataFormat # Int16
                           , self.numberofHMetrics # UInt16
                           )
+
+        return padTableBytes(hhea)

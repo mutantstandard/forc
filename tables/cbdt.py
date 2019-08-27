@@ -2,7 +2,7 @@ import struct
 
 from lxml.etree import Element
 from tables.support.ebxBitmaps import EBDTBitmapFormat17
-
+from transform.bytes import padTableBytes
 
 class CBDTStrike:
     """
@@ -71,5 +71,5 @@ class CBDT:
                           , self.majorVersion # UInt16
                           , self.minorVersion # UInt16
                           )
-        return cbdt # placeholder
+        return padTableBytes(cbdt) # placeholder
         # TODO: pack all of the image data immediately after~

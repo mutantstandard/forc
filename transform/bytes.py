@@ -77,12 +77,14 @@ def generateOffsets(list, length, offsetStart, usingClasses=True):
 
 
 
-def calculateChecksum(data):
+def calculateTableChecksum(data):
     """
-    Calculates a checksum for a given hunk of data.
+    Calculates checksums for tables.
 
     If the data length is not a multiple of 4, it assumes it
     should be padded with null bytes to make it so.
+
+    Should not be used on anything but the bytes output of a whole table.
 
     - https://docs.microsoft.com/en-us/typography/opentype/spec/otff#calculating-checksums
     (code being used from fonttools - https://github.com/fonttools/fonttools/blob/master/Lib/fontTools/ttLib/sfnt.py)
@@ -104,3 +106,20 @@ def calculateChecksum(data):
         value = (value + sum(longs)) & 0xffffffff
 
     return value
+
+
+
+def padTableBytes(data):
+    """
+    Pads input bytes so they are 32-bit aligned (is a multiple of 4 bytes).
+
+    Should only be used on the output of each table as a whole.
+
+    - https://docs.microsoft.com/en-us/typography/opentype/spec/otff#font-tables
+    """
+    remainder = len(data) % 4
+
+    if remainder:
+        return data + b"\0" * (4 - remainder) # pad with zeroes
+    else:
+        return data

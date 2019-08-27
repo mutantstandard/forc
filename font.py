@@ -1,6 +1,6 @@
 from lxml.etree import Element, tostring
 from math import log2, floor
-from transform.bytes import calculateChecksum, generateOffsets
+from transform.bytes import calculateTableChecksum, generateOffsets
 import struct
 
 import log
@@ -246,7 +246,7 @@ class TTFont:
 
         # get all of the table data
         for t in self.tables:
-            print(f"converting {t.tableName} to bytes...")
+            #print(f"converting {t.tableName} to bytes...")
 
             # convert to bytes
             try:
@@ -258,7 +258,7 @@ class TTFont:
 
             # get a checksum on that data
             try:
-                checkSums.append(calculateChecksum(data))
+                checkSums.append(calculateTableChecksum(data))
             except ValueError as e:
                 raise ValueError(f"Something has gone wrong with calculating the checksum for {t.tableName}. -> {e}")
 
@@ -279,8 +279,8 @@ class TTFont:
                                                , tableOffsets["offsetInts"][n]
                                                , len(initialTables[n])
                                                ))
-        print(tableRecordsList)
-        
+        #print(tableRecordsList)
+
         tableRecordsList.sort()
         tableRecords = b''
 

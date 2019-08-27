@@ -1,7 +1,7 @@
 import struct
 from lxml.etree import Element
 from tables.support.cmapSubtables import cmapFormat0, cmapFormat4, cmapFormat12, cmapFormat14
-from transform.bytes import generateOffsets
+from transform.bytes import generateOffsets, padTableBytes
 
 
 class cmap:
@@ -93,4 +93,4 @@ class cmap:
                        )
             encodingRecords += encodingEntry
 
-        return header + encodingRecords + subtableOffsets["bytes"]
+        return padTableBytes(header + encodingRecords + subtableOffsets["bytes"])

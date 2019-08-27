@@ -1,5 +1,7 @@
 from lxml.etree import Element, ElementTree
 
+from transform.bytes import padTableBytes
+
 
 class glyf:
     """
@@ -66,6 +68,6 @@ class glyf:
         return glyf
 
     def toBytes(self):
-        return b'' # placeholder
+        return padTableBytes(b'') # placeholder
 
     # TODO: learn how to convert glyf to bytes.

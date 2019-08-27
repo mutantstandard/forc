@@ -284,9 +284,9 @@ class LongDateTime:
         Returns a string representation of this datetime, designed for TTX compilation.
         (returns a datetime string formatted in the following way:)
 
-        %a  %b  %d %X       %Y
+        %a %b %d %X %Y
         Wed May 22 13:45:00 2018
-                   (24h UTC)
+        (24h UTC)
 
         (Giving TTX compiler anything else will result in a TTX build error)
         """
