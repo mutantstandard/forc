@@ -77,6 +77,6 @@ class name:
         return name
 
     def toBytes(self):
-        return padTableBytes(b'') # placeholder
+        return padTableBytes(b'\0') # placeholder
 
     # TODO: figure out how to compile name to bytes.

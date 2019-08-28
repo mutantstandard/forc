@@ -11,6 +11,8 @@ class post:
 
     def __init__(self, glyphs):
 
+        print(int(VFixed('11635.474330')).to_bytes(8, 'big'))
+
         self.tableName = "post" # hard-coded. For font generation only.
         self.version = VFixed('2.0')
         # Apple suggests against using formats 2.5, 3 and 4.
@@ -79,6 +81,6 @@ class post:
                           )
 
         return padTableBytes(post)
-        
+
         # TODO: append self.extraNames
         # details about extraNames (names) - https://docs.microsoft.com/en-gb/typography/opentype/spec/post#version-20

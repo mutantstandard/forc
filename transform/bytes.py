@@ -56,10 +56,10 @@ def generateOffsets(list, length, offsetStart, usingClasses=True):
             offsetInt = offsetStart
         elif x > 0:
             if usingClasses:
-                prevBytesOffset = sys.getsizeof(list[x-1].toBytes())
+                prevBytesLen = len(list[x-1].toBytes())
             else:
-                prevBytesOffset = sys.getsizeof(list[x-1])
-            offsetInt = prevBytesOffset + sum(offsetInts) + offsetStart
+                prevBytesLen = len(list[x-1])
+            offsetInt = offsetInts[-1] + prevBytesLen
 
         offsetInts.append(offsetInt)
 

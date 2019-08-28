@@ -246,7 +246,7 @@ class TTFont:
 
         # get all of the table data
         for t in self.tables:
-            #print(f"converting {t.tableName} to bytes...")
+            print(f"converting {t.tableName} to bytes...")
 
             # convert to bytes
             try:
@@ -266,7 +266,6 @@ class TTFont:
             tags.append(t.tableName)
 
 
-
         # calculate offsets for each table
         initialOffset = (len(self.tables) * 16) + 12 # 16 = tableRecord length, 12 = offset table length.
         tableOffsets = generateOffsets(initialTables, 32, initialOffset, usingClasses=False)
@@ -279,7 +278,7 @@ class TTFont:
                                                , tableOffsets["offsetInts"][n]
                                                , len(initialTables[n])
                                                ))
-        #print(tableRecordsList)
+        print(tableRecordsList)
 
         tableRecordsList.sort()
         tableRecords = b''
@@ -311,4 +310,7 @@ class TTFont:
         # return bytesPass(self)
 
         log.out('making a placeholder pass...', 90)
-        return self.bytesPass()
+
+        bytes = self.bytesPass()
+        print(bytes)
+        return bytes

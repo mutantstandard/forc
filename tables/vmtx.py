@@ -46,6 +46,6 @@ class vmtx:
         return vmtx
 
     def toBytes(self):
-        return padTableBytes(b'') #temp
+        return padTableBytes(b'\0') #temp
 
     # TODO: figure out how to compile vmtx in bytes.

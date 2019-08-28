@@ -21,4 +21,4 @@ class loca:
         return Element("loca")
 
     def toBytes(self):
-        return padTableBytes(b'') # TODO: make a bytes representation
+        return padTableBytes(b'\0') # TODO: make a bytes representation

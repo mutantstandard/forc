@@ -39,4 +39,4 @@ class TableRecord:
             return False
 
     def __repr__(self):
-        return f"TableRecord for {self.tag} - checkSum: {self.checkSum} - offset: {self.offset} - length: {self.length}\n"
+        return f"TableRecord for {self.tag} - offset: {self.offset} - length: {self.length}\n"

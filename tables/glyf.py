@@ -68,6 +68,6 @@ class glyf:
         return glyf
 
     def toBytes(self):
-        return padTableBytes(b'') # placeholder
+        return padTableBytes(b'\0') # placeholder
 
     # TODO: learn how to convert glyf to bytes.
