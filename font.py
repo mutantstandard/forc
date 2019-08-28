@@ -70,8 +70,8 @@ class TTFont:
             log.out('[OS/2] ', 90, newline=False)
             self.tables.append(tables.os2.OS2(m, glyphs))
 
-            log.out('[post] ', 90, newline=False)
-            self.tables.append(tables.post.post(glyphs))
+            #log.out('[post] ', 90, newline=False)
+            #self.tables.append(tables.post.post(glyphs))
 
             # maxp is a semi-placeholder table.
             log.out('[maxp] ', 90, newline=False)
@@ -312,5 +312,5 @@ class TTFont:
         log.out('making a placeholder pass...', 90)
 
         bytes = self.bytesPass()
-        print(bytes)
+        #print(bytes)
         return bytes

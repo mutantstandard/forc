@@ -1,7 +1,7 @@
 import struct
 from lxml.etree import Element
-from tables.support.ebxMetrics import SbitLineMetrics
-from tables.support.ebxIndexes import IndexSubTable1
+from tables.common.ebxMetrics import SbitLineMetrics
+from tables.common.ebxIndexes import IndexSubTable1
 from transform.bytes import padTableBytes
 
 

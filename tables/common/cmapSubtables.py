@@ -130,13 +130,36 @@ class cmapFormat4:
         # TODO: learn how to calculate idDelta and idRangeOffset
         # TODO: add terminating entries to these arrays.
 
-
-        # Generate a bunch of metadata. these calculations are what they are.
+        # METADATA
+        # Generate a bunch of metadata. these calculations are what they are (and they're tested to be correct).
         segCountX2 = segCount * 2
         searchRange = 2 * (2 ** floor(log2(39)))
         entrySelector = floor(log2(searchRange / 2))
         rangeShift = 2 * segCount - searchRange
         rangeShift = max(rangeShift, 0)
+
+
+
+        # RANGES AND OTHER STUFF
+        reservedPad = 0 # hard-coded
+
+        startCode = []
+        endCode = []
+        idDelta = []
+
+        currentDelta = 0 # just for the upcoming loop
+
+        for g in range(0, len(self.glyphs)):
+            if g == 0:
+                startCode.append(self.glyphs[g].codepoints.seq[0])
+            else:
+                if self.glyphs[g].codepoints.seq[0] == self.glyphs[g-1].codepoints.seq[0] + 1:
+                    currentDelta += 1
+                else:
+                    endCode.append(self.glyphs[g-1].codepoints.seq[0])
+                    idDelta.append(-currentDelta) # deltas in this should be negative
+                    currentDelta = 0
+
 
         beginning = struct.pack( ">HHHHHH"
                           , self.format # UInt16
@@ -148,16 +171,34 @@ class cmapFormat4:
                           , rangeShift # UInt16
                           )
 
-        # TODO: create bytes representations of these and compile.
 
-                          # endCode[segCount] # UInt16. End character code for each segment. Last possible one = 0xFFFF
-                          # reservedPad = 0. UInt16
-                          # startCode[segCount] # UInt16. Start character code for each segment.
-                          # idDelta[segCount] # Int16. Delta for all character codes in the segment.
-                          # idRangeOffset[segCount] # UInt16. Offsets into glyphIdArray or 0.
-                          # glyphIdArray[] # Array of UInt16s.
+        # beginning + startCode + endCode + reservedPad + idDelta
+
+
+        # TODO: create bytes representations of these and compile.
+              # idRangeOffset[segCount] # UInt16. Offsets into glyphIdArray or 0.
+              # glyphIdArray[] # Array of UInt16s.
 
         return b'' # placeholder
+
+
+
+class SequentialMapGroupRecord:
+    """
+    Class representing a SequentialMapGroup Record in a cmap Subtable Format 12.
+
+    This is only used during bytes compilation.
+    """
+    def __init__ (self, startCharCode, endCharCode, startGlyphID):
+        self.startCharCode = startCharCode
+        self.endCharCode = endCharCode
+        self.startGlyphID = startGlyphID
+
+    def toBytes(self):
+        return struct.pack(">III"
+                    , self.startCharCode
+                    , self.endCharCode
+                    , self.startGlyphID)
 
 
 class cmapFormat12:
@@ -175,6 +216,7 @@ class cmapFormat12:
             if g.codepoints.seq[0] > int('ffffff', 16):
                 raise ValueError(f"Creating cmap subtable format 12 has been rejected. A glyph whose codepoint is greater than U+FFFFFF was given. cmap Subtable Format 12 must only have codepoints less than or equal to U+FFFFFF.")
 
+        self.format = 12 # hard-coded.
         self.glyphs = glyphs
         self.platformID = platformID
         self.platEncID = platEncID
@@ -194,7 +236,38 @@ class cmapFormat12:
                                 , self.glyphs
                                 )
     def toBytes(self):
-        return b'' # placeholder
+
+        startCode = 0
+        endCode = 0
+        startCodeID = 0
+        sequentialMapGroup = []
+
+        for g in range(0, len(self.glyphs)):
+            if g == 0:
+                startCode = self.glyphs[g].codepoints.seq[0]
+                startCodeID = g
+            else:
+                if self.glyphs[g].codepoints.seq[0] != self.glyphs[g-1].codepoints.seq[0] + 1:
+                    endCode = self.glyphs[g-1].codepoints.seq[0]
+                    sequentialMapGroup.append(SequentialMapGroupRecord(startCode, endCode, startCodeID))
+
+        subtableLength = 16 + 12*len(sequentialMapGroup)
+        numGroups = len(sequentialMapGroup)
+
+        beginning = struct.pack(">HHIII"
+                                , self.format # UInt16
+                                , 0 # Reserved, UInt16
+                                , subtableLength # UInt32
+                                , self.language # UInt32
+                                , numGroups # UInt32
+                                )
+
+        smgBytes = b''
+
+        for smg in sequentialMapGroup:
+            smgBytes += smg.toBytes()
+
+        return beginning + smgBytes
 
 
 

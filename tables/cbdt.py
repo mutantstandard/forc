@@ -1,7 +1,7 @@
 import struct
 
 from lxml.etree import Element
-from tables.support.ebxBitmaps import EBDTBitmapFormat17
+from tables.common.ebxBitmaps import EBDTBitmapFormat17
 from transform.bytes import padTableBytes
 
 class CBDTStrike:

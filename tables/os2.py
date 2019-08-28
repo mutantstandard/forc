@@ -2,7 +2,7 @@ import struct
 from lxml.etree import Element
 
 from data import BFlags
-from tables.support.os2Extra import PANOSE
+from tables.common.os2Extra import PANOSE
 from transform.bytes import padTableBytes
 
 

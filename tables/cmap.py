@@ -1,6 +1,6 @@
 import struct
 from lxml.etree import Element
-from tables.support.cmapSubtables import cmapFormat0, cmapFormat4, cmapFormat12, cmapFormat14
+from tables.common.cmapSubtables import cmapFormat0, cmapFormat4, cmapFormat12, cmapFormat14
 from transform.bytes import generateOffsets, padTableBytes
 
 
@@ -77,20 +77,25 @@ class cmap:
 
 
     def toBytes(self):
+
+        # initialise some stuff
+        subtableOffsets = generateOffsets(self.subtables, 32, 4 + (8 * len(self.subtables))) ## placheholder. last one should be (8 * len(self.subtables)
+        encodingRecords = b''
+
+
+        # prepare the chunks
         header = struct.pack( ">HH"
                           , self.version # UInt16
                           , len(self.subtables) # UInt16
                           )
 
-        subtableOffsets = generateOffsets(self.subtables, 32, (8 * len(self.subtables)))
-        encodingRecords = b''
-
         for num, subtable in enumerate(self.subtables):
             encodingEntry = struct.pack( ">HHI"
-                       , subtable.platformID
-                       , subtable.platEncID
-                       , subtableOffsets["offsetInts"][num]
+                       , subtable.platformID # UInt16
+                       , subtable.platEncID # UInt16
+                       , subtableOffsets["offsetInts"][num] # Offset32 (UInt32
                        )
             encodingRecords += encodingEntry
+
 
         return padTableBytes(header + encodingRecords + subtableOffsets["bytes"])

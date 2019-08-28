@@ -2,9 +2,9 @@ import struct
 from lxml.etree import Element, ElementTree, fromstring
 
 from data import VFixed
-from tables.support.otlScript import ScriptList, ScriptRecord, Script
-from tables.support.otlFeature import FeatureList, FeatureRecord, Feature
-from tables.support.otlLookup import LookupList, LookupType4
+from tables.common.otlScript import ScriptList, ScriptRecord, Script
+from tables.common.otlFeature import FeatureList, FeatureRecord, Feature
+from tables.common.otlLookup import LookupList, LookupType4
 from transform.bytes import padTableBytes
 
 

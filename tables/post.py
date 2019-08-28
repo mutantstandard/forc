@@ -11,8 +11,6 @@ class post:
 
     def __init__(self, glyphs):
 
-        print(int(VFixed('11635.474330')).to_bytes(8, 'big'))
-
         self.tableName = "post" # hard-coded. For font generation only.
         self.version = VFixed('2.0')
         # Apple suggests against using formats 2.5, 3 and 4.
@@ -29,6 +27,11 @@ class post:
         self.maxMemType42 = 0 # hard-coded
         self.minMemType1 = 1 # hard-coded
         self.maxMemType1 = 1 # hard-coded
+
+        self.numGlyphs = len(glyphs["img_empty"])
+
+        # TODO: glyphNameIndex[numGlyphs]
+        # TODO: names[numberNewGlyphs]
 
         self.extraNames = [] # this array pleases macOS.
 
@@ -66,7 +69,7 @@ class post:
 
 
     def toBytes(self):
-        post = struct.pack( ">iihhIIIII"
+        post = struct.pack( ">iihhIIIIIH"
                           , int(self.version) # Fixed, version no. type (Int32)
                           , int(self.italicAngle) # Fixed (Int32)
 
@@ -78,6 +81,8 @@ class post:
                           , self.maxMemType42 # UInt32
                           , self.minMemType1 # UInt32
                           , self.maxMemType1 # UInt32
+
+                          , self.numGlyphs # UInt16
                           )
 
         return padTableBytes(post)
