@@ -9,7 +9,7 @@ class maxp:
 
         self.version = VFixed('1.0') # hard-coded
 
-        self.numGlyphs = len(glyphs["all"]) + 1
+        self.numGlyphs = len(glyphs["all"])
         # sbix determines the number of glyphs from this data point.
 
         self.maxPoints = 0
