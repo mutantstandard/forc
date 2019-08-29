@@ -215,11 +215,12 @@ class TTFont:
 
         # number of glyphs in an sbix strike must be equal to maxp.numGlyphs.
         # ------------------------------------------------------------------------------
+        maxpNumGlyphs = self.tables["maxp"].numGlyphs
         if "sbix" in self.tables:
             strikes = self.tables["sbix"].strikes
-            for s in strikes:
+            for num, s in enumerate(strikes):
                 if len(s.bitmaps) != self.tables["maxp"].numGlyphs:
-                    log.out(f"💢 the number of bitmaps for this sbix strike (ppem: {s.ppem}, ppi: {s.ppi}) don't match maxp.numGlyphs.", 91)
+                    log.out(f"💢 the number of bitmaps inside sbix strike index {num} (ppem: {s.ppem}, ppi: {s.ppi}) doesn't match maxp.numGlyphs. (sbix strike: {len(s.bitmaps)}, maxp.numGlyphs: {self.tables['maxp'].numGlyphs}).", 91)
 
 
 

@@ -35,7 +35,7 @@ class nameRecord:
 
 
     def toTTX(self):
-        
+
         platformID = ""
 
         if platformID == 1: # Mac
@@ -70,8 +70,6 @@ class name:
         nameRecords = m['metadata']['nameRecords'][fontFormat]
         macLangID = m['encoding']['macLangID']
         msftLangID = m['encoding']['msftLangID']
-
-        print(macLangID, msftLangID, type(macLangID), type(msftLangID))
 
         for id, value in nameRecords.items():
             self.nameRecords.append(nameRecord(int(id), 0, 4, 0x0, value)) # unicode
