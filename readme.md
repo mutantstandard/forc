@@ -6,6 +6,8 @@ forc (a terrible portmanteau of font and orc) is an emoji font creation tool. It
 
 Making fonts can be really hard, so forc is designed to help you succeed every time - it has comprehensive documentation and guides on how to make your own emoji font, gives very readable and transparent error messages and is structured in a way that tries to make making highly-compatible emoji fonts as effortless as possible.
 
+Because fonts are inconsistent and difficult, forc also tries to have a heavily documented and commented codebase, so all of the elements make as much sense as possible to someone new to TrueType/OpenType.
+
 **Forc is under heavy development right now. Most font exports don't work quite right or are not functional yet.**
 
 ## Features

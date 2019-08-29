@@ -4,15 +4,20 @@ from math import floor
 
 def generateOffsets(list, length, offsetStart, usingClasses=True):
     """
-    Takes a list of classes that have a .toBytes() function, and then converts
-    it to Bytes with that function and generates a matching list of offsets.
+    Takes a list of classes that have a .toBytes() function (or a list of bytes objects),
+    converts it to a large blob of connected bytes, with a matching list of offsets.
 
     inputs:
     - array: the array of classes that has a .toBytes() function.
     - length: length of each offset: 32 (4 bytes/UInt32) or 16 (2 bytes/UInt16).
     - offsetStart: the number of bytes you want the offsets to begin at. (normally a negative number)
+    - usingClasses: (default: true) whether you're inputting classes with a toBytes() function or bytes objects.
 
-    Returns an object with the compiled bytes of offsets (["offsets"]), then the compiled blob of bytes (["bytes"]).
+
+    Returns a dict with:
+    - ["offsetBytes"] - the offsets as a list of bytes objects, encoded by the given length
+    - ["offsetInts"] - the offsets as a list of ints
+    - ["bytes"] - the compiled blob of bytes.
 
     - https://docs.microsoft.com/en-us/typography/opentype/spec/otff#data-types
     """
