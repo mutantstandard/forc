@@ -3,7 +3,7 @@ from lxml.etree import Element
 
 from data import BFlags
 from tables.common.os2Extra import PANOSE
-from transform.bytes import padTableBytes
+from transform.bytes import outputTableBytes
 
 
 
@@ -231,4 +231,4 @@ class OS2:
                           , self.usUpperOpticalPointSize # UInt16
                           )
 
-        return padTableBytes(os2)
+        return outputTableBytes(os2)

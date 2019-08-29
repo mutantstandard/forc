@@ -2,7 +2,7 @@ import struct
 from lxml.etree import Element
 
 from data import BFlags
-from transform.bytes import padTableBytes
+from transform.bytes import outputTableBytes
 
 class DSIG:
     """
@@ -39,4 +39,4 @@ class DSIG:
                           , self.numSigs # UInt16
                           )
 
-        return padTableBytes(dsig)
+        return outputTableBytes(dsig)

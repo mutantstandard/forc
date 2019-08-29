@@ -1,7 +1,7 @@
 import struct
 from lxml.etree import Element
 
-from transform.bytes import padTableBytes
+from transform.bytes import outputTableBytes
 
 
 
@@ -53,7 +53,7 @@ class hmtx:
         for m in self.metrics:
             longHorMetric += m.toBytes()
 
-        return padTableBytes(longHorMetric)
+        return outputTableBytes(longHorMetric)
 
         # TODO: work out how to calcuilate leftSideBearings[numGlyphs - numberOfHMetrics]
         # https://docs.microsoft.com/en-us/typography/opentype/spec/hmtx

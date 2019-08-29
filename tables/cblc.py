@@ -2,7 +2,7 @@ import struct
 from lxml.etree import Element
 from tables.common.ebxMetrics import SbitLineMetrics
 from tables.common.ebxIndexes import IndexSubTable1
-from transform.bytes import padTableBytes
+from transform.bytes import outputTableBytes
 
 
 class CBLCBitmapSize:
@@ -127,4 +127,4 @@ class CBLC:
                           # pack all of the BitmapSize tables immediately after.
                           )
 
-        return padTableBytes(cblc)
+        return outputTableBytes(cblc)

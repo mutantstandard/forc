@@ -2,7 +2,7 @@ from lxml.etree import Element
 import struct
 
 from data import VFixed
-from transform.bytes import padTableBytes
+from transform.bytes import outputTableBytes
 
 class maxp:
     def __init__(self, glyphs):
@@ -89,4 +89,4 @@ class maxp:
                           , self.maxComponentDepth # UInt16
                           )
 
-        return padTableBytes(maxp)
+        return outputTableBytes(maxp)

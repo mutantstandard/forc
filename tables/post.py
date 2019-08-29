@@ -1,7 +1,7 @@
 import struct
 from lxml.etree import Element
 from data import Fixed, VFixed
-from transform.bytes import padTableBytes
+from transform.bytes import outputTableBytes
 
 
 class post:
@@ -82,7 +82,7 @@ class post:
                           , self.numGlyphs # UInt16
                           )
 
-        return padTableBytes(post)
+        return outputTableBytes(post)
 
         # TODO: append self.extraNames
         # details about extraNames (names) - https://docs.microsoft.com/en-gb/typography/opentype/spec/post#version-20

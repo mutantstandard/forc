@@ -1,6 +1,6 @@
 from lxml.etree import Element
 
-from transform.bytes import padTableBytes
+from transform.bytes import outputTableBytes
 
 class loca:
     """
@@ -20,4 +20,4 @@ class loca:
         return Element("loca")
 
     def toBytes(self):
-        return padTableBytes(b'\0') # TODO: make a bytes representation
+        return outputTableBytes(b'\0') # TODO: make a bytes representation

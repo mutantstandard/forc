@@ -1,7 +1,7 @@
 import struct
 from lxml.etree import Element
 from data import VFixed
-from transform.bytes import padTableBytes
+from transform.bytes import outputTableBytes
 
 class hhea:
     """
@@ -101,4 +101,4 @@ class hhea:
                           , self.numberofHMetrics # UInt16
                           )
 
-        return padTableBytes(hhea)
+        return outputTableBytes(hhea)

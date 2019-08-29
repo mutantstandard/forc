@@ -1,6 +1,6 @@
 import struct
 from lxml.etree import Element
-from transform.bytes import padTableBytes
+from transform.bytes import outputTableBytes
 
 class GaspRange:
     """
@@ -53,4 +53,4 @@ class gasp:
         for gr in self.gaspRanges:
             gasp += gr.toBytes()
 
-        return padTableBytes(gasp)
+        return outputTableBytes(gasp)

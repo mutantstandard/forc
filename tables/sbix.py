@@ -2,7 +2,7 @@ import struct
 import sys
 from lxml.etree import Element
 from data import Tag, BFlags
-from transform.bytes import generateOffsets, padTableBytes
+from transform.bytes import generateOffsets, outputTableBytes
 
 
 
@@ -137,4 +137,4 @@ class sbix:
                           )
 
         strikeBytes = generateOffsets(self.strikes, 32, 8) # long offsets (UInt32)
-        return padTableBytes(header + strikeBytes["offsetBytes"] + strikeBytes["bytes"])
+        return outputTableBytes(header + strikeBytes["offsetBytes"] + strikeBytes["bytes"])

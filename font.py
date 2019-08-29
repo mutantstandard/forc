@@ -280,6 +280,7 @@ class TTFont:
         # -------------------------------------------------------------
 
         initialTables = []
+        originalLengths = []
         checkSums = []
         tags = []
 
@@ -289,15 +290,16 @@ class TTFont:
 
             # convert to bytes
             try:
-                data = t.toBytes()
+                tableOutput = t.toBytes()
             except ValueError as e:
                 raise ValueError(f"Something has gone wrong with converting the {tableName} table to bytes. -> {e}")
 
-            initialTables.append(data)
+            initialTables.append(tableOutput[0])
+            originalLengths.append(tableOutput[1])
 
             # get a checksum on that data
             try:
-                checkSums.append(calculateTableChecksum(data))
+                checkSums.append(calculateTableChecksum(tableOutput[0]))
             except ValueError as e:
                 raise ValueError(f"Something has gone wrong with calculating the checksum for {tableName}. -> {e}")
 
@@ -315,7 +317,7 @@ class TTFont:
                 tableRecordsList.append(tables.tableRecord.TableRecord( tags[n]
                                                , checkSums[n]
                                                , tableOffsets["offsetInts"][n]
-                                               , len(initialTables[n])
+                                               , originalLengths[n]
                                                ))
         print(tableRecordsList)
 

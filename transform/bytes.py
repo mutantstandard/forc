@@ -109,17 +109,23 @@ def calculateTableChecksum(data):
 
 
 
-def padTableBytes(data):
+def outputTableBytes(data):
     """
-    Pads input bytes so they are 32-bit aligned (is a multiple of 4 bytes).
+    Outputs table bytes in a specific way that makes them ready to be composed into a font file.
 
-    Should only be used on the output of each table as a whole.
+    It returns a tuple containing:
+    [0] The bytes output of the table, but padded so it's 32-bit aligned (is a multiple of 4 bytes).
+    [1] The length of the unpadded bytes output of the table.
+
+    The original length is necessary for TableRecord entries. (https://docs.microsoft.com/en-us/typography/opentype/spec/otff#calculating-checksums)
+
+    This function should only be used on the output of each table as a whole.
 
     - https://docs.microsoft.com/en-us/typography/opentype/spec/otff#font-tables
     """
     remainder = len(data) % 4
 
     if remainder:
-        return data + b"\0" * (4 - remainder) # pad with zeroes
+        return (data + b"\0" * (4 - remainder), len(data)) # pad with zeroes
     else:
-        return data
+        return (data, len(data))

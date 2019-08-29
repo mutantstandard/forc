@@ -1,6 +1,6 @@
 from lxml.etree import Element
 
-from transform.bytes import padTableBytes
+from transform.bytes import outputTableBytes
 
 
 
@@ -45,6 +45,6 @@ class vmtx:
         return vmtx
 
     def toBytes(self):
-        return padTableBytes(b'\0') #temp
+        return outputTableBytes(b'\0') #temp
 
     # TODO: figure out how to compile vmtx in bytes.

@@ -1,6 +1,6 @@
 from lxml.etree import Element, ElementTree, fromstring
 
-from transform.bytes import padTableBytes
+from transform.bytes import outputTableBytes
 
 ################################
 # CURRENTLY DISCONTINUED TABLE #
@@ -40,4 +40,4 @@ def toTTX(glyphs):
 
     gdef.append(lcl)
 
-    return padTableBytes(gdef)
+    return outputTableBytes(gdef)

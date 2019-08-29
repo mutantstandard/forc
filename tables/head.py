@@ -1,7 +1,7 @@
 import struct
 from lxml.etree import Element
 from data import BFlags, LongDateTime
-from transform.bytes import padTableBytes
+from transform.bytes import outputTableBytes
 
 
 class head:
@@ -104,4 +104,4 @@ class head:
                             , self.glyphDataFormat # Int16
                             )
 
-        return padTableBytes(head)
+        return outputTableBytes(head)

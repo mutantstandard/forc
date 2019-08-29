@@ -4,7 +4,7 @@ from io import BytesIO
 
 
 from transform.svg import stripStyles, affinityDesignerCompensate, viewboxCompensate
-from transform.bytes import padTableBytes
+from transform.bytes import outputTableBytes
 
 
 class SVGDoc:
@@ -65,5 +65,5 @@ class SVG:
                          # - offsetToSVGDocumentList # Offset32/UInt32
                          , self.reserved # UInt32
                          )
-        return padTableBytes(svg) # placeholder
+        return outputTableBytes(svg) # placeholder
         # Attach SVGDocumentList afterwards.

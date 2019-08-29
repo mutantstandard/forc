@@ -5,7 +5,7 @@ from data import VFixed
 from tables.common.otlScript import ScriptList, ScriptRecord, Script
 from tables.common.otlFeature import FeatureList, FeatureRecord, Feature
 from tables.common.otlLookup import LookupList, LookupType4
-from transform.bytes import padTableBytes
+from transform.bytes import outputTableBytes
 
 
 class GSUB:
@@ -51,4 +51,4 @@ class GSUB:
         # - dump the lists immediately after this information
         # - return the table.
 
-        return padTableBytes(gsub)
+        return outputTableBytes(gsub)
