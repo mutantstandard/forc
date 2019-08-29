@@ -46,12 +46,14 @@ def createFont(fontFormat, outputPath, manifest, glyphs, compiler, flags):
     # --------------------------------------------------------------
     log.out(f'🛠  Assembling font...')
     emojiFont = TTFont(formatData["name"], manifest, glyphs, flags)
+    log.out(f'🛠  Performing internal tests...')
+    emojiFont.test()
     log.out(f'✅ Font successfully assembled.\n', 32)
 
 
     # pass it to compilers and packagers
     # --------------------------------------------------------------
-    log.out(f"⚙️  Compiling and testing font...")
+    log.out(f"⚙️  Compiling and externally testing font...")
 
 
     if compiler == 'ttx':

@@ -5,6 +5,7 @@ import struct
 
 import log
 from format import formats
+from data import Tag
 
 import tables.tableRecord
 
@@ -52,7 +53,7 @@ class TTFont:
         glyphFormat = formats[chosenFormat]["imageTables"]
 
 
-        self.tables = []
+        self.tables = {}
 
 
         try:
@@ -65,20 +66,20 @@ class TTFont:
             # headers and other weird crap
             # ---------------------------------------------
             log.out('[head] ', 90, newline=False)
-            self.tables.append(tables.head.head(m))
+            self.tables["head"] = tables.head.head(m)
 
             log.out('[OS/2] ', 90, newline=False)
-            self.tables.append(tables.os2.OS2(m, glyphs))
+            self.tables["OS/2"] = tables.os2.OS2(m, glyphs)
 
             #log.out('[post] ', 90, newline=False)
             #self.tables.append(tables.post.post(glyphs))
 
             # maxp is a semi-placeholder table.
             log.out('[maxp] ', 90, newline=False)
-            self.tables.append(tables.maxp.maxp(glyphs))
+            self.tables["maxp"] = tables.maxp.maxp(glyphs)
 
             log.out('[gasp] ', 90, newline=False)
-            self.tables.append(tables.gasp.gasp())
+            self.tables["gasp"] = tables.gasp.gasp()
 
 
 
@@ -91,11 +92,11 @@ class TTFont:
 
             if glyphFormat is not "CBx":
                 log.out('[loca] ', 36, newline=False)
-                self.tables.append(tables.loca.loca())
+                self.tables["loca"] = tables.loca.loca()
 
             # placeholder table that makes Google's font validation happy.
             log.out('[DSIG]', 90)
-            self.tables.append(tables.dsig.DSIG())
+            self.tables["DSIG"] = tables.dsig.DSIG()
 
 
 
@@ -105,16 +106,16 @@ class TTFont:
             # horizontal and vertical metrics tables
             # ---------------------------------------------
             log.out('[hhea] ', 90, newline=False)
-            self.tables.append(tables.hhea.hhea(m))
+            self.tables["hhea"] = tables.hhea.hhea(m)
 
             log.out('[hmtx] ', 90, newline=False)
-            self.tables.append(tables.hmtx.hmtx(m, glyphs))
+            self.tables["hmtx"] = tables.hmtx.hmtx(m, glyphs)
 
             log.out('[vhea] ', 90, newline=False)
-            self.tables.append(tables.vhea.vhea(m))
+            self.tables["vhea"] = tables.vhea.vhea(m)
 
             log.out('[vmtx]', 90)
-            self.tables.append(tables.vmtx.vmtx(m, glyphs))
+            self.tables["vmtx"] = tables.vmtx.vmtx(m, glyphs)
 
 
 
@@ -124,7 +125,7 @@ class TTFont:
 
             # single glyphs
             log.out('[cmap] ', 90, newline=False)
-            self.tables.append(tables.cmap.cmap(glyphs, flags["no_vs16"]))
+            self.tables["cmap"] = tables.cmap.cmap(glyphs, flags["no_vs16"])
 
 
 
@@ -140,7 +141,7 @@ class TTFont:
 
                 if formats[chosenFormat]["ligatureFormat"] == "OpenType":
                     log.out('[GSUB] ', 36, newline=False)
-                    self.tables.append(tables.gsub.GSUB(glyphs))
+                    self.tables["GSUB"] = tables.gsub.GSUB(glyphs)
 
 
 
@@ -153,7 +154,7 @@ class TTFont:
             # CBDT/CBLC doesn't use glyf at all
             if glyphFormat is not "CBx":
                 log.out('[glyf] ', 36, newline=False)
-                self.tables.append(tables.glyf.glyf(m, glyphs))
+                self.tables["glyf"] = tables.glyf.glyf(m, glyphs)
 
 
             # actual glyph picture data
@@ -161,18 +162,18 @@ class TTFont:
 
             if glyphFormat == "SVG":
                 log.out('[SVG ]', 36)
-                self.tables.append(tables.svg.SVG(m, glyphs))
+                self.tables["SVG "] = tables.svg.SVG(m, glyphs)
 
             elif glyphFormat == "sbix":
                 log.out('[sbix]', 36)
-                self.tables.append(tables.sbix.sbix(glyphs))
+                self.tables["sbix"] = tables.sbix.sbix(glyphs)
 
             elif glyphFormat == "CBx":
                 log.out('[CBLC] ', 36, newline=False)
-                self.tables.append(tables.cblc.CBLC(m, glyphs))
+                self.tables["CBLC"] = tables.cblc.CBLC(m, glyphs)
 
                 log.out('[CBDT]', 36)
-                self.tables.append(tables.cbdt.CBDT(m, glyphs))
+                self.tables["CBDT"] = tables.cbdt.CBDT(m, glyphs)
 
 
 
@@ -180,10 +181,48 @@ class TTFont:
             # human-readable metadata
             # ---------------------------------------------
             log.out('[name]', 90)
-            self.tables.append(tables.name.name(chosenFormat, m))
+            self.tables["name"] = tables.name.name(chosenFormat, m)
 
         except ValueError as e:
             ValueError(f"Something went wrong with building the font class. -> {e}")
+
+
+
+
+
+    def test(self):
+        """
+        A series of tests determining the validity of the font, checking certain
+        variables between font tables that must agree with each other (as opposed to
+        checking issues that exist solely within a certain table).
+        """
+
+
+
+        # certain bits in head.macStyle and OS/2.fsSelection must agree with each other.
+        # ------------------------------------------------------------------------------
+        macStyleBold = self.tables["head"].macStyle.toList()[0]
+        fsSelectionBold = self.tables["OS/2"].fsSelection.toList()[5]
+        macStyleItalic = self.tables["head"].macStyle.toList()[1]
+        fsSelectionItalic = self.tables["OS/2"].fsSelection.toList()[0]
+
+        if macStyleBold != fsSelectionBold:
+            log.out(f"💢 The Bold bit in head.macStyle (bit 0: {macStyleBold}) does not agree with OS/2.fsSelection (bit 5: {fsSelectionBold})", 91)
+
+        if macStyleItalic != fsSelectionItalic:
+            log.out(f"💢 The Italic bit in head.macStyle (bit 1: {macStyleItalic}) does not agree with OS/2.fsSelection (bit 0: {fsSelectionItalic})", 91)
+
+
+        # number of glyphs in an sbix strike must be equal to maxp.numGlyphs.
+        # ------------------------------------------------------------------------------
+        if "sbix" in self.tables:
+            strikes = self.tables["sbix"].strikes
+            for s in strikes:
+                if len(s.bitmaps) != self.tables["maxp"].numGlyphs:
+                    log.out(f"💢 the number of bitmaps for this sbix strike (ppem: {s.ppem}, ppi: {s.ppi}) don't match maxp.numGlyphs.", 91)
+
+
+
 
 
 
@@ -200,7 +239,7 @@ class TTFont:
         # get all of this font's tables' TTX representations and append them to the file.
         root.append(self.glyphOrder.toTTX())
 
-        for t in self.tables:
+        for tableName, t in self.tables.items():
             root.append(t.toTTX())
 
 
@@ -245,14 +284,14 @@ class TTFont:
         tags = []
 
         # get all of the table data
-        for t in self.tables:
-            print(f"converting {t.tableName} to bytes...")
+        for tableName, t in self.tables.items():
+            print(f"converting {tableName} to bytes...")
 
             # convert to bytes
             try:
                 data = t.toBytes()
             except ValueError as e:
-                raise ValueError(f"Something has gone wrong with converting the {t.tableName} table to bytes. -> {e}")
+                raise ValueError(f"Something has gone wrong with converting the {tableName} table to bytes. -> {e}")
 
             initialTables.append(data)
 
@@ -260,10 +299,10 @@ class TTFont:
             try:
                 checkSums.append(calculateTableChecksum(data))
             except ValueError as e:
-                raise ValueError(f"Something has gone wrong with calculating the checksum for {t.tableName}. -> {e}")
+                raise ValueError(f"Something has gone wrong with calculating the checksum for {tableName}. -> {e}")
 
             # also add a tag.
-            tags.append(t.tableName)
+            tags.append(tableName)
 
 
         # calculate offsets for each table
@@ -295,6 +334,7 @@ class TTFont:
         Compiles font class to bytes, including checksum.
         (Just a placeholder right now.)
         """
+
         #log.out('building the first time...', 90)
 
         ## build first time + put together

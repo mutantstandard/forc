@@ -27,7 +27,6 @@ class gasp:
     """
 
     def __init__(self):
-        self.tableName = "gasp" # hard-coded.  For font generation only.
 
         self.version = 1
         self.gaspRanges = []

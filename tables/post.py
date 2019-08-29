@@ -11,7 +11,6 @@ class post:
 
     def __init__(self, glyphs):
 
-        self.tableName = "post" # hard-coded. For font generation only.
         self.version = VFixed('2.0')
         # Apple suggests against using formats 2.5, 3 and 4.
         # Microsoft says that version 2.5 is depreciated.
@@ -40,8 +39,6 @@ class post:
 
 
     def toTTX(self):
-        post = Element("post")
-
         post.append(Element("formatType", {'value': self.version.toDecimalStr() })) # TTX wants this particular format.
         post.append(Element("italicAngle", {'value': str(self.italicAngle) }))
 

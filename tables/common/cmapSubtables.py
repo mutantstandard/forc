@@ -196,9 +196,10 @@ class SequentialMapGroupRecord:
 
     def toBytes(self):
         return struct.pack(">III"
-                    , self.startCharCode
-                    , self.endCharCode
-                    , self.startGlyphID)
+                    , self.startCharCode # UInt32
+                    , self.endCharCode # UInt32
+                    , self.startGlyphID # UInt32
+                    )
 
 
 class cmapFormat12:
@@ -262,7 +263,7 @@ class cmapFormat12:
                                 , numGroups # UInt32
                                 )
 
-        smgBytes = b''
+        smgBytes = b'\0'
 
         for smg in sequentialMapGroup:
             smgBytes += smg.toBytes()
@@ -304,4 +305,4 @@ class cmapFormat14:
         return cmap14
 
     def toBytes(self):
-        return b'' # placeholder
+        return b'\0' # placeholder

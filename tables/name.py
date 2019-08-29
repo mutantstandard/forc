@@ -40,7 +40,6 @@ class name:
 
     def __init__(self, fontFormat, m):
 
-        self.tableName = "name" # hard-coded. For font generation only.
         self.format = 1 # the format that is being worked with.
         self.nameRecords = []
 

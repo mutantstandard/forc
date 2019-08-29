@@ -11,8 +11,6 @@ class glyf:
 
     def __init__(self, m, glyphs):
 
-        self.tableName = "glyf" # hard-coded.  For font generation only.
-
         self.glyphs = []
         self.xMin = m['metrics']['xMin']
         self.yMin = m['metrics']['yMin']

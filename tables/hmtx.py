@@ -35,7 +35,6 @@ class hmtx:
     """
     def __init__(self, m, glyphs):
 
-        self.tableName = "hmtx" # hard-coded. For font generation only.
         self.metrics = []
 
         for g in glyphs["img_empty"]:

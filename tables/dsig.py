@@ -11,8 +11,6 @@ class DSIG:
 
     def __init__(self):
 
-        self.tableName = "DSIG" # hard-coded.  For font generation only.
-
         self.version = 0x00000001
         # Hardcoded. It is what it's supposed to be - a single UInt32 formatted as hex.
 

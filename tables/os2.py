@@ -43,8 +43,6 @@ class OS2:
 
         # STORE DATA
         # --------------------------
-        self.tableName = "OS/2" # hard-coded. For font generation only.
-
         self.version = 5 # hard-coded, the current (also the latest) version for this table generation is 5.
 
         self.xAvgCharWidth = metrics['xMax']
@@ -232,5 +230,5 @@ class OS2:
                           , self.usLowerOpticalPointSize # UInt16
                           , self.usUpperOpticalPointSize # UInt16
                           )
-                          
+
         return padTableBytes(os2)

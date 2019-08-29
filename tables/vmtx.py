@@ -31,7 +31,6 @@ class vmtx:
 
     def __init__(self, m, glyphs):
 
-        self.tableName = "vmtx" # hard-coded. For font generation only.
         self.metrics = []
 
         for g in glyphs["img_empty"]:

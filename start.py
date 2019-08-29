@@ -5,7 +5,7 @@ import files
 from create import createFont
 from manifest.manifest import checkTransformManifest
 from validate.aliases import validateAliases
-from glyphs import getGlyphs
+from glyphProc import getGlyphs
 from format import formats, compilers
 
 

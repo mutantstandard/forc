@@ -11,8 +11,6 @@ class head:
 
     def __init__(self, m):
 
-        self.tableName = "head" # hard-coded. For font generation only.
-
         self.majorVersion = 1 # hard-coded, is meant to be 1.
         self.minorVersion = 0 # hard-coded, is meant to be 0.
         self.fontRevision = m['metadata']['version'] # fixed format.

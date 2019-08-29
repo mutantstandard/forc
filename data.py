@@ -128,6 +128,22 @@ class BFlags:
         """
         self.bits = self.bits & ~(1 << bitNumber) | (value << bitNumber)
 
+    def toList(self):
+        """
+        Returns a list of ints representing the flags, in big-endian order.
+        """
+
+        list = []
+        bitString = f"{self.bits:0{self.len*8}b}"
+
+        if sys.byteorder == 'little': # ensure what we're working with is big-endian.
+            bitString = bitString[::-1]
+
+        for index, c in enumerate(bitString): # big-endian
+            list.append(int(c)) # append the bit as an int
+
+        return list
+
 
     def toTTXStr(self):
         """
