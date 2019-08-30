@@ -342,7 +342,8 @@ class TTFont:
         firstPass = self.bytesPass()
 
         log.out('calculating checksum...', 90)
-        checkSumAdjustment = calculateTableChecksum(firstPass)
+        initialCS = calculateTableChecksum(firstPass)
+        checkSumAdjustment = (0xB1B0AFBA - initialCS) % 0x100000000
         self.tables["head"].checkSumAdjustment = checkSumAdjustment
 
         log.out('last compilation pass...', 90)
