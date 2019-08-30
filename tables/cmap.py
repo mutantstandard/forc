@@ -57,7 +57,7 @@ class cmap:
             self.subtables.append(cmapFormat12(fourByte, platformID=3, platEncID=10, language=0))
 
         if vs:
-            self.subtables.append(cmapFormat14(vs, platformID=0, platEncID=5))
+            self.subtables.append(cmapFormat14(vs)) # IDs are specific to this cmap Subtable.
 
 
 
@@ -88,12 +88,14 @@ class cmap:
                           )
 
         for num, subtable in enumerate(self.subtables):
-            encodingEntry = struct.pack( ">HHI"
-                       , subtable.platformID # UInt16
-                       , subtable.platEncID # UInt16
-                       , subtableOffsets["offsetInts"][num] # Offset32 (UInt32
-                       )
-            encodingRecords += encodingEntry
+
+            if subtable.format not in [4, 14]: # TEMP: skipping malformed cmaps for now.
+                encodingEntry = struct.pack( ">HHI"
+                           , subtable.platformID # UInt16
+                           , subtable.platEncID # UInt16
+                           , subtableOffsets["offsetInts"][num] # Offset32 (UInt32)
+                           )
+                encodingRecords += encodingEntry
 
 
         return outputTableBytes(header + encodingRecords + subtableOffsets["bytes"])

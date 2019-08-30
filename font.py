@@ -287,7 +287,7 @@ class TTFont:
 
         # get all of the table data
         for tableName, t in self.tables.items():
-            print(f"converting {tableName} to bytes...")
+            #print(f"converting {tableName} to bytes...")
 
             # convert to bytes
             try:
@@ -320,7 +320,7 @@ class TTFont:
                                                , tableOffsets["offsetInts"][n]
                                                , originalLengths[n]
                                                ))
-        print(tableRecordsList)
+        #print(tableRecordsList)
 
         tableRecordsList.sort()
         tableRecords = b''
@@ -338,22 +338,15 @@ class TTFont:
         (Just a placeholder right now.)
         """
 
-        #log.out('building the first time...', 90)
+        log.out('first compilation pass...', 90)
+        firstPass = self.bytesPass()
 
-        ## build first time + put together
-        # header.append(bytesPass(self))
+        log.out('calculating checksum...', 90)
+        checkSumAdjustment = calculateTableChecksum(firstPass)
+        self.tables["head"].checkSumAdjustment = checkSumAdjustment
 
-        #log.out('calculating checksum...', 90)
+        log.out('last compilation pass...', 90)
+        lastPass = self.bytesPass()
 
-        ## make a checksum for it
-        # self.head.checkSumAdjustment = ???
 
-        #log.out('final pass...', 90)
-        ## one last conversion to bytes.
-        # return bytesPass(self)
-
-        log.out('making a placeholder pass...', 90)
-
-        bytes = self.bytesPass()
-        #print(bytes)
-        return bytes
+        return lastPass

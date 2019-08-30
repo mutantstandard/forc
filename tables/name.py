@@ -25,28 +25,30 @@ class nameRecord:
     Class representing a record in a name table.
     """
 
-    def __init__(self, nameID, platformID, encodingID, languageID, text):
+    def __init__(self, nameID, platformID, platEncID, languageID, text):
 
         self.nameID  = nameID
         self.platformID = platformID
-        self.encodingID = encodingID
+        self.platEncID = platEncID
         self.languageID = languageID
         self.text = text
 
 
     def toTTX(self):
 
-        platformID = ""
+        languageID = ""
 
-        if platformID == 1: # Mac
-            platformID = str(self.platformID)
-        if platformID == 3: # Win
-            platformID = hex(self.platformID)
+        if self.platformID == 1: # Mac
+            languageID = str(self.languageID)
+        elif self.platformID == 3: # Win
+            languageID = hex(self.languageID)
+        elif self.platformID == 0: # Unicode
+            languageID = str(self.languageID)
 
         record = Element("namerecord",  { "nameID" : str(self.nameID)
                                         , "platformID" : str(self.platformID)
-                                        , "platEncID" : str(self.encodingID)
-                                        , "langID" : str(self.languageID)
+                                        , "platEncID" : str(self.platEncID)
+                                        , "langID" : str(languageID)
                                         })
         record.text = self.text
         return record
@@ -61,7 +63,7 @@ class name:
 
     def __init__(self, fontFormat, m):
 
-        self.format = 1 # the format that is being worked with.
+        self.format = 0 # the format that is being worked with.
         self.nameRecords = []
 
 
@@ -98,7 +100,7 @@ class name:
 
 
     def toBytes(self):
-        # This follows the structure of naming table format 1.
+        # This follows the structure of naming table format 0.
         # (there's a difference)
 
 
@@ -127,7 +129,7 @@ class name:
         for num, nr in enumerate(self.nameRecords):
             nameRecords += struct.pack(">HHHHHH"
                                 , nr.platformID # UInt16
-                                , nr.encodingID # UInt16
+                                , nr.platEncID # UInt16
                                 , nr.languageID # UInt16
                                 , nr.nameID # UInt16
                                 , len(texts[num]) # UInt16
@@ -141,12 +143,8 @@ class name:
                             , stringOffset # Offset16 (UInt16)
                             )
 
-        # LangTagRecords is currently ommitted and thus, this count is 0.
-        langTagCount = struct.pack(">H", 0)
 
 
-
-
-        table = beginning + nameRecords + langTagCount + stringData
+        table = beginning + nameRecords + stringData
 
         return outputTableBytes(table)

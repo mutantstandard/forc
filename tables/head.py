@@ -13,9 +13,12 @@ class head:
 
         self.majorVersion = 1 # hard-coded, is meant to be 1.
         self.minorVersion = 0 # hard-coded, is meant to be 0.
-        self.fontRevision = m['metadata']['version'] # fixed format.
+        self.fontRevision = m['metadata']['version'] # Fixed format.
 
-        self.checkSumAdjustment = 0 # TTX sets this automatically at compilation; the internal compiler needs to do this manually.
+        self.checkSumAdjustment = 0 # hard-coded.
+        # This needs to be set at 0 before compilation in order for a correct checksum.
+        # During compilation, the compilers will set it to what it needs to be in the end.
+
         self.magicNumber = 0x5f0f3cf5 # hard-coded
 
         self.flags = BFlags('11010000 00000000') # hard-coded

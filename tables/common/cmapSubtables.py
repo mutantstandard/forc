@@ -229,7 +229,7 @@ class cmapFormat12:
                                 { "platformID": str(self.platformID)
                                 , "platEncID": str(self.platEncID)
                                 , "language": str(self.language)
-                                , "format": "12"
+                                , "format": str(self.format)
                                 , "reserved": "0"
                                 , "length": "0"
                                 , "nGroups": "0"
@@ -240,20 +240,24 @@ class cmapFormat12:
 
         startCode = 0
         endCode = 0
-        startCodeID = 0
+        startGlyphID = 0
         sequentialMapGroup = []
 
-        for g in range(0, len(self.glyphs)):
+        for g in range(len(self.glyphs)):
             if g == 0:
                 startCode = self.glyphs[g].codepoints.seq[0]
                 startCodeID = g
             else:
                 if self.glyphs[g].codepoints.seq[0] != self.glyphs[g-1].codepoints.seq[0] + 1:
                     endCode = self.glyphs[g-1].codepoints.seq[0]
-                    sequentialMapGroup.append(SequentialMapGroupRecord(startCode, endCode, startCodeID))
+                    sequentialMapGroup.append(SequentialMapGroupRecord(startCode, endCode, startGlyphID))
+
+                    startCode = self.glyphs[g].codepoints.seq[0]
+                    startGlyphID = g
 
         subtableLength = 16 + 12*len(sequentialMapGroup)
         numGroups = len(sequentialMapGroup)
+
 
         beginning = struct.pack(">HHIII"
                                 , self.format # UInt16
@@ -282,10 +286,15 @@ class cmapFormat14:
     - https://docs.microsoft.com/en-us/typography/opentype/spec/cmap#format-14-unicode-variation-sequences
     """
 
-    def __init__(self, glyphs, platformID, platEncID):
+    def __init__(self, glyphs):
+
+        self.format = 14 # hard-coded
         self.glyphs = glyphs
-        self.platformID = platformID
-        self.platEncID = platEncID
+        self.platformID = 0 # hard-coded
+        self.platEncID = 5 # hard-coded
+
+        # platEncID 5 = cmap subtable 14 in platID 0. It just means that.
+        # no other platID or platEncID should be used for this subtable.
 
 
     def toTTX(self):

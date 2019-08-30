@@ -32,17 +32,13 @@ class maxp:
 
 
     def toTTX(self):
-        """
-        Create a maxp table. All of the data inside this is dummy data, the TTX
-        compiler will insert actually useful data.
-        """
-
+        # TTX re-calculates most, if not all of these values by itself, but it's still worth giving them anyway.
 
         maxp = Element("maxp")
 
         maxp.append(Element("tableVersion", {'value': self.version.toHexStr() })) # TTX wants the version in this format.
 
-        maxp.append(Element("numGlyphs", {'value': str(self.numGlyphs) })) # TTX re-calculates this anyway but I'm giving it the right value anyway.
+        maxp.append(Element("numGlyphs", {'value': str(self.numGlyphs) })) # TTX re-calculates this, but I'm giving it the right value anyway.
 
         maxp.append(Element("maxPoints", {'value': str(self.maxPoints) }))
         maxp.append(Element("maxContours", {'value': str(self.maxContours) }))
