@@ -43,11 +43,15 @@ def compileiOSConfig(manifest, font, outputPath):
     addEntry(dict, 'key', 'PayloadIdentifier')
     addEntry(dict, 'string', m['PayloadIdentifier'])
 
+    if "PayloadDescription" in m:
+        addEntry(dict, 'key', 'PayloadDescription')
+        addEntry(dict, 'string', m['PayloadDescription'])
+
     addEntry(dict, 'key', 'PayloadRemovalDisallowed')
-    dict.append(Element('false'))
+    dict.append(Element('false')) # hard-coded
 
     addEntry(dict, 'key', 'PayloadType')
-    addEntry(dict, 'string', 'Configuration')
+    addEntry(dict, 'string', 'Configuration') # hard-coded
 
     addEntry(dict, 'key', 'PayloadUUID')
     addEntry(dict, 'string', m['PayloadUUID'])

@@ -268,16 +268,17 @@ The iOSConfig part of the manifest is a simple flat array of a few things.
     
 ```
 
-| name | type | description |
-|:--|:--|:--|
-| PayloadDisplayName | string | The title of the mobileconfig ('payload'). This is what users will see when they install it. |
-| PayloadIdentifier | string | Identifier of the payload itself. [1] |
-| PayloadUUID  | string representing a UUID | The UUID of the payload.[2] |
-| PayloadVersion | int | The version of the payload. As far as I know, you can normally ignore this and just set it to 1.
-| ContentPayloadName | string | The name of your font inside the payload. The user isn't going to see this one, it can be whatever. |
-| ContentPayloadIdentifier | string | Identifier of the font in the payload. [1] |
-| ContentPayloadUUID  | string representing a UUID | The UUID of the font in the payload. [2] |
-| ContentPayloadVersion | int | The version of the font in the payload. As far as I know, you can normally ignore this and just set it to 1. |
+| name | type | req? | description |
+|:--|:--|:--|:--|
+| PayloadDisplayName | string | ✔️ | The title of the mobileconfig ('payload'). This is what users will see when they install it. |
+| PayloadIdentifier | string | ✔️ | Identifier of the payload itself. [1] |
+| PayloadUUID  | string representing a UUID | ✔️ | The UUID of the payload.[2] |
+| PayloadVersion | int | ✔️ | The version of the payload. As far as I know, you can normally ignore this and just set it to 1. |
+| PayloadDescription | string | | A user-readable description of your package. |
+| ContentPayloadName | string | ✔️ | The name of your font inside the payload. The user isn't going to see this one, it can be whatever. |
+| ContentPayloadIdentifier | string | ✔️ | Identifier of the font in the payload. [1] |
+| ContentPayloadUUID  | string representing a UUID | ✔️ | The UUID of the font in the payload. [2] |
+| ContentPayloadVersion | int | ✔️ | The version of the font in the payload. As far as I know, you can normally ignore this and just set it to 1. |
  
  
 1. Identifiers need to be done in the [Reverse DNS Notation style](https://en.wikipedia.org/wiki/Reverse_domain_name_notation). If you are bundling this in an app, then it needs to begin with the identifier you use with your iOS app.
