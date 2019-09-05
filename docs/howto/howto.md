@@ -1,6 +1,12 @@
 # How to make a font
 
-Many of these flags will be familiar to you if you already use [orxporter](https://github.com/mutantstandard/orxporter).
+**Keep in mind that forc is under heavy development and font output isn't fully working yet. This guide is largely written as if font output is basically fine.**
+
+---
+
+There are a few different ingredients you'll need to make a font.
+
+(Many of these flags will be familiar to you if you already use [orxporter](https://github.com/mutantstandard/orxporter).)
 
 ### [Input](input.md) `(-i)`
 
@@ -18,9 +24,7 @@ All forc exports will be exported in a flat manner, each file named after the fi
 Where you set your font's metrics and metadata.
 
 
-### [Aliases](aliases.md) `(-a)`
-
-**(Optional)**
+### [Aliases](aliases.md) `(-a)` (optional)
 
 For when you want to map multiple codepoint sequences onto the same glyph.
 
@@ -30,7 +34,7 @@ For when you want to map multiple codepoint sequences onto the same glyph.
 What emoji font formats to export to.
 
 
-### Compiler `(-C)`
+### Compiler `(-C)` (optional)
 
 What compiler to use.
 

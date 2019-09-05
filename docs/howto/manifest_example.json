@@ -1,0 +1,115 @@
+{"metrics":
+    {"unitsPerEm": 2048
+    ,"lowestRecPPEM": 16
+
+    ,"width": 2550
+    ,"height": 2400
+
+    ,"xMin": 0
+    ,"xMax": 2550
+    ,"yMin": -500
+    ,"yMax": 1900
+
+    ,"horiAscent" : 1900
+    ,"horiDescent" : -500
+    ,"vertAscent" : 1250
+    ,"vertDescent" : -1250
+
+    ,"spaceHLength": 1024
+    ,"spaceVLength": 1024
+
+    ,"normalWidth": 2048
+    ,"normalLSB": 0
+    ,"normalHeight": 2048
+    ,"normalTSB": 0
+
+    ,"OS2ySubscriptXSize": 512
+    ,"OS2ySubscriptYSize": 512
+    ,"OS2ySubscriptXOffset": 0
+    ,"OS2ySubscriptYOffset": 0
+
+    ,"OS2ySuperscriptXSize": 512
+    ,"OS2ySuperscriptYSize": 512
+    ,"OS2ySuperscriptXOffset": 0
+    ,"OS2ySuperscriptYOffset": 0
+
+    ,"OS2yStrikeoutSize": 128
+    ,"OS2yStrikeoutPosition": 522
+    }
+
+,"encoding":
+    {"macLangID": "0"
+    ,"msftLangID": "0x809"
+    }
+
+,"metadata":
+    {"created": ""
+    ,"version": "1.000"
+    ,"filenames":
+        { "SVGinOT": "MyEmojiFont-SVGinOT"
+        , "sbixOT": "MyEmojiFont-sbixOT"
+        , "CBx": "MyEmojiFont-CBx"
+        , "sbixOTiOS": "MyEmojiFont-sbixOT-iOS"
+        }
+    ,"nameRecords":
+        {"default":
+            {"0" : "Copyright (c) [Year] Font Designer"
+            ,"2" : "Regular"
+            ,"5" : "Version notes (if any)"
+            ,"8" : "Vendor Name"
+            ,"9" : "Designer Name"
+            ,"10" : "Some additional comments about your font."
+            ,"11" : "https://vendor-website.example"
+            ,"12" : "https://designer-website.example"
+            ,"13" : "A brief statement about the license your using"
+            ,"14" : "https://url-to-your-license-text.com"
+            ,"16" : "Font Name"
+            }
+        ,"SVGinOT":
+            {"1" : "Font Name (SVGinOT)"
+            ,"3" : "Font Name SVGinOT"
+            ,"4" : "Font Name (SVGinOT)"
+            ,"6" : "FontName-SVGinOT"
+            ,"17" : "SVGinOT"
+            }
+
+        ,"sbixOT":
+            {"1" : "Font Name (sbixOT)"
+            ,"3" : "Font Name sbixOT"
+            ,"4" : "Font Name (sbixOT)"
+            ,"6" : "FontName-sbixOT"
+            ,"17" : "sbixOT"
+            }
+
+        ,"sbixOTiOS":
+            {"1" : "Font Name (sbixOT)"
+            ,"3" : "Font Name sbixOT"
+            ,"4" : "Font Name (sbixOT)"
+            ,"6" : "FontName-sbixOT"
+            ,"17" : "sbixOT"
+            }
+
+        ,"CBx":
+            {"1" : "Font Name (CBx)"
+            ,"3" : "Font Name CBx"
+            ,"4" : "Font Name (CBx)"
+            ,"6" : "FontName-CBx"
+            ,"17" : "CBx"
+            }
+
+
+        }
+
+    ,"iOSConfig":
+        {"PayloadDisplayName": "Font Name for iOS"
+        ,"PayloadIdentifier": "example.vendor-website.iOSconfig"
+        ,"PayloadUUID": "insert UUID here"
+        ,"PayloadVersion": 1
+
+        ,"ContentPayloadName": "Font Name (iOS)"
+        ,"ContentPayloadIdentifier": "example.vendor-website.emojiFont"
+        ,"ContentPayloadUUID": "insert UUID here"
+        ,"ContentPayloadVersion": 1
+        }
+    }
+}

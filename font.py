@@ -207,10 +207,10 @@ class TTFont:
         fsSelectionItalic = self.tables["OS/2"].fsSelection.toList()[0]
 
         if macStyleBold != fsSelectionBold:
-            log.out(f"💢 The Bold bit in head.macStyle (bit 0: {macStyleBold}) does not agree with OS/2.fsSelection (bit 5: {fsSelectionBold})", 91)
+            log.out(f"💢 The Bold bit in head.macStyle (bit 0: {macStyleBold}) does not agree with the Bold bit in OS/2.fsSelection (bit 5: {fsSelectionBold})", 91)
 
         if macStyleItalic != fsSelectionItalic:
-            log.out(f"💢 The Italic bit in head.macStyle (bit 1: {macStyleItalic}) does not agree with OS/2.fsSelection (bit 0: {fsSelectionItalic})", 91)
+            log.out(f"💢 The Italic bit in head.macStyle (bit 1: {macStyleItalic}) does not agree with the Italic bit in OS/2.fsSelection (bit 0: {fsSelectionItalic})", 91)
 
 
         # number of glyphs in an sbix strike must be equal to maxp.numGlyphs.
@@ -334,8 +334,8 @@ class TTFont:
 
     def toBytes(self):
         """
-        Compiles font class to bytes, including checksum.
-        (Just a placeholder right now.)
+        Compiles font class into a fully formed TrueType/OpenType font.
+        (WIP)
         """
 
         log.out('first compilation pass...', 90)

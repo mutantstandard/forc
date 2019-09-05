@@ -3,6 +3,10 @@ The manifest is a JSON file with a particular structure, and it contains metrics
 
 This has been structured in such a way where data points that recur throughout a font have been consolidated in one place.
 
+In the following tables, any of the items ticked in the 'req?' column are required and forc will stop and throw a build error if those values are not present or formatted incorrectly.
+
+I've added an [example JSON file](manifest_example.json) that you can use to template from or study.
+
 There are three main sections to the file:
 
 - Metrics
@@ -50,7 +54,7 @@ FUnits stands for Font Design Units.
 | xMin | int (FUnits) |  | The minimum x-position of your glyphs (includes vertical descenders). |
 | xMax | int (FUnits) |  | The maximum x-position of your glyphs (includes vertical ascender). |
 | yMin | int (FUnits) | | The minimum y-position of your glyphs (includes horizontal descenders). |
-| yMax | int (FUnits) | | The maximum y-position of your glyphs (includes vertical ascenders). |
+| yMax | int (FUnits) | | The maximum y-position of your glyphs (includes horizontal ascenders). |
 | spaceHLength | int (FUnits) | | The length of space characters in horizontal writing orientation. |
 | spaceVLength | int (FUnits) | | The length of space characters in vertical writing orientation. |
 | normalWidth | int (FUnits) | | ??? |
@@ -103,17 +107,24 @@ forc assumes you want to create a font that can work in both vertical AND horizo
     ,"OS2VendorID": "MTNT"
     ,"filenames": {...}
     ,"nameRecords": {...}
+    ,"iOSConfig": {...}
 	}
 ````
+
+<br/>
+
+### Metadata beginning
 
 | name | type | req? | description |
 |:--|:--|:--|:--|
 | created | string |  | The date your font was created. Formatted as YYYY-MM-DD MM:SS +(timezone) (""%Y-%m-%d %H:%M %z" in Python). If you don't want to specify a date, you can leave it empty and forc will just use your compilation time as the created time.
 | version | string (representing a 3-decimal number that's 1.000 or greater) | ✔️
-| OS2VendorID | string (a 4-character string of a limited set of ASCII characters) | | [Microsoft's 4-letter identifier for registered font vendors](https://docs.microsoft.com/en-us/typography/opentype/spec/os2#achvendid). |
+| OS2VendorID | string (a 4-character string of a limited set of ASCII characters) | | [Microsoft's 4-letter identifier for registered font vendors](https://docs.microsoft.com/en-us/typography/opentype/spec/os2#achvendid). Ignore if you're not a registered typography vendor with Microsoft. |
+| filenames | object |  | A list representing the filenames of your font output. |
 | nameRecords | object | ✔️ | A structure represnting all of the records of the `name` table. (Described in more detail later.) |
+| iOSConfig | object |  | A structure represnting metadata that's needed to create an iOS Mobile Configuration profile. You only need to make this if you're building one of these. |
 
-
+<br/>
 
 ### Filenames
 
@@ -142,12 +153,12 @@ If you're using these, you must have a filename for each of the formats you're e
 FontFamilyName-StyleName
 ```
 
-As you can see in the JSON example though, I personally decided to not have Regular because 'MutantStandardEmoji-Regular' plus the emoji format is long enough. Emoji fonts don't have regular/bold/etc, So I would personally recommend the following convention:
+As you can see in the JSON example though, I personally decided to not have Regular because 'MutantStandardEmoji-Regular' plus the emoji format is really long and unecessary. Emoji fonts don't have regular/bold/etc, So I would personally recommend the following convention:
 
 ````
 FontFamilyName-EmojiFormat
 ````
-
+<br/>
 
 
 ### Name Records
@@ -227,3 +238,52 @@ What kinds of characters you can put in these will be determined by the encoding
 2. 'License' should just have a brief summary of the license, not legalese. Use 'License URL' to direct people to the legalese.
 3. 1 and 2 are similar to 16 and 17 but not identical. 1 and 2 are legacy versions and are strictly restricted to 'Regular', 'Italic', 'Bold' and 'Bold Italic'. With 16 and 17 you can put whatever you want in them. If an application supports 16 and 17, they will take precedence over 1 and 2. If it doesn't, it will just use 1 and 2.
 4. This normally a mandatory record but forc uses the version number already recorded in `metadata.version` to create the version record. So in forc, this is just a space for any supplementary information you want to insert after the version number. If you don't want to add any notes, you don't have to, forc will create this record anyway.
+
+
+**I recommend that you at least make name records 1, 3, 4, 6 and 17 different for each format like the example way above if you plan on publishing multiple formats. This way, your different format versions won't overwrite each other if they are installed on the same system and there's no confusion from an end-user perspective.**
+
+
+### iOSConfig
+
+These are the data elemnts you need so forc can create an iOS package. If you're not going to build an iOS package, then you can ignore this and not include it in your manifest.
+
+You don't need to be using macOS to build one of these, you can do it on any computer that can run forc.
+
+The iOSConfig part of the manifest is a simple flat array of a few things.
+
+```
+
+"iOSConfig":
+        {"PayloadDisplayName": "Mutant Standard emoji for iOS"
+        ,"PayloadIdentifier": "tech.mutant.iOSconfig"
+        ,"PayloadUUID": "<UUID>"
+        ,"PayloadVersion": 1
+
+        ,"ContentPayloadName": "Mutant Standard emoji (iOS)"
+        ,"ContentPayloadIdentifier": "tech.mutant.emojiFont"
+        ,"ContentPayloadUUID": "<UUID>"
+        ,"ContentPayloadVersion": 1
+        }
+
+    
+```
+
+| name | type | description |
+|:--|:--|--:|:--|
+| PayloadDisplayName | string | The title of the mobileconfig ('payload'). This is what users will see when they install it. |
+| PayloadIdentifier | string | Identifier of the payload itself. [1] |
+| PayloadUUID  | string representing a UUID | The UUID of the payload.[2] |
+| PayloadVersion | int | The version of the payload. As far as I know, you can normally ignore this and just set it to 1.
+| ContentPayloadName | string | The name of your font inside the payload. The user isn't going to see this one, it can be whatever. |
+| ContentPayloadIdentifier | string | Identifier of the font in the payload. [1] |
+| ContentPayloadUUID  | string representing a UUID | The UUID of the font in the payload. [2] |
+| ContentPayloadVersion | int | The version of the font in the payload. As far as I know, you can normally ignore this and just set it to 1.
+ 
+ 
+1. Identifiers need to be done in the [Reverse DNS Notation style](https://en.wikipedia.org/wiki/Reverse_domain_name_notation). If you are bundling this in an app, then it needs to begin with the identifier you use with your iOS app.
+2. You have to generate the UUIDs outside of forc. In macOS, you can simply do this by typing `uuidgen` in Terminal. You need to create one for both the payload and the font.
+
+
+#### Signing mobileconfigs
+
+If you want to sign your mobileconfig, you do it on the resulting file once it's built. [This article](https://lindenbergsoftware.com/en/notes/installing-fonts-on-ios/index.html) provides some details on how you can do that if you scroll down towards the end of it.

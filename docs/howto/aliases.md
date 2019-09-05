@@ -20,12 +20,12 @@ Alias glyphs are created by a JSON file, which is is structured as follows:
 
 The target is the codepoint of the alias glyph, and the destination is the image glyph the alias is pointing to.
 
-Both the target and destination are strings representing sequences of hexadecimal numbers (without '0x' at the beginning).
+The format of the target and destination are exactly the same as the filenames of your [input images](input.md).
 
 ````
 example
 
-{ "1F3F3-FE0F-200D-26A7" : "101681"
+{ "1f3f3-fe0f-200d-26a7" : "101681"
 }
 
 
