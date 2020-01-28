@@ -54,5 +54,5 @@ Feature requests and collaboration are welcome. Any collaborators must follow [M
 
 ## License
 
-- forc is licensed under [AGPL 3.0](license.txt).
-- The forc logo image is ©2019 Dzuk.
+
+forc is licensed under the [Cooperative Non-Violent License (CNPL) v4](license.txt).
