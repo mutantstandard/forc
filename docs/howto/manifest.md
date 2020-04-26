@@ -132,9 +132,7 @@ forc assumes you want to create a font that can work in both vertical AND horizo
 
 "filenames":
 	{ "SVGinOT": "MutantStandardEmoji-SVGinOT"
-	, "sbixTT": "MutantStandardEmoji-sbixTT"
 	, "sbixOT": "MutantStandardEmoji-sbixOT"
-	, "sbixTTiOS": "MutantStandardEmoji-sbixTT-iOS"
 	, "sbixOTiOS": "MutantStandardEmoji-sbixOT-iOS"
 	, "CBx": "MutantStandardEmoji-CBx"
 }
@@ -265,7 +263,7 @@ The iOSConfig part of the manifest is a simple flat array of a few things.
         ,"ContentPayloadVersion": 1
         }
 
-    
+
 ```
 
 | name | type | req? | description |
@@ -279,8 +277,8 @@ The iOSConfig part of the manifest is a simple flat array of a few things.
 | ContentPayloadIdentifier | string | ✔️ | Identifier of the font in the payload. [1] |
 | ContentPayloadUUID  | string representing a UUID | ✔️ | The UUID of the font in the payload. [2] |
 | ContentPayloadVersion | int | ✔️ | The version of the font in the payload. As far as I know, you can normally ignore this and just set it to 1. |
- 
- 
+
+
 1. Identifiers need to be done in the [Reverse DNS Notation style](https://en.wikipedia.org/wiki/Reverse_domain_name_notation). If you are bundling this in an app, then it needs to begin with the identifier you use with your iOS app.
 2. You have to generate the UUIDs outside of forc. In macOS, you can simply do this by typing `uuidgen` in Terminal. You need to create one for both the payload and the font.
 

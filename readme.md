@@ -10,16 +10,16 @@ Because fonts are inconsistent and difficult, forc also tries to have a heavily 
 
 **Forc is under heavy development right now. Most font exports don't work quite right or are not functional yet.**
 
+---
+
 ## Features
 
 **Exports to:**
 
-- **SVGinOT**: SVGinOT
-- **sbixOT**: sbix with OpenType ligatures
+- **SVGinOT**
+- **sbixOT**: sbix with OpenType ligatures.
 - **sbixOT for iOS**: sbix with OpenType ligatures, packaged in an iOS Configuration Profile.
-- **sbixTT**: sbix with TrueType ligatures
-- **sbixTT for iOS** sbix with TrueType ligatures, packaged in an iOS Configuration profile.
-- **CBDT/CBLC** (Google/Android format)
+- **CBx (CBDT/CBLC)**: CBDT/CBLC tables with OpenType ligatures.
 
 **Other features:**
 
@@ -31,12 +31,16 @@ Because fonts are inconsistent and difficult, forc also tries to have a heavily 
 - Strictly validates your input and gives you helpful error messages, ensuring that you get it right every time.
 - Designed to work as effortlessly as possible with [orxporter](https://github.com/mutantstandard/orxporter).
 
+
+---
+
 ## Dependencies
 
 - Python 3.6+
 - [lxml](https://lxml.de/) (install via pip)
 - [fonttools](https://github.com/fonttools/fonttools) (install via pip)
 
+---
 
 ## Documentation
 
@@ -44,15 +48,43 @@ Because fonts are inconsistent and difficult, forc also tries to have a heavily 
 
 #### [FAQ](docs/faq.md)
 
+---
+
+## Compatibility/stability notes
+
+### General stability
+
+forc is very much in development and probably isn't ready for production in any serious task.
+
+The `ttx` compiler (which is an external software called fonttools) will change various metadata elements you put in the manifest to different things. I cannot change this and while I've been working on a custom binary compiler to get around this and other limitations of `ttx`, it's not yet ready to use in production.
+
+At the moment it will always throw some errors about the number of sbix strikes not being the same as maxp.numGlyphs. This is a non-breaking error and you can ignore this.
+
+### Format stability
+
+This is only with the `ttx` compiler - the `forc` compiler is not yet ready for use. Also your mileage may vary depending on your input images and manifest data - fonts are complicated things.
+
+| format | stability | notes |
+|:--|:--|:--|
+| SVGinOT | sometimes okay | If you have a single SVG with some wrong parts to it (I'm not sure what those are), then the entire font glyph set will just not display. Unfortunately SVGinOT is a really inconsistent and poorly documented format :S. |
+| sbixOT | quite stable | This has been tested working within macOS and GNOME in Linux. |
+| sbixOT for iOS | quite stable | This has been tested working in iOS 13. |
+| CBDT/CBLC | not working | Even though the output is a valid font, glyphs don't display in any compatible environment that has been tested. It's unclear why that is at this point in time. |
+
+---
+
 ## Collaborators
 - Dzuk
-- kiilas
+- kiilas (helping out with various things)
+
+---
 
 ## Contributions
 
 Feature requests and collaboration are welcome. Any collaborators must follow [Mutant Standard's code of conduct](code_of_conduct.md).
 
-## License
+----
 
+## License
 
 forc is licensed under the [Cooperative Non-Violent License (CNPL) v4](license.txt).

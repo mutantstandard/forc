@@ -72,9 +72,7 @@ HOW TO BUILD IT:
         - SVGinOT       (Many platforms)
 
         Formats that require PNG images:
-        - sbixTT        (macOS) (not fully functional)
         - sbixOT
-        - sbixTTiOS     (iOS) (not fully functional)
         - sbixOTiOS     (DEVELOPMENT/TESTING)
         - CBx           (Google/Android)
 

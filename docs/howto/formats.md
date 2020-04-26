@@ -58,21 +58,3 @@ Windows 10, Linux, Rooted Android devices
 This is specifically designed to mimic how Google encodes their emoji fonts.
 
 'CBDT/CBLC' is more commonly used to refer to this format, but in forc it's simplified to 'CBx' to make it easier to remember.
-
----
-
-### Formats that are there but don't work
-
-These are currently placeholders in the software and may be removed in the future, do not use these.
-
-#### sbixTT
-
-- PNG glyphs encoded as sbix tables
-- TrueType ligature data
-- .ttf extension
-
-macOS's emoji system font format.
-
-#### sbixTTiOS
-
-sbixTT packaged in an iOS Configuration Profile. Designed for installation in iOS.

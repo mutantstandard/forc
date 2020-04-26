@@ -13,14 +13,6 @@ formats = {"SVGinOT":
              ,"extension": ".otf"
              ,"iOSCompile": False
              }
-         ,"sbixTT":
-              {"name": "sbixTT"
-              ,"imageFormat": "png"
-              ,"imageTables": "sbix"
-              ,"ligatureFormat": "TrueType"
-              ,"extension": ".otf"
-              ,"iOSCompile": False
-              }
          ,"sbixOT":
               {"name": "sbixOT"
               ,"imageFormat": "png"
@@ -28,14 +20,6 @@ formats = {"SVGinOT":
               ,"ligatureFormat": "OpenType"
               ,"extension": ".ttf"
               ,"iOSCompile": False
-              }
-         ,"sbixTTiOS":
-              {"name": "sbixTTiOS"
-              ,"imageFormat": "png"
-              ,"imageTables": "sbix"
-              ,"ligatureFormat": "TrueType"
-              ,"extension": ".ttf"
-              ,"iOSCompile": True
               }
         ,"sbixOTiOS":
              {"name": "sbixOTiOS"
