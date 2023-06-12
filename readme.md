@@ -90,4 +90,4 @@ Feature requests and collaboration are welcome. Any collaborators must follow [M
 
 ## License
 
-forc is licensed under the [Cooperative Non-Violent License (CNPL) v4](license.txt).
+forc is licensed under [GPLv3](license.txt).
